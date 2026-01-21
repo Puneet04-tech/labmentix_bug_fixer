@@ -1,0 +1,149 @@
+LABMENTIX_BUG_FIXER/
+│
+├── 📄 README.md                          # Main project documentation
+├── 📄 INSTALLATION.md                    # Detailed setup instructions
+├── 📄 DAY_WISE_GUIDE.md                 # 14-day development roadmap
+├── 📄 QUICK_REFERENCE.md                # Quick commands and tips
+├── 📄 PROJECT_STRUCTURE.txt             # This file
+├── 📜 setup.ps1                          # Automated installation script
+├── 📜 start.ps1                          # Start both servers script
+│
+├── 📂 BACKEND/                           # Node.js + Express.js API
+│   │
+│   ├── 📂 config/                        # Configuration files
+│   │   └── 📄 db.js                      # MongoDB connection setup
+│   │
+│   ├── 📂 middleware/                    # Custom middleware
+│   │   └── 📄 auth.js                    # JWT authentication middleware
+│   │
+│   ├── 📂 models/                        # Mongoose schemas (Day 2+)
+│   │   ├── 📄 User.js                    # User model (Day 2)
+│   │   ├── 📄 Project.js                 # Project model (Day 3)
+│   │   ├── 📄 Ticket.js                  # Ticket model (Day 4)
+│   │   └── 📄 Comment.js                 # Comment model (Day 9)
+│   │
+│   ├── 📂 routes/                        # API routes (Day 2+)
+│   │   ├── 📄 auth.js                    # Authentication routes (Day 2)
+│   │   ├── 📄 projects.js                # Project routes (Day 3)
+│   │   ├── 📄 tickets.js                 # Ticket routes (Day 4)
+│   │   └── 📄 comments.js                # Comment routes (Day 9)
+│   │
+│   ├── 📂 controllers/                   # Business logic (Day 2+)
+│   │   ├── 📄 authController.js          # Auth logic (Day 2)
+│   │   ├── 📄 projectController.js       # Project logic (Day 3)
+│   │   ├── 📄 ticketController.js        # Ticket logic (Day 4)
+│   │   └── 📄 commentController.js       # Comment logic (Day 9)
+│   │
+│   ├── 📄 .env                           # Environment variables (CREATE THIS!)
+│   ├── 📄 .env.example                   # Environment template
+│   ├── 📄 .gitignore                    # Git ignore rules
+│   ├── 📄 package.json                  # Backend dependencies
+│   ├── 📄 package-lock.json             # Dependency lock file
+│   └── 📄 server.js                      # Main server entry point
+│
+└── 📂 FRONTEND/                          # React + Vite + Tailwind CSS
+    │
+    ├── 📂 public/                        # Static assets
+    │   └── 🖼️ bug-icon.svg               # Favicon (add later)
+    │
+    ├── 📂 src/                           # Source code
+    │   │
+    │   ├── 📂 components/                # Reusable UI components
+    │   │   │
+    │   │   ├── 📂 layout/                # Layout components (Day 6)
+    │   │   │   ├── 📄 Sidebar.jsx        # Sidebar navigation
+    │   │   │   ├── 📄 Navbar.jsx         # Top navigation bar
+    │   │   │   └── 📄 Breadcrumbs.jsx    # Breadcrumb navigation
+    │   │   │
+    │   │   ├── 📂 project/               # Project components (Day 3)
+    │   │   │   ├── 📄 ProjectCard.jsx    # Project card display
+    │   │   │   └── 📄 CreateProjectModal.jsx
+    │   │   │
+    │   │   ├── 📂 ticket/                # Ticket components (Day 5)
+    │   │   │   ├── 📄 TicketCard.jsx     # Ticket card
+    │   │   │   ├── 📄 TicketList.jsx     # Ticket list view
+    │   │   │   ├── 📄 CreateTicketModal.jsx
+    │   │   │   └── 📄 EditTicketModal.jsx  # (Day 11)
+    │   │   │
+    │   │   ├── 📂 kanban/                # Kanban components (Day 8)
+    │   │   │   ├── 📄 KanbanBoard.jsx    # Main Kanban board
+    │   │   │   └── 📄 KanbanColumn.jsx   # Kanban column
+    │   │   │
+    │   │   ├── 📂 comment/               # Comment components (Day 9)
+    │   │   │   ├── 📄 CommentSection.jsx
+    │   │   │   └── 📄 CommentItem.jsx
+    │   │   │
+    │   │   ├── 📂 common/                # Common components
+    │   │   │   ├── 📄 Button.jsx         # Reusable button
+    │   │   │   ├── 📄 Input.jsx          # Form input
+    │   │   │   ├── 📄 Modal.jsx          # Modal wrapper
+    │   │   │   ├── 📄 Loader.jsx         # Loading spinner (Day 13)
+    │   │   │   └── 📄 FilterBar.jsx      # Filter bar (Day 10)
+    │   │   │
+    │   │   └── 📂 auth/                  # Auth components (Day 2)
+    │   │       ├── 📄 ProtectedRoute.jsx # Route protection
+    │   │       └── 📄 AuthForm.jsx       # Reusable auth form
+    │   │
+    │   ├── 📂 pages/                     # Page components
+    │   │   ├── 📄 Login.jsx              # Login page (Day 2)
+    │   │   ├── 📄 Register.jsx           # Register page (Day 2)
+    │   │   ├── 📄 Dashboard.jsx          # Main dashboard (Day 3)
+    │   │   ├── 📄 ProjectView.jsx        # Single project view (Day 5)
+    │   │   └── 📄 TicketDetail.jsx       # Ticket detail page (Day 9)
+    │   │
+    │   ├── 📂 context/                   # React Context API
+    │   │   ├── 📄 AuthContext.jsx        # Authentication state (Day 2)
+    │   │   └── 📄 ProjectContext.jsx     # Project state (Day 3)
+    │   │
+    │   ├── 📂 utils/                     # Utility functions
+    │   │   ├── 📄 api.js                 # Axios instance & interceptors
+    │   │   ├── 📄 helpers.js             # Helper functions
+    │   │   └── 📄 constants.js           # App constants
+    │   │
+    │   ├── 📄 App.jsx                    # Main App component
+    │   ├── 📄 main.jsx                   # React entry point
+    │   └── 📄 index.css                  # Global styles + Tailwind
+    │
+    ├── 📄 index.html                     # HTML template
+    ├── 📄 .gitignore                    # Git ignore rules
+    ├── 📄 package.json                  # Frontend dependencies
+    ├── 📄 package-lock.json             # Dependency lock file
+    ├── 📄 vite.config.js                # Vite configuration
+    ├── 📄 tailwind.config.js            # Tailwind CSS config
+    └── 📄 postcss.config.js             # PostCSS config
+
+
+═══════════════════════════════════════════════════════════════════
+
+LEGEND:
+📂 = Folder
+📄 = File (created)
+📜 = Script
+🖼️ = Image/Asset
+
+═══════════════════════════════════════════════════════════════════
+
+CURRENT STATUS (Day 1):
+✅ Complete:
+   - Backend structure
+   - Frontend structure
+   - MongoDB config
+   - JWT middleware
+   - Tailwind setup
+   - React Router
+   - Documentation files
+
+🔜 Coming in Day 2+:
+   - Models folder with schemas
+   - Routes and controllers
+   - React pages and components
+   - Context API for state
+   - And much more!
+
+═══════════════════════════════════════════════════════════════════
+
+TOTAL FILES CREATED ON DAY 1: 20+
+FOLDERS CREATED: 8+
+LINES OF CODE: 500+
+
+═══════════════════════════════════════════════════════════════════
