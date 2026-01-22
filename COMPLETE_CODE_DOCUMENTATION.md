@@ -1,8 +1,8 @@
 # 📚 COMPLETE CODE DOCUMENTATION - Line by Line Explanation
 
 **Bug Tracker MERN Project - Detailed File Analysis**  
-**Date:** January 21, 2026  
-**Status:** Day 2 Complete - Authentication System
+**Date:** January 22, 2026  
+**Status:** Day 3 Complete - Project Management System
 
 ---
 
@@ -10,8 +10,11 @@
 
 1. [Backend Files](#backend-files)
    - User Model (User.js)
+   - **Project Model (Project.js)** ⭐ NEW
    - Auth Controller (authController.js)
+   - **Project Controller (projectController.js)** ⭐ NEW
    - Auth Routes (auth.js)
+   - **Project Routes (projects.js)** ⭐ NEW
    - Auth Middleware (auth.js)
    - Database Config (db.js)
    - Server File (server.js)
@@ -20,10 +23,14 @@
 
 2. [Frontend Files](#frontend-files)
    - Auth Context (AuthContext.jsx)
+   - **Project Context (ProjectContext.jsx)** ⭐ NEW
    - Protected Route (ProtectedRoute.jsx)
    - Register Page (Register.jsx)
    - Login Page (Login.jsx)
    - Dashboard Page (Dashboard.jsx)
+   - **Projects List Page (Projects.jsx)** ⭐ NEW
+   - **Create Project Page (CreateProject.jsx)** ⭐ NEW
+   - **Project Detail Page (ProjectDetail.jsx)** ⭐ NEW
    - App Component (App.jsx)
    - API Utility (api.js)
    - Main Entry (main.jsx)
@@ -280,7 +287,175 @@ module.exports = mongoose.model('User', userSchema);
 
 ---
 
-## 2. 📄 **backend/controllers/authController.js** (Authentication Logic)
+## 2. 📄 **backend/models/Project.js** (Project Model) ⭐ NEW - DAY 3
+
+### Purpose:
+Defines the MongoDB schema for project data with ownership, members, status tracking, and priority management.
+
+### Line-by-Line Explanation:
+
+```javascript
+const mongoose = require('mongoose');
+```
+**Line 1:** Import Mongoose library  
+- Same as User model
+- Provides schema and model functionality
+
+```javascript
+const projectSchema = new mongoose.Schema({
+```
+**Line 3:** Create new Mongoose schema  
+- Defines structure for project documents
+- Blueprint for all projects in MongoDB
+
+```javascript
+  name: {
+    type: String,
+    required: [true, 'Please add a project name'],
+    trim: true,
+    maxlength: [100, 'Name cannot be more than 100 characters']
+  },
+```
+**Lines 4-9:** Define name field  
+- `type: String` - Project name as text
+- `required: [true, 'Please add a project name']` - Mandatory field with custom error
+- `trim: true` - Remove whitespace
+- `maxlength: [100, ...]` - Limit to 100 characters
+- Example: "Bug Tracker Project"
+
+```javascript
+  description: {
+    type: String,
+    required: [true, 'Please add a description'],
+    maxlength: [500, 'Description cannot be more than 500 characters']
+  },
+```
+**Lines 10-14:** Define description field  
+- Longer text field for project description
+- `maxlength: [500, ...]` - Limit to 500 characters
+- Required field with validation
+
+```javascript
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+```
+**Lines 15-19:** Define owner field  
+- `mongoose.Schema.Types.ObjectId` - Reference to User document
+- `ref: 'User'` - Points to User model
+- Creates relationship: Project belongs to User
+- Stores user's MongoDB _id
+- Example: "507f1f77bcf86cd799439011"
+
+```javascript
+  members: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+```
+**Lines 20-23:** Define members array  
+- `[{...}]` - Array of ObjectIds
+- Multiple users can be project members
+- Each element references a User
+- Empty array by default
+- Example: ["507f...", "608g...", "709h..."]
+
+```javascript
+  status: {
+    type: String,
+    enum: ['Planning', 'In Progress', 'On Hold', 'Completed', 'Cancelled'],
+    default: 'Planning'
+  },
+```
+**Lines 24-28:** Define status field  
+- `enum` - Only allows specific values
+- Five possible statuses:
+  - `Planning` - Project being planned
+  - `In Progress` - Active development
+  - `On Hold` - Temporarily paused
+  - `Completed` - Project finished
+  - `Cancelled` - Project abandoned
+- `default: 'Planning'` - New projects start in Planning
+
+```javascript
+  priority: {
+    type: String,
+    enum: ['Low', 'Medium', 'High', 'Critical'],
+    default: 'Medium'
+  },
+```
+**Lines 29-33:** Define priority field  
+- Four priority levels:
+  - `Low` - Minor projects
+  - `Medium` - Standard priority
+  - `High` - Important projects
+  - `Critical` - Urgent, high-impact projects
+- `default: 'Medium'` - Balanced default priority
+
+```javascript
+  startDate: {
+    type: Date,
+    default: Date.now
+  },
+```
+**Lines 34-37:** Define startDate field  
+- `type: Date` - MongoDB Date object
+- `default: Date.now` - Auto-set to current date/time
+- Tracks when project started
+
+```javascript
+  endDate: {
+    type: Date
+  },
+```
+**Lines 38-40:** Define endDate field  
+- Optional field (no `required`)
+- Can be null if no deadline
+- Tracks project deadline
+
+```javascript
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+```
+**Lines 41-48:** Define timestamp fields  
+- `createdAt` - When project was created (auto-set)
+- `updatedAt` - Last modification time (auto-updated)
+- Both default to current time
+
+```javascript
+// Update the updatedAt field before saving
+projectSchema.pre('save', async function(next) {
+  this.updatedAt = Date.now();
+  next();
+});
+```
+**Lines 50-53:** Pre-save middleware  
+- `pre('save')` - Runs before saving to database
+- `this.updatedAt = Date.now()` - Update timestamp
+- Automatically tracks when project was last modified
+- `next()` - Continue to save operation
+
+```javascript
+module.exports = mongoose.model('Project', projectSchema);
+```
+**Line 55:** Export Project model  
+- `mongoose.model('Project', projectSchema)` - Create model
+- Collection name in MongoDB: 'projects' (plural, lowercase)
+- Can be imported: `const Project = require('./models/Project')`
+- Provides methods: find, findById, create, update, delete
+
+---
+
+## 3. 📄 **backend/controllers/authController.js** (Authentication Logic)
 
 ### Purpose:
 Contains business logic for user authentication (register, login, get profile).
@@ -616,7 +791,386 @@ exports.getMe = async (req, res) => {
 
 ---
 
-## 3. 📄 **backend/routes/auth.js** (API Routes)
+## 4. 📄 **backend/controllers/projectController.js** (Project Management Logic) ⭐ NEW - DAY 3
+
+### Purpose:
+Contains business logic for project CRUD operations, member management, and access control.
+
+### Key Concepts:
+- **Access Control**: Only owners and members can view projects
+- **Authorization**: Only owners can update/delete projects
+- **Population**: Mongoose `.populate()` fills in user details from references
+
+### Line-by-Line Explanation:
+
+```javascript
+const Project = require('../models/Project');
+```
+**Line 1:** Import Project model  
+- Loads Project model from models folder
+- Provides access to all project database operations
+
+```javascript
+// @desc    Get all projects
+// @route   GET /api/projects
+// @access  Private
+exports.getProjects = async (req, res) => {
+```
+**Lines 3-6:** Get all projects function  
+- Returns projects where user is owner or member
+- `async` - Can use await for database queries
+- `req.user.id` - Set by auth middleware
+
+```javascript
+  try {
+    const projects = await Project.find({
+      $or: [
+        { owner: req.user.id },
+        { members: req.user.id }
+      ]
+    })
+```
+**Lines 7-13:** Query projects with MongoDB $or operator  
+- `Project.find()` - Find all matching documents
+- `$or: [...]` - Match if ANY condition is true
+- `{ owner: req.user.id }` - User is project owner
+- `{ members: req.user.id }` - User is in members array
+- Result: All projects user has access to
+
+```javascript
+    .populate('owner', 'name email')
+    .populate('members', 'name email')
+    .sort({ createdAt: -1 });
+```
+**Lines 14-16:** Populate references and sort  
+- `.populate('owner', 'name email')` - Replace owner ObjectId with user object
+  - Only includes name and email fields
+  - Example: `owner: "507f..."` → `owner: { name: "John", email: "john@example.com" }`
+- `.populate('members', 'name email')` - Same for members array
+- `.sort({ createdAt: -1 })` - Sort by creation date, newest first
+  - `-1` = descending order
+  - `1` = ascending order
+
+```javascript
+    res.json(projects);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+```
+**Lines 18-22:** Send response and error handling  
+- Returns array of projects
+- Catch any database errors
+
+```javascript
+// @desc    Get single project
+// @route   GET /api/projects/:id
+// @access  Private
+exports.getProject = async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.id)
+      .populate('owner', 'name email')
+      .populate('members', 'name email');
+```
+**Lines 24-31:** Get single project with ID  
+- `req.params.id` - Project ID from URL (/api/projects/507f...)
+- `findById()` - Find one document by MongoDB _id
+- Populate owner and members like before
+
+```javascript
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+```
+**Lines 33-35:** Check if project exists  
+- `status(404)` - HTTP 404 Not Found
+- Early return if project doesn't exist
+
+```javascript
+    // Check if user is owner or member
+    const isOwner = project.owner._id.toString() === req.user.id;
+    const isMember = project.members.some(member => member._id.toString() === req.user.id);
+```
+**Lines 37-39:** Access control check  
+- `project.owner._id.toString()` - Convert ObjectId to string for comparison
+- `req.user.id` - Current user's ID from auth middleware
+- `.some(member => ...)` - Check if any member matches user ID
+- Returns true if at least one member matches
+
+```javascript
+    if (!isOwner && !isMember) {
+      return res.status(403).json({ message: 'Not authorized to access this project' });
+    }
+```
+**Lines 41-43:** Reject unauthorized access  
+- `status(403)` - HTTP 403 Forbidden
+- Only owners and members can view project details
+
+```javascript
+    res.json(project);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+```
+**Lines 45-49:** Return project and error handling
+
+```javascript
+// @desc    Create new project
+// @route   POST /api/projects
+// @access  Private
+exports.createProject = async (req, res) => {
+  try {
+    const { name, description, status, priority, startDate, endDate, members } = req.body;
+```
+**Lines 51-56:** Create project function  
+- Destructure project data from request body
+- All data sent from frontend form
+
+```javascript
+    // Validation
+    if (!name || !description) {
+      return res.status(400).json({ message: 'Please provide name and description' });
+    }
+```
+**Lines 58-61:** Validate required fields  
+- Name and description are mandatory
+- `status(400)` - Bad Request if missing
+
+```javascript
+    // Create project
+    const project = await Project.create({
+      name,
+      description,
+      owner: req.user.id,
+      status: status || 'Planning',
+      priority: priority || 'Medium',
+      startDate: startDate || Date.now(),
+      endDate,
+      members: members || []
+    });
+```
+**Lines 63-72:** Create project document  
+- `Project.create()` - Insert new document in MongoDB
+- `owner: req.user.id` - Set current user as owner
+- `status || 'Planning'` - Use provided status or default
+- `priority || 'Medium'` - Use provided priority or default
+- `startDate || Date.now()` - Use provided date or current date
+- `members || []` - Use provided members array or empty
+
+```javascript
+    const populatedProject = await Project.findById(project._id)
+      .populate('owner', 'name email')
+      .populate('members', 'name email');
+```
+**Lines 74-76:** Fetch created project with populated fields  
+- `project._id` - ID of just-created project
+- Need to re-fetch to get populated owner/members
+- `create()` returns raw document without population
+
+```javascript
+    res.status(201).json(populatedProject);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+```
+**Lines 78-82:** Return created project  
+- `status(201)` - HTTP 201 Created (successful creation)
+- Returns full project with user details
+
+```javascript
+// @desc    Update project
+// @route   PUT /api/projects/:id
+// @access  Private
+exports.updateProject = async (req, res) => {
+  try {
+    let project = await Project.findById(req.params.id);
+
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    // Check if user is owner
+    if (project.owner.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'Not authorized to update this project' });
+    }
+```
+**Lines 84-98:** Update project with authorization  
+- Find project first to check ownership
+- `project.owner.toString()` - Convert ObjectId to string
+- **Only owner can update** - Members cannot edit
+- `status(403)` - Forbidden if not owner
+
+```javascript
+    // Update project
+    project = await Project.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    )
+    .populate('owner', 'name email')
+    .populate('members', 'name email');
+```
+**Lines 100-106:** Perform update  
+- `findByIdAndUpdate()` - Find and update in one operation
+- First param: ID to find
+- Second param: Update data from req.body
+- `{ new: true }` - Return updated document (not old one)
+- `runValidators: true` - Run schema validation on update
+- Populate owner and members
+
+```javascript
+    res.json(project);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+```
+**Lines 108-112:** Return updated project
+
+```javascript
+// @desc    Delete project
+// @route   DELETE /api/projects/:id
+// @access  Private
+exports.deleteProject = async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.id);
+
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    // Check if user is owner
+    if (project.owner.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'Not authorized to delete this project' });
+    }
+```
+**Lines 114-128:** Delete project with authorization  
+- Similar checks as update
+- **Only owner can delete** - Important security check
+
+```javascript
+    await Project.findByIdAndDelete(req.params.id);
+
+    res.json({ message: 'Project deleted successfully', id: req.params.id });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+```
+**Lines 130-136:** Perform deletion  
+- `findByIdAndDelete()` - Delete document from MongoDB
+- Return success message with deleted ID
+- Frontend can use ID to remove from state
+
+```javascript
+// @desc    Add member to project
+// @route   POST /api/projects/:id/members
+// @access  Private
+exports.addMember = async (req, res) => {
+  try {
+    const { userId } = req.body;
+    const project = await Project.findById(req.params.id);
+
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    // Check if user is owner
+    if (project.owner.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'Not authorized to add members' });
+    }
+```
+**Lines 138-153:** Add member function  
+- `userId` from request body - ID of user to add
+- Only owner can add members
+- Check project exists and user is owner
+
+```javascript
+    // Check if member already exists
+    if (project.members.includes(userId)) {
+      return res.status(400).json({ message: 'User is already a member' });
+    }
+```
+**Lines 155-158:** Prevent duplicate members  
+- `project.members.includes(userId)` - Check if userId in array
+- Reject if user already member
+
+```javascript
+    project.members.push(userId);
+    await project.save();
+```
+**Lines 160-161:** Add member and save  
+- `.push(userId)` - Add to members array
+- `.save()` - Persist changes to MongoDB
+- Triggers pre-save middleware (updates updatedAt)
+
+```javascript
+    const updatedProject = await Project.findById(project._id)
+      .populate('owner', 'name email')
+      .populate('members', 'name email');
+
+    res.json(updatedProject);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+```
+**Lines 163-171:** Return updated project  
+- Re-fetch with populated fields
+- Returns full project with new member details
+
+```javascript
+// @desc    Remove member from project
+// @route   DELETE /api/projects/:id/members/:userId
+// @access  Private
+exports.removeMember = async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.id);
+
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    // Check if user is owner
+    if (project.owner.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'Not authorized to remove members' });
+    }
+```
+**Lines 173-188:** Remove member function  
+- `req.params.userId` - User ID to remove from URL
+- Only owner can remove members
+
+```javascript
+    project.members = project.members.filter(
+      member => member.toString() !== req.params.userId
+    );
+    await project.save();
+```
+**Lines 190-193:** Filter out member and save  
+- `.filter()` - Create new array excluding userId
+- Keeps all members except the one to remove
+- Save updated members array
+
+```javascript
+    const updatedProject = await Project.findById(project._id)
+      .populate('owner', 'name email')
+      .populate('members', 'name email');
+
+    res.json(updatedProject);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+```
+**Lines 195-203:** Return updated project  
+- Re-fetch with populated fields
+- Returns project without removed member
+
+---
+
+## 5. 📄 **backend/routes/auth.js** (API Routes)
 
 ### Purpose:
 Defines authentication endpoints and links them to controller functions.
@@ -2693,7 +3247,3593 @@ Backend auth middleware verifies token → Process request → Send response
 
 ---
 
+---
+
+# DAY 4: TICKET SYSTEM (CRUD OPERATIONS) ⭐ NEW
+
+## Overview
+Day 4 implements a complete ticket/issue tracking system with:
+- Full CRUD operations for tickets
+- Assignment to team members
+- Type, Status, and Priority tracking
+- Filtering and search capabilities
+- Authorization checks (only project members can view/edit)
+
+---
+
+## 22. 📄 **backend/models/Ticket.js** (Ticket Model) ⭐ NEW - DAY 4
+
+### Purpose:
+Defines MongoDB schema for bug/issue tickets with relationships to projects and users.
+
+### Line-by-Line Explanation:
+
+```javascript
+const mongoose = require('mongoose');
+```
+**Line 1:** Import Mongoose library  
+- ODM for MongoDB
+- Provides schema and model functionality
+
+```javascript
+const ticketSchema = new mongoose.Schema({
+```
+**Line 3:** Create ticket schema  
+- Blueprint for ticket documents
+- Defines all fields and validation
+
+```javascript
+  title: {
+    type: String,
+    required: [true, 'Please add a ticket title'],
+    trim: true,
+    maxlength: [100, 'Title cannot be more than 100 characters']
+  },
+```
+**Lines 4-9:** Define title field  
+- `type: String` - Text field
+- `required` - Mandatory with custom error message
+- `trim: true` - Remove leading/trailing whitespace
+- `maxlength: [100, ...]` - Limit to 100 characters
+- Example: "Login button not working"
+
+```javascript
+  description: {
+    type: String,
+    required: [true, 'Please add a description'],
+    maxlength: [2000, 'Description cannot be more than 2000 characters']
+  },
+```
+**Lines 10-14:** Define description field  
+- Longer text field for detailed description
+- `maxlength: [2000, ...]` - Limit to 2000 characters
+- Example: "When user clicks login button, nothing happens. Expected: Should redirect to dashboard."
+
+```javascript
+  type: {
+    type: String,
+    enum: ['Bug', 'Feature', 'Improvement', 'Task'],
+    default: 'Bug'
+  },
+```
+**Lines 15-19:** Define type field  
+- `enum` - Only allows 4 specific values:
+  - `Bug` - Software defect/error
+  - `Feature` - New functionality request
+  - `Improvement` - Enhancement to existing feature
+  - `Task` - General task or chore
+- `default: 'Bug'` - Most tickets are bugs
+
+```javascript
+  status: {
+    type: String,
+    enum: ['Open', 'In Progress', 'In Review', 'Resolved', 'Closed'],
+    default: 'Open'
+  },
+```
+**Lines 20-24:** Define status field  
+- `enum` - Tracks ticket lifecycle through 5 stages:
+  - `Open` - Newly created, not started
+  - `In Progress` - Being worked on
+  - `In Review` - Awaiting code review
+  - `Resolved` - Fixed, awaiting verification
+  - `Closed` - Completed and verified
+- `default: 'Open'` - New tickets start here
+
+```javascript
+  priority: {
+    type: String,
+    enum: ['Low', 'Medium', 'High', 'Critical'],
+    default: 'Medium'
+  },
+```
+**Lines 25-29:** Define priority field  
+- `enum` - 4 urgency levels:
+  - `Low` - Minor issues, can wait
+  - `Medium` - Standard priority
+  - `High` - Important, needs attention soon
+  - `Critical` - Urgent, blocking users
+- `default: 'Medium'` - Balanced default
+
+```javascript
+  project: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Project',
+    required: true
+  },
+```
+**Lines 30-34:** Define project reference  
+- `ObjectId` - Reference to Project document
+- `ref: 'Project'` - Links to Project model
+- `required: true` - Every ticket must belong to a project
+- Creates relationship: Ticket belongs to Project
+- Example: "507f1f77bcf86cd799439011"
+
+```javascript
+  assignedTo: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+```
+**Lines 35-38:** Define assignedTo field  
+- Optional field (no `required`)
+- References User who will work on ticket
+- Can be null if unassigned
+- Only project members can be assigned
+
+```javascript
+  reportedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+```
+**Lines 39-43:** Define reportedBy field  
+- References User who created the ticket
+- `required: true` - Must have a reporter
+- Set to logged-in user when creating
+- Used for authorization (reporter can delete)
+
+```javascript
+  dueDate: {
+    type: Date
+  },
+```
+**Lines 44-46:** Define dueDate field  
+- Optional deadline for ticket
+- Can be null if no deadline
+- Used to track overdue tickets
+
+```javascript
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+```
+**Lines 47-54:** Define timestamp fields  
+- `createdAt` - When ticket was created (auto-set)
+- `updatedAt` - Last modification time (auto-updated)
+- Both default to current time
+
+```javascript
+// Update the updatedAt field before saving
+ticketSchema.pre('save', function(next) {
+  this.updatedAt = Date.now();
+  next();
+});
+```
+**Lines 56-59:** Pre-save middleware  
+- Runs automatically before saving
+- Updates `updatedAt` timestamp
+- Ensures modification time is always current
+
+```javascript
+// Add indexes for better query performance
+ticketSchema.index({ project: 1, status: 1 });
+ticketSchema.index({ assignedTo: 1, status: 1 });
+```
+**Lines 61-62:** Database indexes  
+- Improves query performance
+- First index: Find tickets by project and status (faster filtering)
+- Second index: Find assigned tickets by user and status (faster "My Tickets" page)
+- `1` means ascending order
+- MongoDB uses these for faster lookups
+
+```javascript
+module.exports = mongoose.model('Ticket', ticketSchema);
+```
+**Line 64:** Export Ticket model  
+- Creates model from schema
+- Collection name: 'tickets' (plural, lowercase)
+- Provides methods: find, findById, create, update, delete
+
+---
+
+## 23. 📄 **backend/controllers/ticketController.js** (Ticket Business Logic) ⭐ NEW - DAY 4
+
+### Purpose:
+Handles all ticket operations with comprehensive authorization checks.
+
+### Line-by-Line Explanation:
+
+```javascript
+const Ticket = require('../models/Ticket');
+const Project = require('../models/Project');
+const User = require('../models/User');
+```
+**Lines 1-3:** Import models  
+- Need Ticket model for CRUD operations
+- Project model to check membership
+- User model to validate assignees
+
+```javascript
+// @desc    Get all tickets (filtered by user's projects)
+// @route   GET /api/tickets
+// @access  Private
+exports.getTickets = async (req, res) => {
+```
+**Lines 5-8:** Get tickets function  
+- Returns only tickets from projects user has access to
+- Can apply filters via query params
+
+```javascript
+  try {
+    // Get all projects user has access to
+    const userProjects = await Project.find({
+      $or: [
+        { owner: req.user.id },
+        { members: req.user.id }
+      ]
+    });
+```
+**Lines 9-15:** Find user's projects  
+- `$or` - User is owner OR member
+- Get array of all accessible projects
+- Used to filter tickets
+
+```javascript
+    const projectIds = userProjects.map(project => project._id);
+```
+**Line 17:** Extract project IDs  
+- `.map()` - Transform array
+- Creates array of just the IDs
+- Example: [ObjectId("507f..."), ObjectId("608g...")]
+
+```javascript
+    // Build query based on filters
+    let query = { project: { $in: projectIds } };
+```
+**Lines 19-20:** Build base query  
+- `$in` - Match any of the project IDs
+- Only tickets from user's projects
+- Security: User can't see tickets from other projects
+
+```javascript
+    // Apply additional filters from query params
+    if (req.query.project) query.project = req.query.project;
+    if (req.query.status) query.status = req.query.status;
+    if (req.query.priority) query.priority = req.query.priority;
+    if (req.query.type) query.type = req.query.type;
+    if (req.query.assignedTo) query.assignedTo = req.query.assignedTo;
+```
+**Lines 22-26:** Apply URL filters  
+- `req.query` - Query parameters from URL
+- Example: `/api/tickets?status=Open&priority=High`
+- Dynamically builds MongoDB query
+- Only adds filters if provided
+
+```javascript
+    // Search filter
+    if (req.query.search) {
+      query.$or = [
+        { title: { $regex: req.query.search, $options: 'i' } },
+        { description: { $regex: req.query.search, $options: 'i' } }
+      ];
+    }
+```
+**Lines 28-33:** Search functionality  
+- `$regex` - MongoDB regular expression search
+- `$options: 'i'` - Case-insensitive
+- Searches in both title and description
+- Example: `?search=login` finds "Login button" or "User login failed"
+
+```javascript
+    // User-specific filters
+    if (req.query.filter === 'assigned') {
+      query.assignedTo = req.user.id;
+    } else if (req.query.filter === 'reported') {
+      query.reportedBy = req.user.id;
+    }
+```
+**Lines 35-39:** User-specific filters  
+- "Assigned to Me" filter
+- "Reported by Me" filter
+- Used in frontend tabs
+
+```javascript
+    const tickets = await Ticket.find(query)
+      .populate('project', 'name')
+      .populate('assignedTo', 'name email')
+      .populate('reportedBy', 'name email')
+      .sort({ createdAt: -1 });
+```
+**Lines 41-45:** Execute query  
+- `find(query)` - Get matching tickets
+- `.populate()` - Replace IDs with full objects:
+  - Project: Include name only
+  - AssignedTo: Include name and email
+  - ReportedBy: Include name and email
+- `.sort({ createdAt: -1 })` - Newest first
+
+```javascript
+    res.json(tickets);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+```
+**Lines 47-51:** Return tickets and error handling
+
+```javascript
+// @desc    Get single ticket
+// @route   GET /api/tickets/:id
+// @access  Private
+exports.getTicket = async (req, res) => {
+  try {
+    const ticket = await Ticket.findById(req.params.id)
+      .populate('project', 'name owner members')
+      .populate('assignedTo', 'name email')
+      .populate('reportedBy', 'name email');
+
+    if (!ticket) {
+      return res.status(404).json({ message: 'Ticket not found' });
+    }
+```
+**Lines 53-65:** Get single ticket  
+- Find by ID from URL parameter
+- Populate all relationships
+- Check if exists
+
+```javascript
+    // Check if user has access to this ticket's project
+    const isOwner = ticket.project.owner.toString() === req.user.id;
+    const isMember = ticket.project.members.some(
+      member => member.toString() === req.user.id
+    );
+
+    if (!isOwner && !isMember) {
+      return res.status(403).json({ message: 'Not authorized to view this ticket' });
+    }
+```
+**Lines 67-74:** Authorization check  
+- User must be owner or member of ticket's project
+- `.some()` - Check if any member matches
+- `status(403)` - Forbidden if not authorized
+- Security: Can't view tickets from other projects
+
+```javascript
+    res.json(ticket);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+```
+**Lines 76-80:** Return ticket and error handling
+
+```javascript
+// @desc    Create new ticket
+// @route   POST /api/tickets
+// @access  Private
+exports.createTicket = async (req, res) => {
+  try {
+    const { title, description, type, status, priority, project, assignedTo, dueDate } = req.body;
+
+    // Validation
+    if (!title || !description || !project) {
+      return res.status(400).json({ message: 'Please provide title, description, and project' });
+    }
+```
+**Lines 82-92:** Create ticket setup  
+- Destructure request body
+- Validate required fields
+- Title, description, project are mandatory
+
+```javascript
+    // Check if user has access to the project
+    const projectDoc = await Project.findById(project);
+    if (!projectDoc) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    const isOwner = projectDoc.owner.toString() === req.user.id;
+    const isMember = projectDoc.members.some(member => member.toString() === req.user.id);
+
+    if (!isOwner && !isMember) {
+      return res.status(403).json({ message: 'Not authorized to create ticket in this project' });
+    }
+```
+**Lines 94-105:** Project access check  
+- Find project first
+- Check user is owner or member
+- Can only create tickets in own projects
+- Security: Can't spam other projects with tickets
+
+```javascript
+    // If assignedTo is provided, check if they're a member of the project
+    if (assignedTo) {
+      const isAssigneeMember = projectDoc.owner.toString() === assignedTo ||
+        projectDoc.members.some(member => member.toString() === assignedTo);
+      
+      if (!isAssigneeMember) {
+        return res.status(400).json({ message: 'Assigned user must be a member of the project' });
+      }
+    }
+```
+**Lines 107-115:** Validate assignee  
+- If assigning to someone, check they're in project
+- Assignee must be owner or member
+- Prevents assigning to random users
+
+```javascript
+    // Create ticket
+    const ticket = await Ticket.create({
+      title,
+      description,
+      type: type || 'Bug',
+      status: status || 'Open',
+      priority: priority || 'Medium',
+      project,
+      assignedTo: assignedTo || null,
+      reportedBy: req.user.id,
+      dueDate: dueDate || null
+    });
+```
+**Lines 117-128:** Create ticket document  
+- `Ticket.create()` - Insert into MongoDB
+- Use provided values or defaults
+- `reportedBy: req.user.id` - Current user is reporter
+- Auto-set timestamps
+
+```javascript
+    const populatedTicket = await Ticket.findById(ticket._id)
+      .populate('project', 'name')
+      .populate('assignedTo', 'name email')
+      .populate('reportedBy', 'name email');
+
+    res.status(201).json(populatedTicket);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+```
+**Lines 130-138:** Return created ticket  
+- Re-fetch with populated fields
+- `status(201)` - Created successfully
+- Returns full ticket with user details
+
+```javascript
+// @desc    Update ticket
+// @route   PUT /api/tickets/:id
+// @access  Private
+exports.updateTicket = async (req, res) => {
+  try {
+    let ticket = await Ticket.findById(req.params.id).populate('project');
+
+    if (!ticket) {
+      return res.status(404).json({ message: 'Ticket not found' });
+    }
+```
+**Lines 140-149:** Update ticket setup  
+- Find ticket with populated project
+- Check if exists
+
+```javascript
+    // Check if user has access to this project
+    const isOwner = ticket.project.owner.toString() === req.user.id;
+    const isMember = ticket.project.members.some(
+      member => member.toString() === req.user.id
+    );
+
+    if (!isOwner && !isMember) {
+      return res.status(403).json({ message: 'Not authorized to update this ticket' });
+    }
+```
+**Lines 151-159:** Authorization check  
+- User must be project owner or member
+- All team members can update tickets
+- Security: Can't modify tickets from other projects
+
+```javascript
+    // If changing assignedTo, validate new assignee
+    if (req.body.assignedTo && req.body.assignedTo !== ticket.assignedTo?.toString()) {
+      const isAssigneeMember = ticket.project.owner.toString() === req.body.assignedTo ||
+        ticket.project.members.some(member => member.toString() === req.body.assignedTo);
+      
+      if (!isAssigneeMember) {
+        return res.status(400).json({ message: 'Assigned user must be a member of the project' });
+      }
+    }
+```
+**Lines 161-169:** Validate assignee change  
+- If changing who it's assigned to
+- New assignee must be in project
+- Prevents assigning to non-members
+
+```javascript
+    // Update ticket
+    ticket = await Ticket.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    )
+    .populate('project', 'name')
+    .populate('assignedTo', 'name email')
+    .populate('reportedBy', 'name email');
+
+    res.json(ticket);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+```
+**Lines 171-184:** Perform update  
+- `findByIdAndUpdate()` - Update in one operation
+- `{ new: true }` - Return updated document
+- `runValidators: true` - Run schema validation
+- Populate all relationships
+- Return updated ticket
+
+```javascript
+// @desc    Delete ticket
+// @route   DELETE /api/tickets/:id
+// @access  Private
+exports.deleteTicket = async (req, res) => {
+  try {
+    const ticket = await Ticket.findById(req.params.id).populate('project');
+
+    if (!ticket) {
+      return res.status(404).json({ message: 'Ticket not found' });
+    }
+```
+**Lines 186-195:** Delete ticket setup  
+- Find ticket with project
+- Check if exists
+
+```javascript
+    // Only project owner or ticket reporter can delete
+    const isOwner = ticket.project.owner.toString() === req.user.id;
+    const isReporter = ticket.reportedBy.toString() === req.user.id;
+
+    if (!isOwner && !isReporter) {
+      return res.status(403).json({ message: 'Not authorized to delete this ticket' });
+    }
+```
+**Lines 197-203:** Delete authorization  
+- More restrictive than update
+- Only project owner OR ticket reporter can delete
+- Regular members can't delete others' tickets
+- Security: Prevents malicious deletion
+
+```javascript
+    await Ticket.findByIdAndDelete(req.params.id);
+
+    res.json({ message: 'Ticket deleted successfully', id: req.params.id });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+```
+**Lines 205-211:** Perform deletion  
+- `findByIdAndDelete()` - Remove from MongoDB
+- Return success message with ID
+- Frontend uses ID to remove from state
+
+```javascript
+// @desc    Get tickets by project
+// @route   GET /api/tickets/project/:projectId
+// @access  Private
+exports.getTicketsByProject = async (req, res) => {
+  try {
+    // Check if user has access to project
+    const project = await Project.findById(req.params.projectId);
+    
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    const isOwner = project.owner.toString() === req.user.id;
+    const isMember = project.members.some(member => member.toString() === req.user.id);
+
+    if (!isOwner && !isMember) {
+      return res.status(403).json({ message: 'Not authorized to view this project\'s tickets' });
+    }
+
+    const tickets = await Ticket.find({ project: req.params.projectId })
+      .populate('assignedTo', 'name email')
+      .populate('reportedBy', 'name email')
+      .sort({ createdAt: -1 });
+
+    res.json(tickets);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+```
+**Lines 213-239:** Get tickets by project  
+- Dedicated endpoint for project detail page
+- Check project access first
+- Return all tickets for that project
+- Sorted newest first
+
+```javascript
+// @desc    Assign/unassign ticket
+// @route   PUT /api/tickets/:id/assign
+// @access  Private
+exports.assignTicket = async (req, res) => {
+  try {
+    const { userId } = req.body;
+    const ticket = await Ticket.findById(req.params.id).populate('project');
+
+    if (!ticket) {
+      return res.status(404).json({ message: 'Ticket not found' });
+    }
+
+    // Check if user has access to project
+    const isOwner = ticket.project.owner.toString() === req.user.id;
+    const isMember = ticket.project.members.some(member => member.toString() === req.user.id);
+
+    if (!isOwner && !isMember) {
+      return res.status(403).json({ message: 'Not authorized to assign this ticket' });
+    }
+
+    // If userId is provided, validate they're a project member
+    if (userId) {
+      const isAssigneeMember = ticket.project.owner.toString() === userId ||
+        ticket.project.members.some(member => member.toString() === userId);
+      
+      if (!isAssigneeMember) {
+        return res.status(400).json({ message: 'User must be a member of the project' });
+      }
+    }
+
+    ticket.assignedTo = userId || null;
+    await ticket.save();
+
+    const updatedTicket = await Ticket.findById(ticket._id)
+      .populate('project', 'name')
+      .populate('assignedTo', 'name email')
+      .populate('reportedBy', 'name email');
+
+    res.json(updatedTicket);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+```
+**Lines 241-280:** Assign ticket function  
+- Dedicated endpoint for assignment
+- Can assign (provide userId) or unassign (userId = null)
+- Validate assignee is project member
+- Project members can assign tickets
+- Return updated ticket
+
+---
+
+## 24. 📄 **backend/routes/tickets.js** (Ticket Routes) ⭐ NEW - DAY 4
+
+### Purpose:
+Defines all ticket API endpoints.
+
+### Line-by-Line Explanation:
+
+```javascript
+const express = require('express');
+const router = express.Router();
+```
+**Lines 1-2:** Setup Express router  
+- Import Express
+- Create router instance
+
+```javascript
+const {
+  getTickets,
+  getTicket,
+  createTicket,
+  updateTicket,
+  deleteTicket,
+  getTicketsByProject,
+  assignTicket
+} = require('../controllers/ticketController');
+```
+**Lines 3-11:** Import controller functions  
+- All 8 ticket operations
+- From ticketController.js
+
+```javascript
+const auth = require('../middleware/auth');
+```
+**Line 12:** Import auth middleware  
+- All ticket routes require authentication
+- Added to every route
+
+```javascript
+// All routes are protected
+router.get('/', auth, getTickets);
+router.post('/', auth, createTicket);
+router.get('/project/:projectId', auth, getTicketsByProject);
+router.get('/:id', auth, getTicket);
+router.put('/:id', auth, updateTicket);
+router.delete('/:id', auth, deleteTicket);
+router.put('/:id/assign', auth, assignTicket);
+```
+**Lines 14-20:** Define routes  
+- **GET /** - List tickets with filters
+- **POST /** - Create new ticket
+- **GET /project/:projectId** - Get tickets by project
+- **GET /:id** - Get single ticket
+- **PUT /:id** - Update ticket
+- **DELETE /:id** - Delete ticket
+- **PUT /:id/assign** - Assign/unassign ticket
+- All prefixed with `/api/tickets` in server.js
+
+```javascript
+module.exports = router;
+```
+**Line 22:** Export router  
+- Imported in server.js
+- Mounted at `/api/tickets`
+
+---
+
+## 25. 📄 **frontend/src/context/TicketContext.jsx** (Global Ticket State) ⭐ NEW - DAY 4
+
+### Purpose:
+Manages ticket state globally, provides CRUD functions to all components.
+
+### Line-by-Line Explanation:
+
+```javascript
+import { createContext, useContext, useState } from 'react';
+import API from '../utils/api';
+import { toast } from 'react-toastify';
+```
+**Lines 1-3:** Import dependencies  
+- React context and hooks
+- Axios instance
+- Toast notifications (fixed import!)
+
+```javascript
+const TicketContext = createContext();
+```
+**Line 5:** Create context object  
+- Container for ticket data
+- Shared across components
+
+```javascript
+export const useTicket = () => {
+  const context = useContext(TicketContext);
+  if (!context) {
+    throw new Error('useTicket must be used within TicketProvider');
+  }
+  return context;
+};
+```
+**Lines 7-13:** Custom hook to use context  
+- `useTicket()` - Easier access
+- Error if used outside provider
+- Returns ticket state and functions
+
+```javascript
+export const TicketProvider = ({ children }) => {
+  const [tickets, setTickets] = useState([]);
+  const [currentTicket, setCurrentTicket] = useState(null);
+  const [loading, setLoading] = useState(false);
+```
+**Lines 15-18:** Provider component state  
+- `tickets` - Array of all tickets
+- `currentTicket` - Single ticket being viewed
+- `loading` - Loading indicator
+
+```javascript
+  // Fetch all tickets with optional filters
+  const fetchTickets = async (filters = {}) => {
+    setLoading(true);
+    try {
+      const queryString = new URLSearchParams(filters).toString();
+      const { data } = await API.get(`/tickets${queryString ? `?${queryString}` : ''}`);
+      setTickets(data);
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to fetch tickets');
+    } finally {
+      setLoading(false);
+    }
+  };
+```
+**Lines 20-32:** Fetch tickets function  
+- `filters` - Object with filter params
+  - Example: `{ status: 'Open', priority: 'High' }`
+- `URLSearchParams` - Converts object to query string
+  - Example: `{ status: 'Open' }` → `"status=Open"`
+- Builds URL with or without query string
+- Updates tickets state
+- Shows error toast on failure
+- `finally` - Always stop loading
+
+```javascript
+  // Fetch tickets by project
+  const fetchTicketsByProject = async (projectId) => {
+    setLoading(true);
+    try {
+      const { data } = await API.get(`/tickets/project/${projectId}`);
+      setTickets(data);
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to fetch tickets');
+    } finally {
+      setLoading(false);
+    }
+  };
+```
+**Lines 34-46:** Fetch project tickets  
+- Used in ProjectDetail page
+- Gets all tickets for specific project
+- Updates tickets array
+
+```javascript
+  // Fetch single ticket
+  const fetchTicket = async (id) => {
+    setLoading(true);
+    try {
+      const { data } = await API.get(`/tickets/${id}`);
+      setCurrentTicket(data);
+      return data;
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to fetch ticket');
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+```
+**Lines 48-62:** Fetch single ticket  
+- Updates `currentTicket` state
+- Returns ticket data
+- Used in TicketDetail page
+
+```javascript
+  // Create ticket
+  const createTicket = async (ticketData) => {
+    try {
+      const { data } = await API.post('/tickets', ticketData);
+      setTickets([data, ...tickets]);
+      toast.success('Ticket created successfully');
+      return { success: true, data };
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to create ticket');
+      return { success: false };
+    }
+  };
+```
+**Lines 64-76:** Create ticket function  
+- `POST /api/tickets`
+- `ticketData` - Form data object
+- Add new ticket to START of array `[data, ...tickets]`
+- Show success toast
+- Return object with success status and data
+- Component can check `result.success`
+
+```javascript
+  // Update ticket
+  const updateTicket = async (id, ticketData) => {
+    try {
+      const { data } = await API.put(`/tickets/${id}`, ticketData);
+      setTickets(tickets.map(ticket => ticket._id === id ? data : ticket));
+      setCurrentTicket(data);
+      toast.success('Ticket updated successfully');
+      return { success: true, data };
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to update ticket');
+      return { success: false };
+    }
+  };
+```
+**Lines 78-91:** Update ticket function  
+- `PUT /api/tickets/:id`
+- `.map()` - Replace updated ticket in array
+- Also update currentTicket if viewing
+- Return updated data
+
+```javascript
+  // Delete ticket
+  const deleteTicket = async (id) => {
+    try {
+      await API.delete(`/tickets/${id}`);
+      setTickets(tickets.filter(ticket => ticket._id !== id));
+      toast.success('Ticket deleted successfully');
+      return { success: true };
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to delete ticket');
+      return { success: false };
+    }
+  };
+```
+**Lines 93-105:** Delete ticket function  
+- `DELETE /api/tickets/:id`
+- `.filter()` - Remove deleted ticket from array
+- Success/error feedback
+
+```javascript
+  // Assign ticket
+  const assignTicket = async (id, userId) => {
+    try {
+      const { data } = await API.put(`/tickets/${id}/assign`, { userId });
+      setTickets(tickets.map(ticket => ticket._id === id ? data : ticket));
+      if (currentTicket?._id === id) {
+        setCurrentTicket(data);
+      }
+      toast.success('Ticket assigned successfully');
+      return { success: true, data };
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to assign ticket');
+      return { success: false };
+    }
+  };
+```
+**Lines 107-122:** Assign ticket function  
+- Dedicated assignment endpoint
+- `userId` - Can be null to unassign
+- Update ticket in array
+- Update currentTicket if it's the one being assigned
+- Provide feedback
+
+```javascript
+  const value = {
+    tickets,
+    currentTicket,
+    loading,
+    fetchTickets,
+    fetchTicketsByProject,
+    fetchTicket,
+    createTicket,
+    updateTicket,
+    deleteTicket,
+    assignTicket
+  };
+```
+**Lines 124-136:** Context value  
+- All state and functions available to consumers
+- Components access via `const { tickets, createTicket } = useTicket()`
+
+```javascript
+  return <TicketContext.Provider value={value}>{children}</TicketContext.Provider>;
+};
+```
+**Lines 138-139:** Provide context  
+- Makes value available to all descendants
+
+---
+
+## 26. 📄 **frontend/src/pages/Tickets.jsx** (Ticket List Page) ⭐ NEW - DAY 4
+
+### Purpose:
+Main ticket listing page with comprehensive filtering, search, and tabbed views.
+
+### Key Features:
+1. **Tabbed Views:** All / Assigned to Me / Reported by Me
+2. **Search:** Real-time search in title/description
+3. **Dropdown Filters:** Project, Status, Priority
+4. **Responsive Grid:** Cards with color-coded badges
+5. **Type Icons:** Visual indicators for Bug, Feature, Improvement, Task
+
+### Key Code Sections:
+
+```javascript
+const [activeTab, setActiveTab] = useState('all');
+const [searchTerm, setSearchTerm] = useState('');
+const [filters, setFilters] = useState({
+  project: '',
+  status: '',
+  priority: ''
+});
+```
+**State management**  
+- `activeTab` - Which tab is active (all/assigned/reported)
+- `searchTerm` - Search input value
+- `filters` - Dropdown filter values
+
+```javascript
+useEffect(() => {
+  loadTickets();
+}, [activeTab, filters]);
+```
+**Load tickets on filter change**  
+- Runs when activeTab or filters change
+- Fetches new tickets with current filters
+
+```javascript
+const loadTickets = () => {
+  const queryFilters = { ...filters };
+  
+  if (activeTab === 'assigned') {
+    queryFilters.filter = 'assigned';
+  } else if (activeTab === 'reported') {
+    queryFilters.filter = 'reported';
+  }
+  
+  if (searchTerm) {
+    queryFilters.search = searchTerm;
+  }
+  
+  fetchTickets(queryFilters);
+};
+```
+**Build and apply filters**  
+- Combine dropdown filters with tab filter
+- Add search term if present
+- Call context function
+
+```javascript
+const getTypeIcon = (type) => {
+  const icons = {
+    'Bug': '🐛',
+    'Feature': '✨',
+    'Improvement': '🔧',
+    'Task': '📋'
+  };
+  return icons[type] || '📋';
+};
+```
+**Type icons function**  
+- Returns emoji for each ticket type
+- Visual differentiation
+
+```javascript
+const getStatusColor = (status) => {
+  const colors = {
+    'Open': 'bg-blue-100 text-blue-800',
+    'In Progress': 'bg-yellow-100 text-yellow-800',
+    'In Review': 'bg-purple-100 text-purple-800',
+    'Resolved': 'bg-green-100 text-green-800',
+    'Closed': 'bg-gray-100 text-gray-800'
+  };
+  return colors[status] || 'bg-gray-100 text-gray-800';
+};
+
+const getPriorityColor = (priority) => {
+  const colors = {
+    'Low': 'bg-gray-100 text-gray-700',
+    'Medium': 'bg-blue-100 text-blue-700',
+    'High': 'bg-orange-100 text-orange-700',
+    'Critical': 'bg-red-100 text-red-700'
+  };
+  return colors[priority] || 'bg-gray-100 text-gray-700';
+};
+```
+**Color coding functions**  
+- Returns Tailwind classes for badges
+- Visual priority/status indication
+
+```javascript
+const filteredTickets = tickets.filter(ticket =>
+  ticket.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  ticket.description.toLowerCase().includes(searchTerm.toLowerCase())
+);
+```
+**Client-side search filter**  
+- Filters tickets array by search term
+- Case-insensitive
+- Searches both title and description
+
+```javascript
+<div className="flex gap-4 mb-6">
+  <button
+    onClick={() => setActiveTab('all')}
+    className={`px-4 py-2 rounded-lg font-medium transition ${
+      activeTab === 'all'
+        ? 'bg-primary-600 text-white'
+        : 'bg-white text-gray-700 hover:bg-gray-50'
+    }`}
+  >
+    All ({tickets.length})
+  </button>
+  {/* More tabs... */}
+</div>
+```
+**Tab buttons**  
+- Dynamic active state styling
+- Shows count for each tab
+- Click changes activeTab state
+
+```javascript
+<input
+  type="text"
+  placeholder="Search tickets..."
+  value={searchTerm}
+  onChange={(e) => setSearchTerm(e.target.value)}
+  onKeyPress={(e) => e.key === 'Enter' && loadTickets()}
+  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg"
+/>
+```
+**Search input**  
+- Controlled component
+- Enter key triggers search
+- Real-time filtering
+
+```javascript
+<select
+  value={filters.status}
+  onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+  className="px-4 py-2 border border-gray-300 rounded-lg"
+>
+  <option value="">All Status</option>
+  <option value="Open">Open</option>
+  <option value="In Progress">In Progress</option>
+  <option value="In Review">In Review</option>
+  <option value="Resolved">Resolved</option>
+  <option value="Closed">Closed</option>
+</select>
+```
+**Filter dropdown**  
+- Updates filters state
+- Empty value shows all
+- Triggers useEffect to reload tickets
+
+```javascript
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  {filteredTickets.map(ticket => (
+    <div key={ticket._id} className="bg-white rounded-lg shadow p-6">
+      {/* Ticket card content */}
+    </div>
+  ))}
+</div>
+```
+**Responsive grid**  
+- 1 column mobile, 2 tablet, 3 desktop
+- Maps over filtered tickets
+- Card for each ticket
+
+---
+
+## 27. 📄 **frontend/src/pages/CreateTicket.jsx** (Ticket Creation Form) ⭐ NEW - DAY 4
+
+### Purpose:
+Form to create new tickets with validation and project-specific features.
+
+### Key Features:
+1. **Project Selection:** Loads team members when project selected
+2. **Type Icons:** Visual dropdown with icons
+3. **Assignee Dropdown:** Filtered to project members
+4. **Date Validation:** Due date can't be in past
+5. **Character Counters:** Shows remaining characters
+
+### Key Code Sections:
+
+```javascript
+const [formData, setFormData] = useState({
+  title: '',
+  description: '',
+  type: 'Bug',
+  status: 'Open',
+  priority: 'Medium',
+  project: '',
+  assignedTo: '',
+  dueDate: ''
+});
+```
+**Form state**  
+- All fields in one object
+- Defaults for type/status/priority
+- Empty strings for others
+
+```javascript
+const [projectMembers, setProjectMembers] = useState([]);
+```
+**Project members state**  
+- Loaded when project selected
+- Used in assignee dropdown
+
+```javascript
+useEffect(() => {
+  fetchProjects();
+}, []);
+
+useEffect(() => {
+  if (formData.project) {
+    loadProjectMembers();
+  }
+}, [formData.project]);
+```
+**Effect hooks**  
+- First effect: Load projects on mount
+- Second effect: Load members when project changes
+- Dependent on formData.project value
+
+```javascript
+const loadProjectMembers = async () => {
+  try {
+    const projectData = projects.find(p => p._id === formData.project);
+    if (projectData) {
+      const members = [
+        projectData.owner,
+        ...projectData.members
+      ];
+      setProjectMembers(members);
+    }
+  } catch (error) {
+    toast.error('Failed to load project members');
+  }
+};
+```
+**Load members function**  
+- Find selected project in array
+- Combine owner and members
+- Owner can be assigned too
+- Updates dropdown options
+
+```javascript
+const validate = () => {
+  const newErrors = {};
+
+  if (!formData.title.trim()) {
+    newErrors.title = 'Title is required';
+  } else if (formData.title.length > 100) {
+    newErrors.title = 'Title must be less than 100 characters';
+  }
+
+  if (!formData.description.trim()) {
+    newErrors.description = 'Description is required';
+  } else if (formData.description.length > 2000) {
+    newErrors.description = 'Description must be less than 2000 characters';
+  }
+
+  if (!formData.project) {
+    newErrors.project = 'Project is required';
+  }
+
+  if (formData.dueDate) {
+    const dueDate = new Date(formData.dueDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (dueDate < today) {
+      newErrors.dueDate = 'Due date cannot be in the past';
+    }
+  }
+
+  return newErrors;
+};
+```
+**Validation function**  
+- Check required fields
+- Validate length limits
+- Validate date not in past
+- Return errors object
+
+```javascript
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  const newErrors = validate();
+  if (Object.keys(newErrors).length > 0) {
+    setErrors(newErrors);
+    return;
+  }
+
+  const result = await createTicket(formData);
+  if (result.success) {
+    navigate('/tickets');
+  }
+};
+```
+**Form submission**  
+- Prevent default
+- Validate first
+- Create ticket if valid
+- Navigate to list on success
+
+```javascript
+<select
+  id="type"
+  name="type"
+  value={formData.type}
+  onChange={handleChange}
+  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+>
+  <option value="Bug">🐛 Bug</option>
+  <option value="Feature">✨ Feature</option>
+  <option value="Improvement">🔧 Improvement</option>
+  <option value="Task">📋 Task</option>
+</select>
+```
+**Type dropdown with icons**  
+- Emojis in options
+- Visual selection
+
+```javascript
+<input
+  type="date"
+  id="dueDate"
+  name="dueDate"
+  value={formData.dueDate}
+  onChange={handleChange}
+  min={new Date().toISOString().split('T')[0]}
+  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+/>
+```
+**Date input**  
+- `min` attribute prevents past dates
+- ISO format for value
+- Browser native date picker
+
+```javascript
+<div className="text-sm text-gray-500 text-right">
+  {formData.title.length}/100 characters
+</div>
+```
+**Character counter**  
+- Shows current / max
+- Helps user stay within limit
+
+---
+
+## 28. 📄 **frontend/src/pages/TicketDetail.jsx** (Ticket View/Edit Page) ⭐ NEW - DAY 4
+
+### Purpose:
+View and edit individual tickets with authorization checks.
+
+### Key Features:
+1. **View Mode:** Display ticket details
+2. **Edit Mode:** Inline editing form
+3. **Authorization:** Only project members can edit
+4. **Delete:** Only owner or reporter can delete
+5. **Project Sidebar:** Shows project info
+6. **Assignment:** Dropdown to change assignee
+
+### Key Code Sections:
+
+```javascript
+const [ticket, setTicket] = useState(null);
+const [isEditing, setIsEditing] = useState(false);
+const [editForm, setEditForm] = useState({});
+```
+**Component state**  
+- `ticket` - Current ticket data
+- `isEditing` - Toggle edit mode
+- `editForm` - Form data for editing
+
+```javascript
+useEffect(() => {
+  loadTicket();
+}, [id]);
+
+const loadTicket = async () => {
+  const data = await fetchTicket(id);
+  if (data) {
+    setTicket(data);
+    setEditForm({
+      title: data.title,
+      description: data.description,
+      type: data.type,
+      status: data.status,
+      priority: data.priority,
+      assignedTo: data.assignedTo?._id || '',
+      dueDate: data.dueDate ? data.dueDate.split('T')[0] : ''
+    });
+  }
+};
+```
+**Load ticket on mount**  
+- Get ticket ID from URL
+- Fetch ticket data
+- Initialize edit form with current values
+- Date formatting for input
+
+```javascript
+const handleDelete = async () => {
+  if (window.confirm('Are you sure you want to delete this ticket?')) {
+    const result = await deleteTicket(ticket._id);
+    if (result.success) {
+      navigate('/tickets');
+    }
+  }
+};
+```
+**Delete with confirmation**  
+- Browser confirm dialog
+- Delete if confirmed
+- Navigate to list on success
+
+```javascript
+const handleSave = async () => {
+  const result = await updateTicket(ticket._id, editForm);
+  if (result.success) {
+    setTicket(result.data);
+    setIsEditing(false);
+  }
+};
+```
+**Save changes**  
+- Update ticket with form data
+- Update local state
+- Exit edit mode
+
+```javascript
+const canEdit = ticket.project.owner._id === user?._id ||
+  ticket.project.members.some(m => m._id === user?._id);
+
+const canDelete = ticket.project.owner._id === user?._id ||
+  ticket.reportedBy._id === user?._id;
+```
+**Authorization checks**  
+- `canEdit` - Owner or member
+- `canDelete` - Owner or reporter (more restrictive)
+- Used to show/hide buttons
+
+```javascript
+{isEditing ? (
+  <div>
+    {/* Edit form */}
+  </div>
+) : (
+  <div>
+    {/* View mode */}
+  </div>
+)}
+```
+**Conditional rendering**  
+- Show form if editing
+- Show details if viewing
+- Toggle with Edit button
+
+```javascript
+<div className="lg:col-span-1">
+  <div className="bg-white rounded-lg shadow p-6">
+    <h2 className="text-xl font-bold mb-4">Project Details</h2>
+    <div className="space-y-3">
+      <div>
+        <span className="text-sm text-gray-600">Project:</span>
+        <p className="font-medium">{ticket.project.name}</p>
+      </div>
+      {/* More details... */}
+    </div>
+  </div>
+</div>
+```
+**Project sidebar**  
+- Shows related project info
+- Links to project detail
+- Provides context
+
+---
+
+# DAY 5: COMMENTS & ACTIVITY TRACKING ⭐ NEW
+
+## Overview
+Day 5 adds collaboration features to tickets:
+- Comment system for discussions
+- Edit/delete own comments
+- Activity timeline showing ticket history
+- Real-time timestamps with "time ago" format
+- User avatars and attribution
+
+---
+
+## 29. 📄 **backend/models/Comment.js** (Comment Model) ⭐ NEW - DAY 5
+
+### Purpose:
+Stores ticket comments with edit tracking and relationships.
+
+### Line-by-Line Explanation:
+
+```javascript
+const mongoose = require('mongoose');
+
+const commentSchema = new mongoose.Schema({
+  content: {
+    type: String,
+    required: [true, 'Comment content is required'],
+    maxlength: [1000, 'Comment cannot exceed 1000 characters'],
+    trim: true
+  },
+```
+**Lines 1-9:** Comment content field  
+- Main comment text
+- Required field
+- Max 1000 characters (reasonable for comments)
+- `trim` removes whitespace
+
+```javascript
+  ticket: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Ticket',
+    required: true
+  },
+```
+**Lines 10-14:** Ticket reference  
+- Every comment belongs to a ticket
+- Creates relationship: Comment belongs to Ticket
+- Required field
+
+```javascript
+  author: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+```
+**Lines 15-19:** Author reference  
+- Who wrote the comment
+- References User model
+- Required field
+
+```javascript
+  isEdited: {
+    type: Boolean,
+    default: false
+  },
+  editedAt: {
+    type: Date
+  },
+```
+**Lines 20-26:** Edit tracking  
+- `isEdited` - Boolean flag for edited comments
+- `editedAt` - When last edited
+- Shows "(edited)" indicator in UI
+
+```javascript
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+}, {
+  timestamps: true
+});
+```
+**Lines 27-33:** Timestamps  
+- `createdAt` - When comment created
+- `timestamps: true` - Mongoose adds createdAt and updatedAt automatically
+
+```javascript
+// Pre-save middleware to set isEdited flag
+commentSchema.pre('save', function(next) {
+  if (this.isModified('content') && !this.isNew) {
+    this.isEdited = true;
+    this.editedAt = Date.now();
+  }
+  next();
+});
+```
+**Lines 35-41:** Edit detection middleware  
+- Runs before saving
+- `this.isModified('content')` - Content changed?
+- `!this.isNew` - Not a new comment?
+- If both true: Set isEdited flag and editedAt timestamp
+- Automatically tracks edits
+
+```javascript
+// Index for faster queries
+commentSchema.index({ ticket: 1, createdAt: -1 });
+```
+**Line 43-44:** Database index  
+- Optimizes querying comments by ticket
+- Sorted by creation date (newest first)
+- Makes comment loading faster
+
+```javascript
+module.exports = mongoose.model('Comment', commentSchema);
+```
+**Line 46:** Export model  
+- Collection: 'comments'
+- Available for import
+
+---
+
+## 30. 📄 **backend/controllers/commentController.js** (Comment Logic) ⭐ NEW - DAY 5
+
+### Purpose:
+Handles comment CRUD with authorization (only author can edit/delete).
+
+### Line-by-Line Explanation:
+
+```javascript
+const Comment = require('../models/Comment');
+const Ticket = require('../models/Ticket');
+const Project = require('../models/Project');
+```
+**Lines 1-3:** Import models  
+- Comment for CRUD operations
+- Ticket to check ticket exists
+- Project to verify user access
+
+```javascript
+// @desc    Get comments for a ticket
+// @route   GET /api/comments/ticket/:ticketId
+// @access  Private
+exports.getCommentsByTicket = async (req, res) => {
+  try {
+    // First check if user has access to the ticket's project
+    const ticket = await Ticket.findById(req.params.ticketId).populate('project');
+    
+    if (!ticket) {
+      return res.status(404).json({ message: 'Ticket not found' });
+    }
+
+    const isOwner = ticket.project.owner.toString() === req.user.id;
+    const isMember = ticket.project.members.some(member => member.toString() === req.user.id);
+
+    if (!isOwner && !isMember) {
+      return res.status(403).json({ message: 'Not authorized to view comments for this ticket' });
+    }
+```
+**Lines 5-22:** Get comments authorization  
+- Find ticket first
+- Check user has access to ticket's project
+- Owner or member can view comments
+- Security: Can't read comments from unauthorized projects
+
+```javascript
+    const comments = await Comment.find({ ticket: req.params.ticketId })
+      .populate('author', 'name email')
+      .sort({ createdAt: -1 });
+
+    res.json(comments);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+```
+**Lines 24-31:** Fetch and return comments  
+- Find all comments for ticket
+- Populate author details
+- Sort newest first
+- Return array
+
+```javascript
+// @desc    Create comment
+// @route   POST /api/comments
+// @access  Private
+exports.createComment = async (req, res) => {
+  try {
+    const { content, ticket: ticketId } = req.body;
+
+    // Validation
+    if (!content || !ticketId) {
+      return res.status(400).json({ message: 'Please provide content and ticket ID' });
+    }
+
+    if (content.trim().length === 0) {
+      return res.status(400).json({ message: 'Comment cannot be empty' });
+    }
+
+    if (content.length > 1000) {
+      return res.status(400).json({ message: 'Comment cannot exceed 1000 characters' });
+    }
+```
+**Lines 33-51:** Create comment validation  
+- Check required fields
+- Validate content not empty (after trimming)
+- Validate length limit
+- Server-side validation backup
+
+```javascript
+    // Check if user has access to the ticket's project
+    const ticket = await Ticket.findById(ticketId).populate('project');
+    
+    if (!ticket) {
+      return res.status(404).json({ message: 'Ticket not found' });
+    }
+
+    const isOwner = ticket.project.owner.toString() === req.user.id;
+    const isMember = ticket.project.members.some(member => member.toString() === req.user.id);
+
+    if (!isOwner && !isMember) {
+      return res.status(403).json({ message: 'Not authorized to comment on this ticket' });
+    }
+```
+**Lines 53-66:** Authorization check  
+- Find ticket and project
+- Check user is owner or member
+- Only team members can comment
+- Prevents spam from outsiders
+
+```javascript
+    const comment = await Comment.create({
+      content: content.trim(),
+      ticket: ticketId,
+      author: req.user.id
+    });
+
+    const populatedComment = await Comment.findById(comment._id)
+      .populate('author', 'name email');
+
+    res.status(201).json(populatedComment);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+```
+**Lines 68-80:** Create comment  
+- Trim content before saving
+- Set current user as author
+- Re-fetch with populated author
+- Return created comment
+
+```javascript
+// @desc    Update comment
+// @route   PUT /api/comments/:id
+// @access  Private
+exports.updateComment = async (req, res) => {
+  try {
+    const { content } = req.body;
+
+    if (!content || content.trim().length === 0) {
+      return res.status(400).json({ message: 'Comment content cannot be empty' });
+    }
+
+    if (content.length > 1000) {
+      return res.status(400).json({ message: 'Comment cannot exceed 1000 characters' });
+    }
+
+    let comment = await Comment.findById(req.params.id);
+
+    if (!comment) {
+      return res.status(404).json({ message: 'Comment not found' });
+    }
+```
+**Lines 82-101:** Update comment validation  
+- Check content provided and valid
+- Find comment by ID
+- Check if exists
+
+```javascript
+    // Check if user is the author
+    if (comment.author.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'Not authorized to edit this comment' });
+    }
+```
+**Lines 103-106:** Author-only editing  
+- Only comment author can edit
+- Can't edit others' comments
+- Strict authorization
+
+```javascript
+    comment.content = content.trim();
+    await comment.save();
+```
+**Lines 108-109:** Update content  
+- Set new content
+- Save triggers pre-save middleware
+- Middleware sets isEdited flag automatically
+
+```javascript
+    comment = await Comment.findById(comment._id)
+      .populate('author', 'name email');
+
+    res.json(comment);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+```
+**Lines 111-118:** Return updated comment  
+- Re-fetch with populated author
+- Return full comment object
+
+```javascript
+// @desc    Delete comment
+// @route   DELETE /api/comments/:id
+// @access  Private
+exports.deleteComment = async (req, res) => {
+  try {
+    const comment = await Comment.findById(req.params.id).populate({
+      path: 'ticket',
+      populate: { path: 'project' }
+    });
+
+    if (!comment) {
+      return res.status(404).json({ message: 'Comment not found' });
+    }
+```
+**Lines 120-132:** Delete comment setup  
+- Find comment
+- Populate ticket and nested project
+- Need project for owner check
+- Check if exists
+
+```javascript
+    // Check if user is the author or project owner
+    const isAuthor = comment.author.toString() === req.user.id;
+    const isProjectOwner = comment.ticket.project.owner.toString() === req.user.id;
+
+    if (!isAuthor && !isProjectOwner) {
+      return res.status(403).json({ message: 'Not authorized to delete this comment' });
+    }
+```
+**Lines 134-140:** Delete authorization  
+- Author can delete own comment
+- Project owner can delete any comment (moderation)
+- More flexible than edit
+
+```javascript
+    await Comment.findByIdAndDelete(req.params.id);
+
+    res.json({ message: 'Comment deleted successfully', id: req.params.id });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+```
+**Lines 142-148:** Perform deletion  
+- Delete from MongoDB
+- Return success with ID
+- Frontend removes from state
+
+```javascript
+// @desc    Get comment count for a ticket
+// @route   GET /api/comments/ticket/:ticketId/count
+// @access  Private
+exports.getCommentCount = async (req, res) => {
+  try {
+    const count = await Comment.countDocuments({ ticket: req.params.ticketId });
+    res.json({ count });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+```
+**Lines 150-160:** Get comment count  
+- Simple count query
+- Used for badges/indicators
+- Example: "5 comments" on ticket card
+
+---
+
+## 31. 📄 **backend/routes/comments.js** (Comment Routes) ⭐ NEW - DAY 5
+
+### Purpose:
+Defines comment API endpoints.
+
+### Line-by-Line Explanation:
+
+```javascript
+const express = require('express');
+const router = express.Router();
+const {
+  getCommentsByTicket,
+  createComment,
+  updateComment,
+  deleteComment,
+  getCommentCount
+} = require('../controllers/commentController');
+const auth = require('../middleware/auth');
+
+// All routes are protected
+router.get('/ticket/:ticketId', auth, getCommentsByTicket);
+router.get('/ticket/:ticketId/count', auth, getCommentCount);
+router.post('/', auth, createComment);
+router.put('/:id', auth, updateComment);
+router.delete('/:id', auth, deleteComment);
+
+module.exports = router;
+```
+**Complete file**  
+- **GET /ticket/:ticketId** - Get all comments for ticket
+- **GET /ticket/:ticketId/count** - Get comment count
+- **POST /** - Create new comment
+- **PUT /:id** - Update comment
+- **DELETE /:id** - Delete comment
+- All require authentication
+- Mounted at `/api/comments` in server.js
+
+---
+
+## 32. 📄 **frontend/src/components/CommentSection.jsx** (Comment UI Component) ⭐ NEW - DAY 5
+
+### Purpose:
+Full-featured comment interface with add/edit/delete capabilities.
+
+### Key Features:
+1. **Add Comments:** Textarea with character counter
+2. **Edit Inline:** Click edit shows form
+3. **Delete Confirmation:** Confirm before deletion
+4. **User Avatars:** Colored circles with initials
+5. **Relative Timestamps:** "2 hours ago" format
+6. **Edit Indicator:** Shows "(edited)" tag
+
+### Key Code Sections:
+
+```javascript
+const [comments, setComments] = useState([]);
+const [newComment, setNewComment] = useState('');
+const [editingId, setEditingId] = useState(null);
+const [editContent, setEditContent] = useState('');
+```
+**Component state**  
+- `comments` - Array of all comments
+- `newComment` - New comment textarea value
+- `editingId` - ID of comment being edited (null if none)
+- `editContent` - Edit textarea value
+
+```javascript
+useEffect(() => {
+  loadComments();
+}, [ticketId]);
+```
+**Load comments on mount**  
+- Fetch when component loads
+- Re-fetch if ticketId changes
+
+```javascript
+const loadComments = async () => {
+  try {
+    const { data } = await API.get(`/comments/ticket/${ticketId}`);
+    setComments(data);
+  } catch (error) {
+    toast.error('Failed to load comments');
+  }
+};
+```
+**Load comments function**  
+- GET request to backend
+- Update state with comments
+- Error handling
+
+```javascript
+const handleAddComment = async () => {
+  if (!newComment.trim()) {
+    toast.error('Comment cannot be empty');
+    return;
+  }
+
+  if (newComment.length > 1000) {
+    toast.error('Comment cannot exceed 1000 characters');
+    return;
+  }
+
+  try {
+    const { data } = await API.post('/comments', {
+      content: newComment,
+      ticket: ticketId
+    });
+    setComments([data, ...comments]);
+    setNewComment('');
+    toast.success('Comment added');
+  } catch (error) {
+    toast.error(error.response?.data?.message || 'Failed to add comment');
+  }
+};
+```
+**Add comment function**  
+- Validate not empty
+- Validate length
+- POST request
+- Add to start of array
+- Clear textarea
+- Success feedback
+
+```javascript
+const handleEdit = (comment) => {
+  setEditingId(comment._id);
+  setEditContent(comment.content);
+};
+```
+**Start editing function**  
+- Set which comment is being edited
+- Pre-fill textarea with current content
+
+```javascript
+const handleSaveEdit = async (id) => {
+  if (!editContent.trim()) {
+    toast.error('Comment cannot be empty');
+    return;
+  }
+
+  try {
+    const { data } = await API.put(`/comments/${id}`, {
+      content: editContent
+    });
+    setComments(comments.map(c => c._id === id ? data : c));
+    setEditingId(null);
+    toast.success('Comment updated');
+  } catch (error) {
+    toast.error(error.response?.data?.message || 'Failed to update comment');
+  }
+};
+```
+**Save edit function**  
+- Validate content
+- PUT request
+- Update comment in array
+- Exit edit mode
+- Feedback
+
+```javascript
+const handleDelete = async (id) => {
+  if (!window.confirm('Delete this comment?')) {
+    return;
+  }
+
+  try {
+    await API.delete(`/comments/${id}`);
+    setComments(comments.filter(c => c._id !== id));
+    toast.success('Comment deleted');
+  } catch (error) {
+    toast.error(error.response?.data?.message || 'Failed to delete comment');
+  }
+};
+```
+**Delete comment function**  
+- Confirm with user
+- DELETE request
+- Filter out deleted comment
+- Feedback
+
+```javascript
+const getInitials = (name) => {
+  return name
+    .split(' ')
+    .map(n => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+};
+```
+**Get user initials**  
+- Split name by spaces
+- Take first letter of each word
+- Example: "John Doe" → "JD"
+- Max 2 letters
+
+```javascript
+const getAvatarColor = (name) => {
+  const colors = [
+    'bg-blue-500',
+    'bg-green-500',
+    'bg-purple-500',
+    'bg-pink-500',
+    'bg-yellow-500',
+    'bg-indigo-500'
+  ];
+  const index = name.charCodeAt(0) % colors.length;
+  return colors[index];
+};
+```
+**Get avatar color**  
+- Deterministic color based on first letter
+- Same name always gets same color
+- Consistent across app
+
+```javascript
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffInSeconds = Math.floor((now - date) / 1000);
+
+  if (diffInSeconds < 60) return 'Just now';
+  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+  if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)} days ago`;
+  return date.toLocaleDateString();
+};
+```
+**Relative time formatting**  
+- "Just now" for < 1 minute
+- "X minutes ago" for < 1 hour
+- "X hours ago" for < 1 day
+- "X days ago" for < 30 days
+- Full date for older
+
+```javascript
+<div className={`w-10 h-10 rounded-full ${getAvatarColor(comment.author.name)} text-white flex items-center justify-center font-bold text-sm`}>
+  {getInitials(comment.author.name)}
+</div>
+```
+**Avatar circle**  
+- Round div with color
+- Shows initials
+- Visual user identification
+
+```javascript
+<div className="flex items-center gap-2 text-sm text-gray-500">
+  <span>{formatDate(comment.createdAt)}</span>
+  {comment.isEdited && <span className="text-gray-400">(edited)</span>}
+</div>
+```
+**Timestamp with edit indicator**  
+- Relative time
+- Shows "(edited)" if modified
+- Gray color for metadata
+
+```javascript
+{editingId === comment._id ? (
+  <div>
+    {/* Edit form */}
+  </div>
+) : (
+  <div>
+    {/* View mode */}
+  </div>
+)}
+```
+**Conditional rendering**  
+- Show edit form if this comment is being edited
+- Otherwise show comment content
+- Toggle with Edit button
+
+---
+
+## 33. 📄 **frontend/src/components/ActivityTimeline.jsx** (Activity Feed Component) ⭐ NEW - DAY 5
+
+### Purpose:
+Displays ticket activity history (currently shows comments, expandable for more).
+
+### Key Features:
+1. **Chronological Feed:** Shows activity from newest to oldest
+2. **Action Types:** "added a comment", "edited a comment"
+3. **Full Timestamps:** Exact date and time
+4. **User Attribution:** Who did what
+5. **Expandable:** Can add more activity types later (status changes, assignments)
+
+### Key Code Sections:
+
+```javascript
+const [activities, setActivities] = useState([]);
+```
+**Activity state**  
+- Array of activity objects
+- Currently populated from comments
+
+```javascript
+useEffect(() => {
+  loadActivities();
+}, [ticketId]);
+```
+**Load on mount**  
+- Fetch when component loads
+- Re-fetch if ticket changes
+
+```javascript
+const loadActivities = async () => {
+  try {
+    const { data } = await API.get(`/comments/ticket/${ticketId}`);
+    
+    const commentActivities = data.map(comment => ({
+      id: comment._id,
+      type: comment.isEdited ? 'comment_edited' : 'comment_added',
+      user: comment.author.name,
+      timestamp: comment.isEdited ? comment.editedAt : comment.createdAt,
+      content: comment.content
+    }));
+
+    setActivities(commentActivities.sort((a, b) => 
+      new Date(b.timestamp) - new Date(a.timestamp)
+    ));
+  } catch (error) {
+    console.error('Failed to load activities:', error);
+  }
+};
+```
+**Load activities function**  
+- Fetch comments
+- Transform to activity format:
+  - Type: "comment_added" or "comment_edited"
+  - User name
+  - Timestamp (created or edited)
+  - Content for context
+- Sort newest first
+- Unified activity format for future expansion
+
+```javascript
+const getActivityIcon = (type) => {
+  const icons = {
+    'comment_added': '💬',
+    'comment_edited': '✏️',
+    'status_changed': '🔄',
+    'assigned': '👤',
+    'priority_changed': '⚡'
+  };
+  return icons[type] || '📝';
+};
+```
+**Activity icon mapping**  
+- Different emoji for each action type
+- Visual differentiation
+- Ready for future activity types
+
+```javascript
+const getActivityText = (activity) => {
+  switch (activity.type) {
+    case 'comment_added':
+      return 'added a comment';
+    case 'comment_edited':
+      return 'edited a comment';
+    case 'status_changed':
+      return `changed status to ${activity.newValue}`;
+    case 'assigned':
+      return `assigned to ${activity.assignee}`;
+    default:
+      return 'performed an action';
+  }
+};
+```
+**Activity text generation**  
+- Human-readable action description
+- Switch statement for different types
+- Extensible for new actions
+
+```javascript
+<div className="flex gap-4">
+  <div className="flex-shrink-0">
+    <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center text-sm">
+      {getActivityIcon(activity.type)}
+    </div>
+  </div>
+  <div className="flex-1">
+    <p className="text-sm">
+      <span className="font-medium">{activity.user}</span>{' '}
+      <span className="text-gray-600">{getActivityText(activity)}</span>
+    </p>
+    <p className="text-xs text-gray-500 mt-1">
+      {new Date(activity.timestamp).toLocaleString()}
+    </p>
+    {activity.content && (
+      <p className="text-sm text-gray-700 mt-2 bg-gray-50 p-2 rounded">
+        "{activity.content}"
+      </p>
+    )}
+  </div>
+</div>
+```
+**Activity item layout**  
+- Icon in circle on left
+- Content on right
+- User name in bold
+- Action description
+- Full timestamp
+- Optional content preview (for comments)
+
+```javascript
+{activities.length === 0 && (
+  <p className="text-gray-500 text-sm text-center py-4">
+    No activity yet
+  </p>
+)}
+```
+**Empty state**  
+- Shows message if no activities
+- Better UX than blank space
+
+---
+
+# DAY 9: ANALYTICS DASHBOARD ⭐ NEW
+
+## Overview
+Day 9 implements comprehensive analytics and reporting:
+- Overview statistics with real-time counts
+- Visual charts (bar charts, donut charts)
+- Project performance metrics
+- Team performance tracking
+- 30-day trend analysis
+- Color-coded priorities and statuses
+
+---
+
+## 34. 📄 **backend/controllers/analyticsController.js** (Analytics Logic) ⭐ NEW - DAY 9
+
+### Purpose:
+Generates statistics and analytics using MongoDB aggregation pipelines.
+
+### Key Concepts:
+- **Aggregation Pipeline:** MongoDB's powerful data processing framework
+- **$match:** Filter documents (like SQL WHERE)
+- **$group:** Group and calculate (like SQL GROUP BY)
+- **$lookup:** Join collections (like SQL JOIN)
+- **$project:** Shape output documents
+- **$sort:** Order results
+
+### Line-by-Line Explanation:
+
+```javascript
+const Project = require('../models/Project');
+const Ticket = require('../models/Ticket');
+const Comment = require('../models/Comment');
+const User = require('../models/User');
+```
+**Lines 1-4:** Import models  
+- Need all models for comprehensive analytics
+- Cross-model aggregations
+
+```javascript
+// @desc    Get overview analytics
+// @route   GET /api/analytics/overview
+// @access  Private
+exports.getOverview = async (req, res) => {
+  try {
+    // Get user's accessible projects
+    const userProjects = await Project.find({
+      $or: [
+        { owner: req.user.id },
+        { members: req.user.id }
+      ]
+    }).select('_id');
+
+    const projectIds = userProjects.map(p => p._id);
+```
+**Lines 6-19:** Setup - Find user's projects  
+- Get all projects user has access to
+- Extract just the IDs
+- Used to filter tickets
+
+```javascript
+    // Total counts
+    const totalProjects = userProjects.length;
+    const totalTickets = await Ticket.countDocuments({ project: { $in: projectIds } });
+    const totalComments = await Comment.countDocuments({
+      ticket: { $in: await Ticket.find({ project: { $in: projectIds } }).distinct('_id') }
+    });
+```
+**Lines 21-26:** Count totals  
+- Projects: Length of array
+- Tickets: Count tickets in user's projects
+- Comments: Count comments on user's tickets
+  - First get ticket IDs, then count comments
+
+```javascript
+    // Tickets by status
+    const ticketsByStatus = await Ticket.aggregate([
+      { $match: { project: { $in: projectIds } } },
+      { $group: { _id: '$status', count: { $sum: 1 } } },
+      { $sort: { count: -1 } }
+    ]);
+```
+**Lines 28-33:** Status breakdown aggregation  
+- `$match` - Filter to user's projects
+- `$group` - Group by status field
+  - `_id: '$status'` - Group key
+  - `count: { $sum: 1 }` - Count tickets in each group
+- `$sort` - Sort by count descending
+- Example result: `[{ _id: 'Open', count: 15 }, { _id: 'In Progress', count: 8 }]`
+
+```javascript
+    // Tickets by priority
+    const ticketsByPriority = await Ticket.aggregate([
+      { $match: { project: { $in: projectIds } } },
+      { $group: { _id: '$priority', count: { $sum: 1 } } },
+      { $sort: { count: -1 } }
+    ]);
+```
+**Lines 35-40:** Priority breakdown  
+- Same pattern as status
+- Groups by priority field
+
+```javascript
+    // Tickets by type
+    const ticketsByType = await Ticket.aggregate([
+      { $match: { project: { $in: projectIds } } },
+      { $group: { _id: '$type', count: { $sum: 1 } } },
+      { $sort: { count: -1 } }
+    ]);
+```
+**Lines 42-47:** Type breakdown  
+- Groups by type field (Bug, Feature, etc.)
+
+```javascript
+    // Recent activity (last 7 days)
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    const recentTickets = await Ticket.countDocuments({
+      project: { $in: projectIds },
+      createdAt: { $gte: sevenDaysAgo }
+    });
+
+    const recentComments = await Comment.countDocuments({
+      ticket: { $in: await Ticket.find({ project: { $in: projectIds } }).distinct('_id') },
+      createdAt: { $gte: sevenDaysAgo }
+    });
+```
+**Lines 49-62:** Recent activity calculation  
+- Calculate date 7 days ago
+- Count tickets created since then
+- Count comments created since then
+- `$gte` - Greater than or equal to
+
+```javascript
+    res.json({
+      totals: {
+        projects: totalProjects,
+        tickets: totalTickets,
+        comments: totalComments
+      },
+      breakdown: {
+        status: ticketsByStatus,
+        priority: ticketsByPriority,
+        type: ticketsByType
+      },
+      recentActivity: {
+        tickets: recentTickets,
+        comments: recentComments
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+```
+**Lines 64-82:** Return analytics object  
+- Structured response with three sections
+- Totals: Overall counts
+- Breakdown: Grouped data for charts
+- Recent Activity: 7-day counts
+
+```javascript
+// @desc    Get project statistics
+// @route   GET /api/analytics/projects
+// @access  Private
+exports.getProjectStats = async (req, res) => {
+  try {
+    const userProjects = await Project.find({
+      $or: [
+        { owner: req.user.id },
+        { members: req.user.id }
+      ]
+    }).populate('owner', 'name').populate('members', 'name');
+```
+**Lines 84-94:** Project stats setup  
+- Find user's projects
+- Populate owner and members
+- Need names for display
+
+```javascript
+    const projectStats = await Promise.all(
+      userProjects.map(async (project) => {
+        const totalTickets = await Ticket.countDocuments({ project: project._id });
+        const resolvedTickets = await Ticket.countDocuments({
+          project: project._id,
+          status: { $in: ['Resolved', 'Closed'] }
+        });
+
+        return {
+          _id: project._id,
+          name: project.name,
+          owner: project.owner.name,
+          memberCount: project.members.length,
+          totalTickets,
+          resolvedTickets,
+          completionRate: totalTickets > 0 
+            ? Math.round((resolvedTickets / totalTickets) * 100)
+            : 0
+        };
+      })
+    );
+```
+**Lines 96-116:** Calculate per-project metrics  
+- `Promise.all` - Run queries in parallel
+- `.map()` - Transform each project
+- For each project:
+  - Count total tickets
+  - Count resolved tickets (Resolved or Closed)
+  - Calculate completion rate percentage
+- Return enriched project data
+
+```javascript
+    res.json(projectStats);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+```
+**Lines 118-122:** Return project stats array
+
+```javascript
+// @desc    Get ticket trends (30 days)
+// @route   GET /api/analytics/trends
+// @access  Private
+exports.getTicketTrends = async (req, res) => {
+  try {
+    const userProjects = await Project.find({
+      $or: [
+        { owner: req.user.id },
+        { members: req.user.id }
+      ]
+    }).select('_id');
+
+    const projectIds = userProjects.map(p => p._id);
+
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+```
+**Lines 124-139:** Trends setup  
+- Get user's projects
+- Calculate date 30 days ago
+
+```javascript
+    // Tickets created by day
+    const createdTrends = await Ticket.aggregate([
+      {
+        $match: {
+          project: { $in: projectIds },
+          createdAt: { $gte: thirtyDaysAgo }
+        }
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]);
+```
+**Lines 141-156:** Created tickets trend  
+- `$match` - Tickets in last 30 days
+- `$group` - Group by date:
+  - `$dateToString` - Convert date to "YYYY-MM-DD" string
+  - Format: "2024-01-15"
+  - `count: { $sum: 1 }` - Count per day
+- `$sort` - Order by date ascending
+- Result: Array of `{ _id: '2024-01-15', count: 5 }`
+
+```javascript
+    // Tickets resolved by day
+    const resolvedTrends = await Ticket.aggregate([
+      {
+        $match: {
+          project: { $in: projectIds },
+          status: { $in: ['Resolved', 'Closed'] },
+          updatedAt: { $gte: thirtyDaysAgo }
+        }
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: '%Y-%m-%d', date: '$updatedAt' } },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]);
+```
+**Lines 158-173:** Resolved tickets trend  
+- Similar to created, but:
+  - Filter to Resolved/Closed status
+  - Group by updatedAt (when resolved)
+- Shows resolution rate over time
+
+```javascript
+    res.json({
+      created: createdTrends,
+      resolved: resolvedTrends
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+```
+**Lines 175-182:** Return trend data  
+- Two arrays: created and resolved
+- Frontend will chart these
+
+```javascript
+// @desc    Get user activity statistics
+// @route   GET /api/analytics/user
+// @access  Private
+exports.getUserActivity = async (req, res) => {
+  try {
+    const userProjects = await Project.find({
+      $or: [
+        { owner: req.user.id },
+        { members: req.user.id }
+      ]
+    }).select('_id');
+
+    const projectIds = userProjects.map(p => p._id);
+```
+**Lines 184-197:** User activity setup  
+- Get user's accessible projects
+
+```javascript
+    // Projects owned
+    const projectsOwned = await Project.countDocuments({ owner: req.user.id });
+
+    // Tickets created
+    const ticketsCreated = await Ticket.countDocuments({ reportedBy: req.user.id });
+
+    // Tickets assigned
+    const ticketsAssigned = await Ticket.countDocuments({
+      assignedTo: req.user.id,
+      project: { $in: projectIds }
+    });
+
+    // Comments made
+    const commentsMade = await Comment.countDocuments({ author: req.user.id });
+```
+**Lines 199-211:** User-specific counts  
+- Projects owned by user
+- Tickets reported by user
+- Tickets assigned to user (in accessible projects)
+- Comments made by user
+
+```javascript
+    // Recent activity (last 7 days)
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    const recentTicketsCreated = await Ticket.countDocuments({
+      reportedBy: req.user.id,
+      createdAt: { $gte: sevenDaysAgo }
+    });
+
+    const recentCommentsAdded = await Comment.countDocuments({
+      author: req.user.id,
+      createdAt: { $gte: sevenDaysAgo }
+    });
+```
+**Lines 213-226:** Recent activity  
+- 7-day counts for user's actions
+- Shows current activity level
+
+```javascript
+    res.json({
+      projectsOwned,
+      ticketsCreated,
+      ticketsAssigned,
+      commentsMade,
+      recentActivity: {
+        ticketsCreated: recentTicketsCreated,
+        commentsAdded: recentCommentsAdded
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+```
+**Lines 228-241:** Return user stats  
+- Personal metrics for current user
+- Separate recent activity section
+
+```javascript
+// @desc    Get team performance
+// @route   GET /api/analytics/team
+// @access  Private
+exports.getTeamPerformance = async (req, res) => {
+  try {
+    // Only show team performance if user owns projects
+    const ownedProjects = await Project.find({ owner: req.user.id }).select('_id members');
+
+    if (ownedProjects.length === 0) {
+      return res.json([]);
+    }
+```
+**Lines 243-253:** Team performance authorization  
+- **Owner-only feature**
+- Only show if user owns projects
+- Return empty if no owned projects
+- Privacy: Can't see other teams
+
+```javascript
+    const projectIds = ownedProjects.map(p => p._id);
+    const allMembers = new Set();
+    ownedProjects.forEach(p => {
+      p.members.forEach(m => allMembers.add(m.toString()));
+    });
+```
+**Lines 255-259:** Collect team members  
+- Get all project IDs
+- Use Set to avoid duplicates
+- Members across all owned projects
+
+```javascript
+    const teamStats = await Promise.all(
+      Array.from(allMembers).map(async (memberId) => {
+        const member = await User.findById(memberId).select('name email');
+        
+        if (!member) return null;
+
+        const ticketsAssigned = await Ticket.countDocuments({
+          assignedTo: memberId,
+          project: { $in: projectIds }
+        });
+
+        const ticketsResolved = await Ticket.countDocuments({
+          assignedTo: memberId,
+          project: { $in: projectIds },
+          status: { $in: ['Resolved', 'Closed'] }
+        });
+
+        const commentsMade = await Comment.countDocuments({
+          author: memberId,
+          ticket: {
+            $in: await Ticket.find({ project: { $in: projectIds } }).distinct('_id')
+          }
+        });
+
+        return {
+          _id: member._id,
+          name: member.name,
+          email: member.email,
+          ticketsAssigned,
+          ticketsResolved,
+          commentsMade,
+          resolutionRate: ticketsAssigned > 0
+            ? Math.round((ticketsResolved / ticketsAssigned) * 100)
+            : 0
+        };
+      })
+    );
+```
+**Lines 261-296:** Calculate team member metrics  
+- For each member:
+  - Get user details
+  - Count assigned tickets
+  - Count resolved tickets
+  - Count comments made
+  - Calculate resolution rate %
+- Run in parallel with Promise.all
+- Filter out null (deleted users)
+
+```javascript
+    const filteredStats = teamStats.filter(s => s !== null);
+
+    res.json(filteredStats);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+```
+**Lines 298-304:** Return team stats  
+- Filter out any nulls
+- Return array of team member metrics
+
+---
+
+## 35. 📄 **backend/routes/analytics.js** (Analytics Routes) ⭐ NEW - DAY 9
+
+### Purpose:
+Defines analytics API endpoints.
+
+### Line-by-Line Explanation:
+
+```javascript
+const express = require('express');
+const router = express.Router();
+const {
+  getOverview,
+  getProjectStats,
+  getTicketTrends,
+  getUserActivity,
+  getTeamPerformance
+} = require('../controllers/analyticsController');
+const auth = require('../middleware/auth');
+
+// All analytics routes are protected
+router.get('/overview', auth, getOverview);
+router.get('/projects', auth, getProjectStats);
+router.get('/trends', auth, getTicketTrends);
+router.get('/user', auth, getUserActivity);
+router.get('/team', auth, getTeamPerformance);
+
+module.exports = router;
+```
+**Complete file**  
+- **GET /overview** - General statistics
+- **GET /projects** - Per-project metrics
+- **GET /trends** - 30-day trends
+- **GET /user** - Personal activity
+- **GET /team** - Team performance (owner only)
+- All require authentication
+- Mounted at `/api/analytics` in server.js
+
+---
+
+## 36. 📄 **frontend/src/components/StatsCard.jsx** (Stat Display Component) ⭐ NEW - DAY 9
+
+### Purpose:
+Reusable card component for displaying statistics with icons and colors.
+
+### Key Features:
+1. **8 Color Schemes:** indigo, blue, green, yellow, red, purple, pink, orange
+2. **Icon Support:** Optional icon in colored circle
+3. **Subtitle:** Optional secondary text
+4. **Trend Indicator:** Optional up/down arrow with value
+5. **Hover Effect:** Subtle shadow on hover
+
+### Line-by-Line Explanation:
+
+```javascript
+const StatsCard = ({ title, value, icon, subtitle, color = 'indigo', trend }) => {
+```
+**Props**  
+- `title` - Main label (e.g., "Total Tickets")
+- `value` - Number to display (e.g., 42)
+- `icon` - Optional icon element
+- `subtitle` - Optional subtext
+- `color` - Color scheme (default: indigo)
+- `trend` - Optional trend object `{ value: '+5%', direction: 'up' }`
+
+```javascript
+  const colorClasses = {
+    indigo: 'bg-indigo-50 text-indigo-600',
+    blue: 'bg-blue-50 text-blue-600',
+    green: 'bg-green-50 text-green-600',
+    yellow: 'bg-yellow-50 text-yellow-600',
+    red: 'bg-red-50 text-red-600',
+    purple: 'bg-purple-50 text-purple-600',
+    pink: 'bg-pink-50 text-pink-600',
+    orange: 'bg-orange-50 text-orange-600'
+  };
+```
+**Color mapping**  
+- Maps color name to Tailwind classes
+- Light background, medium text color
+- Used for icon circle and accents
+
+```javascript
+  return (
+    <div className="bg-white rounded-lg shadow p-6 hover:shadow-md transition">
+```
+**Card container**  
+- White background
+- Rounded corners
+- Shadow with hover effect
+- Padding for content
+
+```javascript
+      <div className="flex items-center justify-between">
+        <div className="flex-1">
+          <p className="text-sm text-gray-600 mb-1">{title}</p>
+          <p className="text-3xl font-bold text-gray-900">{value}</p>
+          {subtitle && <p className="text-xs text-gray-500 mt-1">{subtitle}</p>}
+        </div>
+```
+**Content section**  
+- Title in small gray text
+- Value in large bold (3xl size)
+- Optional subtitle below
+
+```javascript
+        {icon && (
+          <div className={`w-12 h-12 rounded-full ${colorClasses[color]} flex items-center justify-center`}>
+            {icon}
+          </div>
+        )}
+      </div>
+```
+**Icon circle**  
+- Only shows if icon provided
+- Colored circle background
+- Centered icon inside
+
+```javascript
+      {trend && (
+        <div className="mt-3 flex items-center text-sm">
+          {trend.direction === 'up' ? (
+            <span className="text-green-600 flex items-center">
+              ↑ {trend.value}
+            </span>
+          ) : (
+            <span className="text-red-600 flex items-center">
+              ↓ {trend.value}
+            </span>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+```
+**Trend indicator**  
+- Optional trend section at bottom
+- Up arrow (↑) in green for positive
+- Down arrow (↓) in red for negative
+- Shows percentage or value
+
+**Usage Example:**
+```jsx
+<StatsCard
+  title="Total Tickets"
+  value={42}
+  icon={<TicketIcon />}
+  color="blue"
+  subtitle="Across all projects"
+  trend={{ value: '+12%', direction: 'up' }}
+/>
+```
+
+---
+
+## 37. 📄 **frontend/src/components/TicketChart.jsx** (Chart Component) ⭐ NEW - DAY 9
+
+### Purpose:
+Renders bar charts and donut charts for ticket data visualization.
+
+### Key Features:
+1. **Bar Chart:** Horizontal bars with percentages
+2. **Donut Chart:** SVG-based pie chart with legend
+3. **Auto-Colors:** Status/priority/type color mapping
+4. **Responsive:** Adapts to container
+5. **Interactive:** Hover effects
+
+### Line-by-Line Explanation:
+
+```javascript
+const TicketChart = ({ data, type = 'bar', title }) => {
+```
+**Props**  
+- `data` - Array of objects: `[{ _id: 'Open', count: 15 }, ...]`
+- `type` - Chart type: 'bar' or 'donut'
+- `title` - Chart title
+
+```javascript
+  const getColor = (label) => {
+    const colorMap = {
+      // Status colors
+      'Open': 'bg-blue-500',
+      'In Progress': 'bg-yellow-500',
+      'In Review': 'bg-purple-500',
+      'Resolved': 'bg-green-500',
+      'Closed': 'bg-gray-500',
+      // Priority colors
+      'Low': 'bg-gray-400',
+      'Medium': 'bg-blue-500',
+      'High': 'bg-orange-500',
+      'Critical': 'bg-red-500',
+      // Type colors
+      'Bug': 'bg-red-400',
+      'Feature': 'bg-blue-400',
+      'Improvement': 'bg-purple-400',
+      'Task': 'bg-gray-400'
+    };
+    return colorMap[label] || 'bg-primary-500';
+  };
+```
+**Color mapping function**  
+- Maps label to Tailwind background color class
+- Covers all status/priority/type values
+- Fallback to primary color
+
+```javascript
+  const total = data.reduce((sum, item) => sum + item.count, 0);
+```
+**Calculate total**  
+- Sum all counts
+- Used for percentage calculations
+
+```javascript
+  if (type === 'bar') {
+    return (
+      <div className="bg-white rounded-lg shadow p-6">
+        <h3 className="text-lg font-bold mb-4">{title}</h3>
+        <div className="space-y-3">
+          {data.map((item, index) => {
+            const percentage = total > 0 ? (item.count / total) * 100 : 0;
+            return (
+              <div key={index}>
+                <div className="flex justify-between text-sm mb-1">
+                  <span className="font-medium">{item._id}</span>
+                  <span className="text-gray-600">{item.count} ({percentage.toFixed(0)}%)</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    className={`h-2 rounded-full ${getColor(item._id)}`}
+                    style={{ width: `${percentage}%` }}
+                  ></div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+```
+**Bar chart rendering**  
+- Card container with title
+- For each item:
+  - Calculate percentage
+  - Show label and count
+  - Show progress bar
+  - Bar width = percentage
+  - Color from getColor() function
+
+```javascript
+  if (type === 'donut') {
+    const colors = data.map(item => getColor(item._id).replace('bg-', ''));
+```
+**Donut chart setup**  
+- Extract color values
+- Remove 'bg-' prefix for direct use
+
+```javascript
+    // Calculate angles for donut slices
+    let currentAngle = 0;
+    const slices = data.map((item, index) => {
+      const percentage = total > 0 ? (item.count / total) * 100 : 0;
+      const angle = (percentage / 100) * 360;
+      
+      const slice = {
+        ...item,
+        percentage,
+        startAngle: currentAngle,
+        endAngle: currentAngle + angle,
+        color: colors[index]
+      };
+      
+      currentAngle += angle;
+      return slice;
+    });
+```
+**Calculate slice angles**  
+- Convert percentages to degrees (360° = 100%)
+- Track current angle position
+- Each slice has start and end angle
+- Example: 25% → 90°
+
+```javascript
+    // SVG donut chart
+    const radius = 80;
+    const innerRadius = 50;
+    const centerX = 100;
+    const centerY = 100;
+```
+**SVG dimensions**  
+- Outer radius: 80
+- Inner radius: 50 (donut hole)
+- Center point: (100, 100)
+- ViewBox will be 200x200
+
+```javascript
+    const polarToCartesian = (angle) => {
+      const rad = (angle - 90) * (Math.PI / 180);
+      return {
+        x: centerX + radius * Math.cos(rad),
+        y: centerY + radius * Math.sin(rad)
+      };
+    };
+```
+**Coordinate conversion function**  
+- Converts polar (angle) to cartesian (x, y)
+- Subtract 90° to start at top (12 o'clock)
+- Convert to radians for Math functions
+- Calculate point on circle
+
+```javascript
+    const getSlicePath = (slice) => {
+      if (slice.percentage === 100) {
+        return `M ${centerX},${centerY - radius}
+                A ${radius},${radius} 0 1,1 ${centerX},${centerY + radius}
+                A ${radius},${radius} 0 1,1 ${centerX},${centerY - radius}
+                M ${centerX},${centerY - innerRadius}
+                A ${innerRadius},${innerRadius} 0 1,0 ${centerX},${centerY + innerRadius}
+                A ${innerRadius},${innerRadius} 0 1,0 ${centerX},${centerY - innerRadius}`;
+      }
+
+      const start = polarToCartesian(slice.startAngle);
+      const end = polarToCartesian(slice.endAngle);
+      const largeArc = slice.endAngle - slice.startAngle > 180 ? 1 : 0;
+
+      const startInner = polarToCartesian(slice.startAngle);
+      const endInner = polarToCartesian(slice.endAngle);
+
+      return `M ${start.x},${start.y}
+              A ${radius},${radius} 0 ${largeArc},1 ${end.x},${end.y}
+              L ${centerX + (end.x - centerX) * (innerRadius / radius)},${centerY + (end.y - centerY) * (innerRadius / radius)}
+              A ${innerRadius},${innerRadius} 0 ${largeArc},0 ${centerX + (startInner.x - centerX) * (innerRadius / radius)},${centerY + (startInner.y - centerY) * (innerRadius / radius)}
+              Z`;
+    };
+```
+**SVG path generation**  
+- Special case for 100% (full circle)
+- Otherwise:
+  - Get start and end points
+  - Large arc flag if > 180°
+  - Draw outer arc
+  - Line to inner radius
+  - Draw inner arc (reverse direction)
+  - Close path (Z)
+- Creates donut slice shape
+
+```javascript
+    return (
+      <div className="bg-white rounded-lg shadow p-6">
+        <h3 className="text-lg font-bold mb-4">{title}</h3>
+        <div className="flex flex-col md:flex-row items-center gap-6">
+          <svg viewBox="0 0 200 200" className="w-48 h-48">
+            {slices.map((slice, index) => (
+              <path
+                key={index}
+                d={getSlicePath(slice)}
+                fill={`var(--${slice.color})`}
+                className={slice.color}
+                stroke="white"
+                strokeWidth="2"
+              />
+            ))}
+          </svg>
+```
+**Render SVG donut**  
+- 200x200 viewBox
+- Map slices to path elements
+- Each path uses calculated path string
+- White stroke separates slices
+
+```javascript
+          <div className="flex-1">
+            {slices.map((slice, index) => (
+              <div key={index} className="flex items-center gap-2 mb-2">
+                <div className={`w-4 h-4 rounded ${slice.color}`}></div>
+                <span className="text-sm">{slice._id}</span>
+                <span className="text-sm text-gray-600">
+                  {slice.count} ({slice.percentage.toFixed(0)}%)
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+};
+```
+**Render legend**  
+- Colored square for each slice
+- Label and count
+- Percentage in parentheses
+- Responsive flex layout
+
+---
+
+## 38. 📄 **frontend/src/pages/Analytics.jsx** (Analytics Dashboard Page) ⭐ NEW - DAY 9
+
+### Purpose:
+Comprehensive analytics dashboard with multiple sections and visualizations.
+
+### Key Sections:
+1. **Overview:** 4 stat cards with totals
+2. **Charts Row:** Status bar, Priority donut, Type donut
+3. **User Activity:** 5 personal stat cards
+4. **Project Performance:** Table with completion rates
+5. **Team Performance:** Table with resolution rates (owner only)
+6. **Trends:** 30-day dual bar chart
+
+### Key Code Sections:
+
+```javascript
+const [data, setData] = useState({
+  overview: null,
+  projects: [],
+  trends: null,
+  userActivity: null,
+  teamPerformance: []
+});
+const [loading, setLoading] = useState(true);
+```
+**Component state**  
+- Single data object with all analytics
+- Loading flag for initial load
+
+```javascript
+useEffect(() => {
+  loadAnalytics();
+}, []);
+
+const loadAnalytics = async () => {
+  try {
+    const [overview, projects, trends, userActivity, teamPerformance] = await Promise.all([
+      API.get('/analytics/overview'),
+      API.get('/analytics/projects'),
+      API.get('/analytics/trends'),
+      API.get('/analytics/user'),
+      API.get('/analytics/team')
+    ]);
+
+    setData({
+      overview: overview.data,
+      projects: projects.data,
+      trends: trends.data,
+      userActivity: userActivity.data,
+      teamPerformance: teamPerformance.data
+    });
+  } catch (error) {
+    toast.error('Failed to load analytics');
+  } finally {
+    setLoading(false);
+  }
+};
+```
+**Load all analytics**  
+- Parallel requests with Promise.all
+- Fetch all 5 endpoints at once
+- Faster than sequential
+- Update state with all data
+- Stop loading
+
+```javascript
+if (loading) {
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="text-gray-600">Loading analytics...</div>
+    </div>
+  );
+}
+```
+**Loading state**  
+- Show message while fetching
+- Prevents flash of empty content
+
+```javascript
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+  <StatsCard
+    title="Total Projects"
+    value={data.overview?.totals.projects || 0}
+    color="blue"
+    icon={<FolderIcon />}
+  />
+  <StatsCard
+    title="Total Tickets"
+    value={data.overview?.totals.tickets || 0}
+    color="indigo"
+    icon={<TicketIcon />}
+  />
+  <StatsCard
+    title="Total Comments"
+    value={data.overview?.totals.comments || 0}
+    color="purple"
+    icon={<CommentIcon />}
+  />
+  <StatsCard
+    title="Recent Activity"
+    value={data.overview?.recentActivity.tickets + data.overview?.recentActivity.comments || 0}
+    subtitle="Last 7 days"
+    color="green"
+    icon={<ActivityIcon />}
+  />
+</div>
+```
+**Overview cards**  
+- 4-column grid (1 mobile, 2 tablet, 4 desktop)
+- Projects, Tickets, Comments, Activity
+- Different colors for visual variety
+- Icons for quick recognition
+- Safe navigation with ?. operator
+
+```javascript
+<div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+  <TicketChart
+    data={data.overview?.breakdown.status || []}
+    type="bar"
+    title="Tickets by Status"
+  />
+  <TicketChart
+    data={data.overview?.breakdown.priority || []}
+    type="donut"
+    title="Tickets by Priority"
+  />
+  <TicketChart
+    data={data.overview?.breakdown.type || []}
+    type="donut"
+    title="Tickets by Type"
+  />
+</div>
+```
+**Charts row**  
+- 3-column grid
+- Status bar chart (shows progress)
+- Priority donut (shows distribution)
+- Type donut (shows composition)
+- Responsive layout
+
+```javascript
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+  <StatsCard
+    title="Projects Owned"
+    value={data.userActivity?.projectsOwned || 0}
+    color="blue"
+  />
+  <StatsCard
+    title="Tickets Created"
+    value={data.userActivity?.ticketsCreated || 0}
+    color="purple"
+  />
+  <StatsCard
+    title="Tickets Assigned"
+    value={data.userActivity?.ticketsAssigned || 0}
+    color="indigo"
+  />
+  <StatsCard
+    title="Comments Made"
+    value={data.userActivity?.commentsMade || 0}
+    color="green"
+  />
+  <StatsCard
+    title="Recent Activity"
+    value={
+      (data.userActivity?.recentActivity.ticketsCreated || 0) +
+      (data.userActivity?.recentActivity.commentsAdded || 0)
+    }
+    subtitle="Last 7 days"
+    color="yellow"
+  />
+</div>
+```
+**User activity cards**  
+- 5-column grid (personal metrics)
+- Projects owned
+- Tickets created/assigned
+- Comments made
+- Recent activity (7 days)
+- Shows personal contribution
+
+```javascript
+<div className="bg-white rounded-lg shadow overflow-hidden mb-8">
+  <div className="px-6 py-4 border-b border-gray-200">
+    <h2 className="text-xl font-bold">Project Performance</h2>
+  </div>
+  <div className="overflow-x-auto">
+    <table className="min-w-full divide-y divide-gray-200">
+      <thead className="bg-gray-50">
+        <tr>
+          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Project</th>
+          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Owner</th>
+          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Members</th>
+          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Tickets</th>
+          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Resolved</th>
+          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Completion</th>
+        </tr>
+      </thead>
+      <tbody className="bg-white divide-y divide-gray-200">
+        {data.projects.map(project => (
+          <tr key={project._id}>
+            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">{project.name}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm">{project.owner}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm">{project.memberCount}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm">{project.totalTickets}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm">{project.resolvedTickets}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm">
+              <div className="flex items-center gap-2">
+                <div className="w-24 bg-gray-200 rounded-full h-2">
+                  <div
+                    className={`h-2 rounded-full ${
+                      project.completionRate >= 80 ? 'bg-green-500' :
+                      project.completionRate >= 50 ? 'bg-yellow-500' :
+                      'bg-red-500'
+                    }`}
+                    style={{ width: `${project.completionRate}%` }}
+                  ></div>
+                </div>
+                <span>{project.completionRate}%</span>
+              </div>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</div>
+```
+**Project performance table**  
+- Responsive table with scroll
+- Shows all projects user can access
+- Columns: Name, Owner, Members, Tickets, Resolved, Completion
+- Progress bar visualization:
+  - Green for ≥80%
+  - Yellow for 50-79%
+  - Red for <50%
+- Helps identify struggling projects
+
+```javascript
+{data.teamPerformance.length > 0 && (
+  <div className="bg-white rounded-lg shadow overflow-hidden mb-8">
+    <div className="px-6 py-4 border-b border-gray-200">
+      <h2 className="text-xl font-bold">Team Performance</h2>
+      <p className="text-sm text-gray-600 mt-1">Performance metrics for your project members</p>
+    </div>
+    <div className="overflow-x-auto">
+      <table className="min-w-full divide-y divide-gray-200">
+        <thead className="bg-gray-50">
+          <tr>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Member</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Assigned</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Resolved</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Comments</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Resolution Rate</th>
+          </tr>
+        </thead>
+        <tbody className="bg-white divide-y divide-gray-200">
+          {data.teamPerformance.map(member => (
+            <tr key={member._id}>
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">{member.name}</td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm">{member.email}</td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm">{member.ticketsAssigned}</td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm">{member.ticketsResolved}</td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm">{member.commentsMade}</td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm">
+                <span className={`px-2 py-1 rounded-full text-xs ${
+                  member.resolutionRate >= 80 ? 'bg-green-100 text-green-800' :
+                  member.resolutionRate >= 50 ? 'bg-yellow-100 text-yellow-800' :
+                  'bg-red-100 text-red-800'
+                }`}>
+                  {member.resolutionRate}%
+                </span>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+)}
+```
+**Team performance table**  
+- **Conditional rendering** - Only shows if data available
+- Only visible to project owners
+- Shows team member metrics:
+  - Name and email
+  - Tickets assigned
+  - Tickets resolved
+  - Comments made
+  - Resolution rate %
+- Color-coded badges for resolution rate
+- Helps identify top performers and who needs help
+
+```javascript
+<div className="bg-white rounded-lg shadow p-6">
+  <h2 className="text-xl font-bold mb-4">Ticket Trends (30 Days)</h2>
+  <div className="space-y-4">
+    {generateTrendData().map((day, index) => (
+      <div key={index} className="flex items-center gap-4">
+        <div className="w-20 text-sm text-gray-600">{day.date}</div>
+        <div className="flex-1 flex gap-2">
+          <div
+            className="bg-blue-500 h-6 rounded flex items-center justify-center text-white text-xs"
+            style={{ width: `${(day.created / maxCount) * 100}%`, minWidth: '20px' }}
+          >
+            {day.created}
+          </div>
+          <div
+            className="bg-green-500 h-6 rounded flex items-center justify-center text-white text-xs"
+            style={{ width: `${(day.resolved / maxCount) * 100}%`, minWidth: '20px' }}
+          >
+            {day.resolved}
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+  <div className="mt-4 flex gap-4 text-sm">
+    <div className="flex items-center gap-2">
+      <div className="w-4 h-4 bg-blue-500 rounded"></div>
+      <span>Created</span>
+    </div>
+    <div className="flex items-center gap-2">
+      <div className="w-4 h-4 bg-green-500 rounded"></div>
+      <span>Resolved</span>
+    </div>
+  </div>
+</div>
+```
+**Trends visualization**  
+- 30-day view of created vs resolved tickets
+- Dual bar chart (horizontal bars)
+- Blue bars: Created tickets
+- Green bars: Resolved tickets
+- Bars scaled relative to max count
+- Legend at bottom
+- Shows workflow health (created vs resolved balance)
+
+---
+
+**End of Day 9 Documentation**
+
+---
+
 **End of Documentation**  
-**Project Status:** Day 2 Complete ✅  
-**Next:** Day 3 - Project Management
+**Project Status:** Day 9 Complete ✅ (64.3% of 14-day project)  
+**Next:** Day 10 - User Profile & Settings
+
+---
+
+# 📊 PROJECT SUMMARY
+
+## Completed Features (Days 1-9):
+
+### Authentication & Authorization (Days 1-2)
+- User registration with password hashing (bcrypt)
+- JWT-based login with 30-day tokens
+- Protected routes and auth middleware
+- Persistent login with localStorage
+
+### Project Management (Day 3)
+- CRUD operations for projects
+- Project ownership and team members
+- Status tracking (5 states)
+- Priority levels (4 levels)
+- Member management (add/remove)
+- Authorization checks
+
+### Ticket System (Day 4)
+- Full CRUD for tickets
+- Type: Bug, Feature, Improvement, Task
+- Status: Open → In Progress → In Review → Resolved → Closed
+- Priority: Low, Medium, High, Critical
+- Assignment to team members
+- Filtering by project/status/priority/type
+- Search in title/description
+- Tabbed views (All/Assigned/Reported)
+- Due date tracking
+- Authorization (members can edit, owner/reporter can delete)
+
+### Comments & Activity (Day 5)
+- Add/edit/delete comments on tickets
+- 1000 character limit
+- Edit tracking (isEdited flag)
+- Relative timestamps ("2 hours ago")
+- User avatars with initials
+- Activity timeline view
+- Author-only editing
+- Project owner can delete any comment
+
+### Analytics Dashboard (Day 9)
+- Overview statistics (projects, tickets, comments, recent activity)
+- Visual charts:
+  - Status bar chart
+  - Priority donut chart
+  - Type donut chart
+- Project performance metrics with completion rates
+- User activity statistics
+- Team performance tracking (owner-only)
+- 30-day trend analysis (created vs resolved)
+- MongoDB aggregation pipelines
+
+## Technical Stack:
+
+**Backend:**
+- Node.js + Express.js
+- MongoDB + Mongoose ODM
+- JWT authentication
+- Bcrypt password hashing
+- RESTful API design
+- Aggregation pipelines for analytics
+
+**Frontend:**
+- React 18 with Hooks
+- Vite build tool
+- Tailwind CSS for styling
+- React Router for navigation
+- Context API for state management
+- Axios for HTTP requests
+- React Toastify for notifications
+- SVG charts (custom implementation)
+
+## Database Schema:
+
+**4 Models:**
+1. User (authentication, profile)
+2. Project (ownership, members, status/priority)
+3. Ticket (type, status, priority, assignments, relationships)
+4. Comment (content, edit tracking, relationships)
+
+## File Count:
+
+**Backend (13 files):**
+- 4 models
+- 5 controllers (auth, project, ticket, comment, analytics)
+- 5 route files
+- 1 middleware (auth)
+- 1 server.js
+- 1 database config
+
+**Frontend (17 files):**
+- 9 pages (Register, Login, Dashboard, Projects, CreateProject, ProjectDetail, Tickets, CreateTicket, TicketDetail, Analytics)
+- 5 components (ProtectedRoute, CommentSection, ActivityTimeline, StatsCard, TicketChart)
+- 3 contexts (AuthContext, ProjectContext, TicketContext)
+- Config files (Vite, Tailwind, package.json)
+
+**Total: 30 code files + documentation**
  

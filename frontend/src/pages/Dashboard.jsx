@@ -1,112 +1,214 @@
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useProject } from '../context/ProjectContext';
+import { useTicket } from '../context/TicketContext';
+import { useState, useEffect } from 'react';
 
 const Dashboard = () => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
+  const { projects } = useProject();
+  const { tickets } = useTicket();
+  const [selectedProject, setSelectedProject] = useState('all');
+
+  // Calculate quick stats
+  const totalTickets = tickets.length;
+  const inProgressTickets = tickets.filter(t => t.status === 'In Progress').length;
+  const completedTickets = tickets.filter(t => ['Resolved', 'Closed'].includes(t.status)).length;
+  const myTickets = tickets.filter(t => t.assignedTo?._id === user?._id).length;
+
+  // Recent activity (last 5 tickets)
+  const recentTickets = [...tickets].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 5);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <h1 className="text-2xl font-bold text-primary-600">🐛 Bug Tracker</h1>
+    <div>
+      {/* Welcome Section */}
+      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Welcome back, {user?.name}! 👋
+            </h1>
+            <p className="text-gray-600">
+              Here's what's happening with your projects today
+            </p>
           </div>
-          <div className="flex items-center space-x-4">
-            <div className="text-right">
-              <p className="text-sm text-gray-600">Welcome,</p>
-              <p className="font-medium text-gray-900">{user?.name}</p>
+          <div className="hidden sm:block">
+            <div className="flex items-center space-x-2">
+              <Link
+                to="/tickets/create"
+                className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition font-medium"
+              >
+                + New Ticket
+              </Link>
+              <Link
+                to="/projects/create"
+                className="bg-white text-primary-600 px-4 py-2 rounded-lg border-2 border-primary-600 hover:bg-primary-50 transition font-medium"
+              >
+                + New Project
+              </Link>
             </div>
-            <button
-              onClick={logout}
-              className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <div className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600 mb-1">Total Tickets</p>
+              <p className="text-3xl font-bold text-gray-900">{totalTickets}</p>
+            </div>
+            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+              <span className="text-2xl">🎫</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600 mb-1">In Progress</p>
+              <p className="text-3xl font-bold text-yellow-600">{inProgressTickets}</p>
+            </div>
+            <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+              <span className="text-2xl">⚡</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600 mb-1">Completed</p>
+              <p className="text-3xl font-bold text-green-600">{completedTickets}</p>
+            </div>
+            <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+              <span className="text-2xl">✅</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600 mb-1">Assigned to Me</p>
+              <p className="text-3xl font-bold text-purple-600">{myTickets}</p>
+            </div>
+            <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+              <span className="text-2xl">👤</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Two Column Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Recent Activity */}
+        <div className="lg:col-span-2">
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Recent Activity</h2>
+            {recentTickets.length > 0 ? (
+              <div className="space-y-3">
+                {recentTickets.map((ticket) => (
+                  <Link
+                    key={ticket._id}
+                    to={`/tickets/${ticket._id}`}
+                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
+                  >
+                    <div className="flex items-center space-x-3 flex-1 min-w-0">
+                      <span className="text-2xl flex-shrink-0">
+                        {ticket.type === 'Bug' ? '🐛' : ticket.type === 'Feature' ? '✨' : ticket.type === 'Improvement' ? '🔧' : '📋'}
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-gray-900 truncate">{ticket.title}</p>
+                        <p className="text-sm text-gray-500">{ticket.project?.name || 'Unknown Project'}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2 flex-shrink-0">
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        ticket.status === 'Open' ? 'bg-blue-100 text-blue-800' :
+                        ticket.status === 'In Progress' ? 'bg-yellow-100 text-yellow-800' :
+                        ticket.status === 'In Review' ? 'bg-purple-100 text-purple-800' :
+                        ticket.status === 'Resolved' ? 'bg-green-100 text-green-800' :
+                        'bg-gray-100 text-gray-800'
+                      }`}>
+                        {ticket.status}
+                      </span>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        ticket.priority === 'Critical' ? 'bg-red-100 text-red-700' :
+                        ticket.priority === 'High' ? 'bg-orange-100 text-orange-700' :
+                        ticket.priority === 'Medium' ? 'bg-blue-100 text-blue-700' :
+                        'bg-gray-100 text-gray-700'
+                      }`}>
+                        {ticket.priority}
+                      </span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500 text-center py-8">No recent tickets</p>
+            )}
+          </div>
+        </div>
+
+        {/* Projects Overview */}
+        <div>
+          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Your Projects</h2>
+            {projects.length > 0 ? (
+              <div className="space-y-3">
+                {projects.slice(0, 5).map((project) => (
+                  <Link
+                    key={project._id}
+                    to={`/projects/${project._id}`}
+                    className="block p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
+                  >
+                    <p className="font-medium text-gray-900 truncate">{project.name}</p>
+                    <p className="text-sm text-gray-500">{project.status}</p>
+                  </Link>
+                ))}
+                {projects.length > 5 && (
+                  <Link
+                    to="/projects"
+                    className="block text-center text-sm text-primary-600 hover:text-primary-700 font-medium pt-2"
+                  >
+                    View all {projects.length} projects →
+                  </Link>
+                )}
+              </div>
+            ) : (
+              <p className="text-gray-500 text-center py-4">No projects yet</p>
+            )}
+          </div>
+
+          {/* Quick Links */}
+          <div className="bg-gradient-to-br from-primary-500 to-primary-700 rounded-lg shadow-md p-6 text-white">
+            <h2 className="text-lg font-bold mb-4">🚀 Days 6-8 Complete!</h2>
+            <ul className="space-y-2 text-sm mb-4">
+              <li className="flex items-start">
+                <span className="mr-2">✓</span>
+                <span>Enhanced Dashboard UI</span>
+              </li>
+              <li className="flex items-start">
+                <span className="mr-2">✓</span>
+                <span>Sidebar & Navigation</span>
+              </li>
+              <li className="flex items-start">
+                <span className="mr-2">✓</span>
+                <span>Kanban Board View</span>
+              </li>
+            </ul>
+            <Link
+              to="/kanban"
+              className="block w-full bg-white text-primary-600 px-4 py-2 rounded-lg hover:bg-gray-100 transition font-medium text-center"
             >
-              Logout
-            </button>
+              Try Kanban Board →
+            </Link>
           </div>
         </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-lg shadow-md p-8">
-          <div className="text-center">
-            <div className="mb-6">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
-                <svg
-                  className="w-8 h-8 text-green-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-              </div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                Welcome to Your Dashboard!
-              </h2>
-              <p className="text-gray-600">
-                You're successfully logged in as <span className="font-semibold">{user?.email}</span>
-              </p>
-            </div>
-
-            <div className="bg-primary-50 border border-primary-200 rounded-lg p-6 mb-6">
-              <h3 className="text-lg font-semibold text-primary-900 mb-3">
-                ✅ Day 2: User Authentication - Complete!
-              </h3>
-              <ul className="text-left text-gray-700 space-y-2">
-                <li className="flex items-start">
-                  <span className="text-green-600 mr-2">✓</span>
-                  User registration with validation
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-600 mr-2">✓</span>
-                  Login with JWT token authentication
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-600 mr-2">✓</span>
-                  Protected routes with auth context
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-600 mr-2">✓</span>
-                  Password hashing with bcrypt
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-600 mr-2">✓</span>
-                  User profile display
-                </li>
-              </ul>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                <div className="text-3xl font-bold text-primary-600 mb-1">0</div>
-                <div className="text-sm text-gray-600">Projects</div>
-                <div className="text-xs text-gray-500 mt-1">Coming in Day 3</div>
-              </div>
-              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                <div className="text-3xl font-bold text-primary-600 mb-1">0</div>
-                <div className="text-sm text-gray-600">Tickets</div>
-                <div className="text-xs text-gray-500 mt-1">Coming in Day 4</div>
-              </div>
-              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                <div className="text-3xl font-bold text-primary-600 mb-1">1</div>
-                <div className="text-sm text-gray-600">Team Members</div>
-                <div className="text-xs text-gray-500 mt-1">Just you for now!</div>
-              </div>
-            </div>
-
-            <div className="text-sm text-gray-500">
-              <p>🚀 Next up: Day 3 - Project Management</p>
-              <p className="mt-1">Create projects and manage your team</p>
-            </div>
-          </div>
-        </div>
-      </main>
+      </div>
     </div>
   );
 };

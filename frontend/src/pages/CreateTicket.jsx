@@ -1,0 +1,243 @@
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useTicket } from '../context/TicketContext';
+import { useProject } from '../context/ProjectContext';
+
+const CreateTicket = () => {
+  const navigate = useNavigate();
+  const { createTicket } = useTicket();
+  const { projects, fetchProjects } = useProject();
+  
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    type: 'Bug',
+    status: 'Open',
+    priority: 'Medium',
+    project: '',
+    assignedTo: '',
+    dueDate: ''
+  });
+
+  const [projectMembers, setProjectMembers] = useState([]);
+
+  useEffect(() => {
+    if (projects.length === 0) {
+      fetchProjects();
+    }
+  }, []);
+
+  useEffect(() => {
+    // Get members of selected project
+    if (formData.project) {
+      const selectedProject = projects.find(p => p._id === formData.project);
+      if (selectedProject) {
+        const members = [
+          { _id: selectedProject.owner._id, name: selectedProject.owner.name, email: selectedProject.owner.email },
+          ...selectedProject.members
+        ];
+        setProjectMembers(members);
+      }
+    } else {
+      setProjectMembers([]);
+    }
+  }, [formData.project, projects]);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!formData.title.trim() || !formData.description.trim() || !formData.project) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    const ticketData = {
+      ...formData,
+      assignedTo: formData.assignedTo || undefined,
+      dueDate: formData.dueDate || undefined
+    };
+
+    const newTicket = await createTicket(ticketData);
+    if (newTicket) {
+      navigate('/tickets');
+    }
+  };
+
+  const today = new Date().toISOString().split('T')[0];
+
+  return (
+    <div className="container mx-auto px-4 py-8 max-w-3xl">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-800 mb-2">Create New Ticket</h1>
+        <p className="text-gray-600">Report a bug, request a feature, or create a task</p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-8">
+        {/* Title */}
+        <div className="mb-6">
+          <label className="block text-gray-700 font-medium mb-2">
+            Title <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+            maxLength={100}
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            placeholder="Brief description of the issue or task"
+          />
+          <p className="text-sm text-gray-500 mt-1">{formData.title.length}/100 characters</p>
+        </div>
+
+        {/* Description */}
+        <div className="mb-6">
+          <label className="block text-gray-700 font-medium mb-2">
+            Description <span className="text-red-500">*</span>
+          </label>
+          <textarea
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            maxLength={2000}
+            required
+            rows={6}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            placeholder="Detailed description of the ticket..."
+          />
+          <p className="text-sm text-gray-500 mt-1">{formData.description.length}/2000 characters</p>
+        </div>
+
+        {/* Project */}
+        <div className="mb-6">
+          <label className="block text-gray-700 font-medium mb-2">
+            Project <span className="text-red-500">*</span>
+          </label>
+          <select
+            name="project"
+            value={formData.project}
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+          >
+            <option value="">Select a project</option>
+            {projects.map(project => (
+              <option key={project._id} value={project._id}>
+                {project.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          {/* Type */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Type</label>
+            <select
+              name="type"
+              value={formData.type}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            >
+              <option value="Bug">🐛 Bug</option>
+              <option value="Feature">✨ Feature</option>
+              <option value="Improvement">🔧 Improvement</option>
+              <option value="Task">📋 Task</option>
+            </select>
+          </div>
+
+          {/* Priority */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Priority</label>
+            <select
+              name="priority"
+              value={formData.priority}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            >
+              <option value="Low">Low</option>
+              <option value="Medium">Medium</option>
+              <option value="High">High</option>
+              <option value="Critical">Critical</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          {/* Status */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Status</label>
+            <select
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            >
+              <option value="Open">Open</option>
+              <option value="In Progress">In Progress</option>
+              <option value="In Review">In Review</option>
+              <option value="Resolved">Resolved</option>
+              <option value="Closed">Closed</option>
+            </select>
+          </div>
+
+          {/* Assigned To */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Assign To</label>
+            <select
+              name="assignedTo"
+              value={formData.assignedTo}
+              onChange={handleChange}
+              disabled={!formData.project}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:bg-gray-100"
+            >
+              <option value="">Unassigned</option>
+              {projectMembers.map(member => (
+                <option key={member._id} value={member._id}>
+                  {member.name} ({member.email})
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Due Date */}
+        <div className="mb-8">
+          <label className="block text-gray-700 font-medium mb-2">Due Date</label>
+          <input
+            type="date"
+            name="dueDate"
+            value={formData.dueDate}
+            onChange={handleChange}
+            min={today}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+          />
+        </div>
+
+        {/* Buttons */}
+        <div className="flex gap-4">
+          <button
+            type="submit"
+            className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-lg transition duration-200"
+          >
+            Create Ticket
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate('/tickets')}
+            className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 px-6 rounded-lg transition duration-200"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default CreateTicket;

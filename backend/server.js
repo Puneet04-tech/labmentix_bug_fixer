@@ -25,9 +25,10 @@ app.get('/', (req, res) => {
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
-// app.use('/api/projects', require('./routes/projects'));
-// app.use('/api/tickets', require('./routes/tickets'));
-// app.use('/api/comments', require('./routes/comments'));
+app.use('/api/projects', require('./routes/projects'));
+app.use('/api/tickets', require('./routes/tickets'));
+app.use('/api/comments', require('./routes/comments'));
+app.use('/api/analytics', require('./routes/analytics'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {
