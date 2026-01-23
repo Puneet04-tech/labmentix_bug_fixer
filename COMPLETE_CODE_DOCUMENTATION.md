@@ -1379,7 +1379,7 @@ const connectDB = async () => {
 - `process.env.MONGODB_URI` - Connection string from .env
 - `await` - Waits for connection to establish
 - Returns connection object
-- Example URI: "mongodb+srv://user:pass@cluster.mongodb.net/bugtracker"
+- Example URI: "mongodb+srv://username:password@cluster.mongodb.net/dbname"
 
 ```javascript
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
@@ -1695,17 +1695,16 @@ PORT=5000
 - Can change if port busy
 
 ```env
-MONGODB_URI=mongodb+srv://chaturvedipuneet200_db_user:i4kJxfNTaQSQZb7F@gigflow-cluster.czk3cti.mongodb.net/bugtracker?retryWrites=true&w=majority&appName=gigflow-cluster
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/bugtracker?retryWrites=true&w=majority
 ```
 **MONGODB_URI** - Database connection string  
 - **Format:** `mongodb+srv://username:password@cluster/database`
-- `chaturvedipuneet200_db_user` - Database username
-- `i4kJxfNTaQSQZb7F` - Database password
-- `gigflow-cluster.czk3cti.mongodb.net` - Cluster hostname
+- Replace `username` with your MongoDB username
+- Replace `password` with your MongoDB password
+- Replace `cluster.mongodb.net` with your cluster hostname
 - `bugtracker` - Database name
 - `retryWrites=true` - Retry failed writes
 - `w=majority` - Write concern (wait for majority)
-- `appName` - Application identifier
 
 ```env
 JWT_SECRET=bug_tracker_jwt_secret_key_2026_change_in_production_12345
