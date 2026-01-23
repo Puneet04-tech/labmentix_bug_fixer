@@ -2,8 +2,11 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTicket } from '../context/TicketContext';
 import { useAuth } from '../context/AuthContext';
+import { toast } from 'react-toastify';
 import CommentSection from '../components/CommentSection';
 import ActivityTimeline from '../components/ActivityTimeline';
+import EditTicketModal from '../components/EditTicketModal';
+import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
 
 const TicketDetail = () => {
   const { id } = useParams();
@@ -11,59 +14,53 @@ const TicketDetail = () => {
   const { user } = useAuth();
   const { currentTicket, fetchTicket, updateTicket, assignTicket, deleteTicket } = useTicket();
   
-  const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    type: '',
-    status: '',
-    priority: '',
-    dueDate: ''
-  });
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     loadTicket();
   }, [id]);
 
-  useEffect(() => {
-    if (currentTicket) {
-      setFormData({
-        title: currentTicket.title,
-        description: currentTicket.description,
-        type: currentTicket.type,
-        status: currentTicket.status,
-        priority: currentTicket.priority,
-        dueDate: currentTicket.dueDate ? new Date(currentTicket.dueDate).toISOString().split('T')[0] : ''
-      });
-    }
-  }, [currentTicket]);
-
   const loadTicket = async () => {
     await fetchTicket(id);
   };
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleUpdate = async (e) => {
-    e.preventDefault();
-    const updated = await updateTicket(id, formData);
-    if (updated) {
-      setIsEditing(false);
+  const handleUpdateTicket = async (formData) => {
+    try {
+      const updated = await updateTicket(id, formData);
+      if (updated) {
+        toast.success('✅ Ticket updated successfully!');
+        setShowEditModal(false);
+        await loadTicket(); // Reload ticket data
+      }
+    } catch (error) {
+      toast.error('❌ Failed to update ticket');
+      throw error;
     }
   };
 
   const handleAssign = async (userId) => {
-    await assignTicket(id, userId);
+    try {
+      await assignTicket(id, userId);
+      toast.success('✅ Ticket assignment updated!');
+      await loadTicket();
+    } catch (error) {
+      toast.error('❌ Failed to update assignment');
+    }
   };
 
-  const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to delete this ticket?')) {
+  const handleDeleteConfirm = async () => {
+    setIsDeleting(true);
+    try {
       const success = await deleteTicket(id);
       if (success) {
+        toast.success('✅ Ticket deleted successfully!');
         navigate('/tickets');
       }
+    } catch (error) {
+      toast.error('❌ Failed to delete ticket');
+      setIsDeleting(false);
     }
   };
 
@@ -121,17 +118,20 @@ const TicketDetail = () => {
   ];
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-5xl">
+    <div>
       {/* Header */}
       <div className="mb-6">
-        <Link to="/tickets" className="text-indigo-600 hover:text-indigo-800 mb-4 inline-block">
-          ← Back to Tickets
+        <Link to="/tickets" className="text-primary-600 hover:text-primary-800 mb-4 inline-flex items-center space-x-2">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          <span>Back to Tickets</span>
         </Link>
         <div className="flex justify-between items-start">
           <div>
             <div className="flex items-center gap-3 mb-2">
               <span className="text-3xl">{getTypeIcon(currentTicket.type)}</span>
-              <h1 className="text-3xl font-bold text-gray-800">{currentTicket.title}</h1>
+              <h1 className="text-3xl font-bold text-gray-900">{currentTicket.title}</h1>
             </div>
             <div className="flex gap-2 mt-3">
               <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(currentTicket.status)}`}>
@@ -148,18 +148,24 @@ const TicketDetail = () => {
           <div className="flex gap-2">
             {canEdit && (
               <button
-                onClick={() => setIsEditing(!isEditing)}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg transition font-medium"
+                onClick={() => setShowEditModal(true)}
+                className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-2 rounded-lg transition font-medium flex items-center space-x-2"
               >
-                {isEditing ? 'Cancel' : 'Edit'}
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                <span>Edit</span>
               </button>
             )}
             {canDelete && (
               <button
-                onClick={handleDelete}
-                className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition font-medium"
+                onClick={() => setShowDeleteModal(true)}
+                className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition font-medium flex items-center space-x-2"
               >
-                Delete
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                <span>Delete</span>
               </button>
             )}
           </div>
@@ -168,139 +174,34 @@ const TicketDetail = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Content - Left Column */}
-        <div className="lg:col-span-2 space-y-6">{isEditing ? (
-            <form onSubmit={handleUpdate} className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-bold text-gray-800 mb-4">Edit Ticket</h2>
-              
-              {/* Title */}
-              <div className="mb-4">
-                <label className="block text-gray-700 font-medium mb-2">Title</label>
-                <input
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleChange}
-                  maxLength={100}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                />
-              </div>
+        <div className="lg:col-span-2 space-y-6">
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">📝 Description</h2>
+            <p className="text-gray-700 whitespace-pre-wrap">{currentTicket.description}</p>
+          </div>
 
-              {/* Description */}
-              <div className="mb-4">
-                <label className="block text-gray-700 font-medium mb-2">Description</label>
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  maxLength={2000}
-                  rows={6}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                {/* Type */}
-                <div>
-                  <label className="block text-gray-700 font-medium mb-2">Type</label>
-                  <select
-                    name="type"
-                    value={formData.type}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                  >
-                    <option value="Bug">Bug</option>
-                    <option value="Feature">Feature</option>
-                    <option value="Improvement">Improvement</option>
-                    <option value="Task">Task</option>
-                  </select>
-                </div>
-
-                {/* Priority */}
-                <div>
-                  <label className="block text-gray-700 font-medium mb-2">Priority</label>
-                  <select
-                    name="priority"
-                    value={formData.priority}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                  >
-                    <option value="Low">Low</option>
-                    <option value="Medium">Medium</option>
-                    <option value="High">High</option>
-                    <option value="Critical">Critical</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                {/* Status */}
-                <div>
-                  <label className="block text-gray-700 font-medium mb-2">Status</label>
-                  <select
-                    name="status"
-                    value={formData.status}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                  >
-                    <option value="Open">Open</option>
-                    <option value="In Progress">In Progress</option>
-                    <option value="In Review">In Review</option>
-                    <option value="Resolved">Resolved</option>
-                    <option value="Closed">Closed</option>
-                  </select>
-                </div>
-
-                {/* Due Date */}
-                <div>
-                  <label className="block text-gray-700 font-medium mb-2">Due Date</label>
-                  <input
-                    type="date"
-                    name="dueDate"
-                    value={formData.dueDate}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                  />
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-lg transition"
-              >
-                Save Changes
-              </button>
-            </form>
-          ) : (
-            <>
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">Description</h2>
-                <p className="text-gray-700 whitespace-pre-wrap">{currentTicket.description}</p>
-              </div>
-
-              {/* Activity Timeline */}
-              <ActivityTimeline ticketId={id} />
-            </>
-          )}
+          {/* Activity Timeline */}
+          <ActivityTimeline ticketId={id} />
         </div>
 
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Details */}
           <div className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-lg font-bold text-gray-800 mb-4">Details</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-4">📋 Details</h3>
             <div className="space-y-3">
               <div>
                 <p className="text-sm text-gray-500">Project</p>
                 <Link 
                   to={`/projects/${currentTicket.project._id}`}
-                  className="text-indigo-600 hover:text-indigo-800 font-medium"
+                  className="text-primary-600 hover:text-primary-800 font-medium"
                 >
                   {currentTicket.project.name}
                 </Link>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Reported By</p>
-                <p className="font-medium text-gray-700">{currentTicket.reportedBy.name}</p>
+                <p className="font-medium text-gray-900">{currentTicket.reportedBy.name}</p>
                 <p className="text-sm text-gray-500">{currentTicket.reportedBy.email}</p>
               </div>
               <div>
@@ -318,30 +219,41 @@ const TicketDetail = () => {
 
           {/* Assignment */}
           <div className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-lg font-bold text-gray-800 mb-4">Assignment</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-4">👤 Assignment</h3>
             {currentTicket.assignedTo ? (
               <div className="mb-4">
                 <p className="text-sm text-gray-500 mb-1">Assigned To</p>
-                <p className="font-medium text-gray-700">{currentTicket.assignedTo.name}</p>
+                <p className="font-medium text-gray-900">{currentTicket.assignedTo.name}</p>
                 <p className="text-sm text-gray-500">{currentTicket.assignedTo.email}</p>
               </div>
             ) : (
-              <p className="text-gray-500 mb-4">Unassigned</p>
+              <p className="text-gray-500 mb-4 italic">Unassigned</p>
             )}
             
             {canEdit && (
               <div>
-                <label className="block text-sm text-gray-500 mb-2">Change Assignment</label>
+                <label className="block text-sm text-gray-700 font-medium mb-2">Change Assignment</label>
                 <select
                   onChange={(e) => handleAssign(e.target.value || null)}
                   value={currentTicket.assignedTo?._id || ''}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
                 >
                   <option value="">Unassigned</option>
                   {/* Note: Would need to fetch project members here */}
                 </select>
               </div>
             )}
+          </div>
+
+          {/* Authorization Info */}
+          <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
+            <h4 className="text-sm font-semibold text-primary-900 mb-2">🔐 Permissions</h4>
+            <ul className="text-sm text-primary-800 space-y-1">
+              {isReporter && <li>• You reported this ticket</li>}
+              {isProjectOwner && <li>• You own this project</li>}
+              {canEdit && <li>• You can edit this ticket</li>}
+              {canDelete && <li>• You can delete this ticket</li>}
+            </ul>
           </div>
         </div>
       </div>
@@ -350,6 +262,24 @@ const TicketDetail = () => {
       <div className="mt-6">
         <CommentSection ticketId={id} />
       </div>
+
+      {/* Modals */}
+      <EditTicketModal
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        ticket={currentTicket}
+        onSubmit={handleUpdateTicket}
+      />
+
+      <DeleteConfirmationModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Ticket"
+        message="Are you sure you want to delete this ticket? This will remove all associated comments and activity history."
+        itemName={currentTicket.title}
+        isDeleting={isDeleting}
+      />
     </div>
   );
 };

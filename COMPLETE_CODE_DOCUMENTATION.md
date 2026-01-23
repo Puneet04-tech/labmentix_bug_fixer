@@ -6829,11 +6829,2252 @@ if (loading) {
 - 1 server.js
 - 1 database config
 
-**Frontend (17 files):**
-- 9 pages (Register, Login, Dashboard, Projects, CreateProject, ProjectDetail, Tickets, CreateTicket, TicketDetail, Analytics)
-- 5 components (ProtectedRoute, CommentSection, ActivityTimeline, StatsCard, TicketChart)
+**Frontend (22 files):**
+- 10 pages (Register, Login, Dashboard, Projects, CreateProject, ProjectDetail, Tickets, CreateTicket, TicketDetail, Analytics, Kanban)
+- 9 components (ProtectedRoute, CommentSection, ActivityTimeline, StatsCard, TicketChart, Sidebar, Navbar, Breadcrumbs, Layout, KanbanColumn)
 - 3 contexts (AuthContext, ProjectContext, TicketContext)
 - Config files (Vite, Tailwind, package.json)
 
-**Total: 30 code files + documentation**
+**Total: 35 code files + documentation**
  
+---
+
+# DAY 6: DASHBOARD UI ENHANCEMENT & LAYOUT SYSTEM ⭐ NEW
+
+**Implementation Date:** January 22, 2026  
+**Focus:** Professional layout system with responsive navigation, breadcrumbs, and enhanced dashboard
+
+**New Files Added:**
+1. `frontend/src/components/Sidebar.jsx` (124 lines)
+2. `frontend/src/components/Navbar.jsx` (96 lines)
+3. `frontend/src/components/Breadcrumbs.jsx` (77 lines)
+4. `frontend/src/components/Layout.jsx` (31 lines)
+
+**Modified Files:**
+- `frontend/src/pages/Dashboard.jsx` (Enhanced with quick stats and activity feed)
+- `frontend/src/App.jsx` (Wrapped all protected routes in Layout component)
+
+---
+
+## 📄 **frontend/src/components/Sidebar.jsx** (Navigation Sidebar)
+
+### Purpose:
+Provides the main navigation menu with collapsible mobile support, active state highlighting, and quick action buttons.
+
+### Key Features:
+- **Mobile Responsive**: Overlay sidebar on mobile devices (z-index 40)
+- **Active State Detection**: Highlights current page using URL pathname
+- **Collapsible**: Hamburger menu toggle on mobile screens
+- **Menu Items**: Dashboard, Projects, Tickets, Kanban Board, Analytics
+- **Quick Actions**: New Project and New Ticket buttons
+- **Status Badge**: Shows "Days 6-8 Complete!" in footer
+
+### Line-by-Line Explanation:
+
+```javascript
+import { Link, useLocation } from 'react-router-dom';
+```
+**Line 1:** Import routing utilities  
+- `Link` - Navigation component (prevents page reload)
+- `useLocation` - Hook to get current URL path
+- Used for active state detection
+
+```javascript
+const Sidebar = ({ isOpen, toggleSidebar }) => {
+```
+**Line 3:** Component receives props  
+- `isOpen` - Boolean controlling sidebar visibility (mobile)
+- `toggleSidebar` - Function to toggle sidebar open/closed
+- Props come from parent Layout component
+
+```javascript
+  const location = useLocation();
+```
+**Line 4:** Get current location  
+- `location.pathname` contains current URL path
+- Used to determine which menu item is active
+- Updates automatically when route changes
+
+```javascript
+  const isActive = (path) => {
+    return location.pathname === path || location.pathname.startsWith(path + '/');
+  };
+```
+**Lines 6-8:** Active state checker function  
+- Exact match: `/dashboard` === `/dashboard` ✓
+- Starts with: `/projects/123` starts with `/projects/` ✓
+- Handles both parent and child routes
+- Returns boolean for conditional styling
+
+```javascript
+  return (
+    <>
+      {/* Mobile Overlay */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          onClick={toggleSidebar}
+        ></div>
+      )}
+```
+**Lines 10-18:** Mobile overlay backdrop  
+- `{isOpen && ...}` - Conditional rendering
+- `fixed inset-0` - Covers entire viewport
+- `bg-black bg-opacity-50` - Semi-transparent dark overlay
+- `z-40` - Stacks above content, below sidebar (z-50)
+- `lg:hidden` - Only visible on mobile/tablet
+- `onClick={toggleSidebar}` - Clicking backdrop closes sidebar
+
+```javascript
+      {/* Sidebar */}
+      <div className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out ${
+          isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        }`}
+      >
+```
+**Lines 20-24:** Sidebar container with animations  
+- `fixed lg:static` - Fixed on mobile, static on desktop
+- `inset-y-0 left-0` - Full height, attached to left edge
+- `z-50` - Above overlay (z-40) and content
+- `w-64` - Fixed width of 16rem (256px)
+- `transform transition-transform duration-300` - Smooth slide animation
+- `isOpen ? 'translate-x-0' : '-translate-x-full'` - Slide in/out on mobile
+- `lg:translate-x-0` - Always visible on desktop (≥1024px)
+
+```javascript
+        <div className="flex flex-col h-full">
+          {/* Header */}
+          <div className="flex items-center justify-between p-4 border-b border-gray-200">
+            <Link to="/dashboard" className="flex items-center space-x-2">
+              <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-lg flex items-center justify-center">
+                <span className="text-white text-xl font-bold">LM</span>
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-gray-900">LabMentix</h1>
+                <p className="text-xs text-gray-500">Bug Tracker</p>
+              </div>
+            </Link>
+```
+**Lines 25-36:** Sidebar header with logo  
+- `flex flex-col h-full` - Vertical layout, full height
+- Logo gradient: `from-primary-500 to-primary-700`
+- Logo initials: "LM" centered in rounded square
+- Title: "LabMentix" with subtitle "Bug Tracker"
+- Clickable Link to dashboard
+
+```javascript
+            {/* Close button (mobile only) */}
+            <button
+              onClick={toggleSidebar}
+              className="lg:hidden p-2 rounded-lg hover:bg-gray-100"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+```
+**Lines 38-46:** Close button (mobile only)  
+- `lg:hidden` - Only visible on screens <1024px
+- X icon (cross) to close sidebar
+- `hover:bg-gray-100` - Subtle hover effect
+- Calls `toggleSidebar` to close
+
+```javascript
+          {/* Navigation */}
+          <nav className="flex-1 overflow-y-auto py-4">
+            <div className="px-3 space-y-1">
+```
+**Lines 50-52:** Navigation menu container  
+- `flex-1` - Takes remaining vertical space
+- `overflow-y-auto` - Scrollable if menu items overflow
+- `space-y-1` - 0.25rem gap between menu items
+
+```javascript
+              <Link
+                to="/dashboard"
+                className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition ${
+                  isActive('/dashboard')
+                    ? 'bg-primary-50 text-primary-700 font-medium'
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                <span className="text-xl">📊</span>
+                <span>Dashboard</span>
+              </Link>
+```
+**Lines 54-64:** Dashboard menu item  
+- Conditional styling based on `isActive('/dashboard')`
+- Active: Primary color background and text, bold font
+- Inactive: Gray text with hover effect
+- Icon: 📊 chart emoji
+- Smooth transitions on state change
+
+```javascript
+              <Link
+                to="/projects"
+                className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition ${
+                  isActive('/projects')
+                    ? 'bg-primary-50 text-primary-700 font-medium'
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                <span className="text-xl">📁</span>
+                <span>Projects</span>
+              </Link>
+```
+**Lines 66-76:** Projects menu item  
+- Same pattern as Dashboard
+- Detects `/projects`, `/projects/create`, `/projects/:id`, etc.
+- Icon: 📁 folder emoji
+- Active highlighting for entire Projects section
+
+```javascript
+              <Link
+                to="/tickets"
+                className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition ${
+                  isActive('/tickets')
+                    ? 'bg-primary-50 text-primary-700 font-medium'
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                <span className="text-xl">🎫</span>
+                <span>Tickets</span>
+              </Link>
+```
+**Lines 78-88:** Tickets menu item  
+- Matches `/tickets` and all ticket sub-routes
+- Icon: 🎫 ticket emoji
+- Active state for ticket list and detail pages
+
+```javascript
+              <Link
+                to="/kanban"
+                className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition ${
+                  isActive('/kanban')
+                    ? 'bg-primary-50 text-primary-700 font-medium'
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                <span className="text-xl">📋</span>
+                <span>Kanban Board</span>
+              </Link>
+```
+**Lines 90-100:** Kanban Board menu item (NEW in Day 8)  
+- Links to `/kanban` route
+- Icon: 📋 clipboard emoji
+- Visual board for drag-and-drop ticket management
+
+```javascript
+              <Link
+                to="/analytics"
+                className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition ${
+                  isActive('/analytics')
+                    ? 'bg-primary-50 text-primary-700 font-medium'
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                <span className="text-xl">📈</span>
+                <span>Analytics</span>
+              </Link>
+```
+**Lines 102-112:** Analytics menu item  
+- Links to analytics/reports page
+- Icon: 📈 trending up chart emoji
+- Shows data insights and visualizations
+
+```javascript
+            </div>
+
+            {/* Quick Actions */}
+            <div className="px-3 mt-6">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                Quick Actions
+              </p>
+```
+**Lines 115-120:** Quick Actions section header  
+- `mt-6` - Margin top to separate from menu items
+- Small uppercase label in gray
+- "Quick Actions" section for common tasks
+
+```javascript
+              <Link
+                to="/projects/create"
+                className="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition"
+              >
+                <span className="text-xl">➕</span>
+                <span className="text-sm">New Project</span>
+              </Link>
+```
+**Lines 122-128:** New Project quick action  
+- Direct link to create project page
+- Plus icon: ➕
+- Smaller text (`text-sm`) than menu items
+- No active state needed (action button)
+
+```javascript
+              <Link
+                to="/tickets/create"
+                className="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition"
+              >
+                <span className="text-xl">📝</span>
+                <span className="text-sm">New Ticket</span>
+              </Link>
+```
+**Lines 130-136:** New Ticket quick action  
+- Direct link to create ticket page
+- Memo icon: 📝
+- Frequently used action for quick access
+
+```javascript
+          {/* Footer */}
+          <div className="p-4 border-t border-gray-200">
+            <div className="text-center">
+              <p className="text-xs text-gray-500 mb-2">Version 1.0.0</p>
+              <div className="inline-flex items-center px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
+                <span className="mr-1">✓</span>
+                Days 6-8 Complete!
+              </div>
+            </div>
+          </div>
+```
+**Lines 141-150:** Sidebar footer  
+- Border top separator
+- Version number display
+- Green badge: "Days 6-8 Complete!"
+- Checkmark icon for completion status
+
+```javascript
+export default Sidebar;
+```
+**Line 157:** Export component  
+- Default export for use in Layout component
+
+---
+
+## 📄 **frontend/src/components/Navbar.jsx** (Top Navigation Bar)
+
+### Purpose:
+Top navigation bar with search functionality, notifications, user profile display, and logout button.
+
+### Key Features:
+- **Hamburger Toggle**: Opens/closes sidebar on mobile
+- **Search Bar**: Desktop-only search input (80 characters wide)
+- **Notifications**: Bell icon with red badge indicator
+- **User Avatar**: Color-coded initials based on user name
+- **User Info**: Display name and email
+- **Logout Button**: Sign out functionality (desktop only)
+
+### Line-by-Line Explanation:
+
+```javascript
+import { useAuth } from '../context/AuthContext';
+```
+**Line 1:** Import authentication context  
+- Accesses `user` object and `logout` function
+- Provides current user data (name, email)
+- Handles logout functionality
+
+```javascript
+const Navbar = ({ toggleSidebar }) => {
+```
+**Line 3:** Component receives toggleSidebar prop  
+- Function passed from Layout component
+- Controls sidebar open/close state
+- Used by hamburger menu button
+
+```javascript
+  const { user, logout } = useAuth();
+```
+**Line 4:** Destructure auth context  
+- `user` - Current logged-in user object (name, email)
+- `logout` - Function to sign out user
+- Both provided by AuthContext
+
+```javascript
+  const getInitials = (name) => {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  };
+```
+**Lines 6-8:** Generate user initials  
+- Split name by spaces: "John Doe" → ["John", "Doe"]
+- Map to first letters: ["J", "D"]
+- Join: "JD"
+- Uppercase and limit to 2 characters
+- Used for avatar display
+
+```javascript
+  const getAvatarColor = (name) => {
+    const colors = [
+      'bg-blue-500', 'bg-green-500', 'bg-yellow-500', 
+      'bg-red-500', 'bg-purple-500', 'bg-pink-500',
+      'bg-indigo-500', 'bg-teal-500'
+    ];
+    const index = name.charCodeAt(0) % colors.length;
+    return colors[index];
+  };
+```
+**Lines 10-18:** Generate consistent avatar color  
+- 8 color options (Tailwind classes)
+- Uses first character's ASCII code: `name.charCodeAt(0)`
+- Modulo operation ensures index in range: `% colors.length`
+- Same name always gets same color (deterministic)
+- Example: "John" → charCode 74 → 74 % 8 = 2 → 'bg-yellow-500'
+
+```javascript
+  return (
+    <nav className="sticky top-0 z-30 bg-white border-b border-gray-200 px-4 py-3">
+```
+**Lines 20-21:** Navbar container  
+- `sticky top-0` - Stays at top when scrolling
+- `z-30` - Above content, below sidebar/overlay
+- `border-b` - Bottom border separator
+- Horizontal padding 1rem, vertical 0.75rem
+
+```javascript
+      <div className="flex items-center justify-between">
+        {/* Left: Hamburger + Search */}
+        <div className="flex items-center space-x-4">
+```
+**Lines 22-24:** Left section container  
+- Flexbox with space-between for left/right split
+- Left side: Hamburger button and search bar
+- `space-x-4` - 1rem gap between elements
+
+```javascript
+          {/* Hamburger Menu */}
+          <button
+            onClick={toggleSidebar}
+            className="p-2 rounded-lg hover:bg-gray-100 lg:hidden"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+```
+**Lines 26-34:** Hamburger menu button  
+- Three horizontal lines icon (☰)
+- `lg:hidden` - Only visible on mobile/tablet
+- Calls `toggleSidebar` to open sidebar
+- Hover effect: `hover:bg-gray-100`
+
+```javascript
+          {/* Search Bar */}
+          <div className="hidden lg:flex items-center">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search projects, tickets..."
+                className="w-80 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              />
+              <svg className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+          </div>
+```
+**Lines 36-47:** Search bar (desktop only)  
+- `hidden lg:flex` - Hidden on mobile, visible on desktop
+- Width: 80 characters (`w-80` = 20rem = 320px)
+- Left padding for icon: `pl-10`
+- Focus ring in primary color
+- Magnifying glass icon positioned absolutely inside input
+- Placeholder: "Search projects, tickets..."
+
+```javascript
+        {/* Right: Notifications + User Profile */}
+        <div className="flex items-center space-x-4">
+```
+**Lines 50-51:** Right section container  
+- Notifications bell and user profile
+- 1rem gap between elements
+
+```javascript
+          {/* Notifications */}
+          <button className="relative p-2 rounded-lg hover:bg-gray-100">
+            <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+            {/* Badge */}
+            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+          </button>
+```
+**Lines 53-60:** Notification bell button  
+- Bell icon from Heroicons
+- Red badge indicator (top-right corner)
+- `w-2 h-2` - Small red dot showing new notifications
+- Hover effect on button
+
+```javascript
+          {/* User Profile */}
+          <div className="flex items-center space-x-3">
+            {/* Avatar */}
+            <div className={`w-10 h-10 ${getAvatarColor(user?.name || 'User')} rounded-full flex items-center justify-center`}>
+              <span className="text-white text-sm font-bold">
+                {getInitials(user?.name || 'U')}
+              </span>
+            </div>
+```
+**Lines 62-69:** User avatar  
+- Circular avatar: `w-10 h-10 rounded-full`
+- Background color from `getAvatarColor()` function
+- Displays user initials in white, bold
+- Fallback to "U" if user name not available
+
+```javascript
+            {/* User Info */}
+            <div className="hidden md:block">
+              <p className="text-sm font-medium text-gray-900">{user?.name}</p>
+              <p className="text-xs text-gray-500">{user?.email}</p>
+            </div>
+```
+**Lines 71-75:** User information (desktop only)  
+- `hidden md:block` - Hidden on small mobile screens
+- Name: Bold, dark gray
+- Email: Smaller text, lighter gray
+- Stacked vertically
+
+```javascript
+            {/* Logout Button */}
+            <button
+              onClick={logout}
+              className="hidden md:block px-4 py-2 text-sm font-medium text-gray-700 hover:text-primary-600 transition"
+            >
+              Logout
+            </button>
+```
+**Lines 77-83:** Logout button (desktop only)  
+- `hidden md:block` - Not shown on mobile
+- Calls `logout` function from AuthContext
+- Color transition on hover (gray → primary)
+- Simple text button, no background
+
+```javascript
+export default Navbar;
+```
+**Line 91:** Export component  
+- Used in Layout component
+
+---
+
+## 📄 **frontend/src/components/Breadcrumbs.jsx** (Navigation Breadcrumbs)
+
+### Purpose:
+Automatically generates breadcrumb navigation based on current URL path, with special handling for detail pages.
+
+### Key Features:
+- **Automatic Generation**: Creates breadcrumbs from URL pathname
+- **Path Mapping**: Converts route names to readable labels
+- **Detail Page Detection**: Identifies MongoDB ObjectId patterns
+- **Active State**: Last breadcrumb highlighted, not clickable
+- **Separators**: Arrow symbols (›) between items
+
+### Line-by-Line Explanation:
+
+```javascript
+import { Link, useLocation } from 'react-router-dom';
+```
+**Line 1:** Import routing utilities  
+- `Link` - For breadcrumb navigation links
+- `useLocation` - To get current URL path
+
+```javascript
+const Breadcrumbs = () => {
+  const location = useLocation();
+```
+**Lines 3-4:** Component setup  
+- No props needed (self-contained)
+- Get current location for pathname extraction
+
+```javascript
+  const pathMap = {
+    'dashboard': 'Dashboard',
+    'projects': 'Projects',
+    'create': 'Create',
+    'tickets': 'Tickets',
+    'analytics': 'Analytics',
+    'kanban': 'Kanban Board',
+    'edit': 'Edit'
+  };
+```
+**Lines 6-14:** Path-to-label mapping  
+- Converts URL segments to readable names
+- Example: `/projects/create` → "Projects" + "Create"
+- Handles nested routes and actions
+- Lowercase keys match URL segments
+
+```javascript
+  const pathnames = location.pathname.split('/').filter(x => x);
+```
+**Line 16:** Parse URL into segments  
+- Example: `/projects/123/edit` → ["projects", "123", "edit"]
+- `split('/')` - Splits by forward slash
+- `filter(x => x)` - Removes empty strings (leading slash)
+- Array used for breadcrumb generation
+
+```javascript
+  if (pathnames.length === 0) return null;
+```
+**Line 18:** Hide on homepage  
+- If no pathnames (root `/`), don't show breadcrumbs
+- Return null to render nothing
+
+```javascript
+  const isDetailPage = pathnames.length > 1 && 
+    pathnames[pathnames.length - 1].match(/^[a-f\d]{24}$/i);
+```
+**Lines 20-21:** Detect MongoDB ObjectId pattern  
+- Checks last segment of URL
+- Regex: `/^[a-f\d]{24}$/i`
+  - `^[a-f\d]{24}$` - Exactly 24 hexadecimal characters
+  - `i` - Case insensitive
+- Example match: `507f1f77bcf86cd799439011`
+- Used to label detail pages
+
+```javascript
+  return (
+    <nav className="flex items-center space-x-2 text-sm mb-6">
+```
+**Lines 23-24:** Breadcrumb container  
+- Horizontal flex layout
+- Small text (`text-sm`)
+- Bottom margin for spacing
+
+```javascript
+      <Link 
+        to="/dashboard" 
+        className="text-gray-600 hover:text-primary-600 transition"
+      >
+        Dashboard
+      </Link>
+```
+**Lines 25-30:** Always show Dashboard as first crumb  
+- Home base for navigation
+- Gray color with primary hover
+- Clickable link
+
+```javascript
+      {pathnames.map((name, index) => {
+        const routeTo = `/${pathnames.slice(0, index + 1).join('/')}`;
+```
+**Lines 32-33:** Loop through path segments  
+- Create breadcrumb for each segment
+- Build cumulative path: `/projects`, `/projects/123`, etc.
+- `slice(0, index + 1)` - Get all segments up to current
+
+```javascript
+        const isLast = index === pathnames.length - 1;
+```
+**Line 34:** Check if last breadcrumb  
+- Last item styled differently (not clickable)
+- Different color to show current page
+
+```javascript
+        const isId = name.match(/^[a-f\d]{24}$/i);
+```
+**Line 35:** Check if segment is MongoDB ID  
+- Same regex as `isDetailPage`
+- Used to determine label text
+
+```javascript
+        let label = pathMap[name] || name;
+```
+**Line 36:** Get readable label  
+- Look up in `pathMap` object
+- Fallback to raw segment if not found
+- Example: "projects" → "Projects"
+
+```javascript
+        if (isId) {
+          const parentPath = pathnames[index - 1];
+          label = pathMap[parentPath] ? `${pathMap[parentPath]} Detail` : 'Detail';
+        }
+```
+**Lines 38-41:** Label for detail pages  
+- If segment is MongoDB ID, create "Detail" label
+- Use parent path name: "Projects Detail", "Tickets Detail"
+- Example: `/tickets/123` → "Tickets Detail"
+
+```javascript
+        return (
+          <div key={index} className="flex items-center space-x-2">
+            <span className="text-gray-400">›</span>
+```
+**Lines 43-45:** Separator and container  
+- Arrow symbol: `›`
+- Gray color for subtle separation
+- Flex layout for alignment
+
+```javascript
+            {isLast ? (
+              <span className="text-primary-600 font-medium">{label}</span>
+            ) : (
+              <Link 
+                to={routeTo} 
+                className="text-gray-600 hover:text-primary-600 transition"
+              >
+                {label}
+              </Link>
+            )}
+```
+**Lines 46-54:** Breadcrumb item (last vs. others)  
+- **Last item**: Primary color, bold, not clickable (current page)
+- **Other items**: Gray with hover, clickable links
+- Conditional rendering with ternary operator
+
+```javascript
+export default Breadcrumbs;
+```
+**Line 62:** Export component  
+- Used in Layout component
+
+---
+
+## 📄 **frontend/src/components/Layout.jsx** (Main Layout Wrapper)
+
+### Purpose:
+Combines Sidebar, Navbar, and Breadcrumbs into a unified layout wrapper for all protected pages.
+
+### Key Features:
+- **Unified Layout**: Consistent navigation across all pages
+- **State Management**: Controls sidebar open/close state
+- **Responsive Design**: Adapts to mobile and desktop
+- **Scrollable Content**: Main area scrolls independently
+- **Max Width Container**: Content constrained for readability
+
+### Line-by-Line Explanation:
+
+```javascript
+import { useState } from 'react';
+import Sidebar from './Sidebar';
+import Navbar from './Navbar';
+import Breadcrumbs from './Breadcrumbs';
+```
+**Lines 1-4:** Import dependencies  
+- `useState` - React hook for sidebar state
+- Three layout components to compose
+
+```javascript
+const Layout = ({ children }) => {
+```
+**Line 6:** Component receives children prop  
+- `children` - Page content to render (Dashboard, Projects, etc.)
+- Layout wraps around page components
+
+```javascript
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+```
+**Line 7:** Sidebar state  
+- Initially closed (`false`) on mobile
+- Controls overlay visibility
+- Desktop sidebar always visible regardless of state
+
+```javascript
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+```
+**Lines 9-11:** Toggle function  
+- Flips boolean: `true` ↔ `false`
+- Passed to Sidebar and Navbar as prop
+- Opens/closes mobile sidebar
+
+```javascript
+  return (
+    <div className="flex h-screen bg-gray-50">
+```
+**Lines 13-14:** Root container  
+- Horizontal flex layout
+- Full viewport height (`h-screen`)
+- Light gray background
+
+```javascript
+      <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+```
+**Line 15:** Render Sidebar  
+- Pass state and toggle function
+- Sidebar handles its own visibility logic
+
+```javascript
+      <div className="flex flex-col flex-1">
+```
+**Line 17:** Main content area  
+- Vertical flex layout
+- `flex-1` - Takes remaining space after sidebar
+- Contains Navbar and scrollable content
+
+```javascript
+        <Navbar toggleSidebar={toggleSidebar} />
+```
+**Line 18:** Render Navbar  
+- Sticky at top of main area
+- Receives toggle function for hamburger button
+
+```javascript
+        <main className="flex-1 overflow-y-auto">
+```
+**Line 20:** Scrollable main content  
+- `flex-1` - Takes remaining vertical space
+- `overflow-y-auto` - Vertical scrolling when needed
+- Content area with breadcrumbs and pages
+
+```javascript
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+```
+**Line 21:** Content container  
+- `max-w-7xl` - Maximum width 80rem (1280px)
+- `mx-auto` - Centered horizontally
+- Responsive padding: 1rem → 1.5rem → 2rem
+- Vertical padding: 1.5rem
+
+```javascript
+            <Breadcrumbs />
+```
+**Line 22:** Render breadcrumbs  
+- Shows above page content
+- Automatic path-based generation
+
+```javascript
+            {children}
+```
+**Line 23:** Render page content  
+- Dashboard, Projects, Tickets, etc.
+- Passed as children prop from App.jsx routes
+
+```javascript
+export default Layout;
+```
+**Line 31:** Export component  
+- Used in App.jsx to wrap protected routes
+
+---
+
+## 📄 **frontend/src/pages/Dashboard.jsx** (ENHANCED)
+
+### Purpose:
+Main landing page after login, showing quick stats, recent activity, and project overview.
+
+### What Changed:
+- **Removed**: Old header with navigation and logout (moved to Layout)
+- **Added**: Stats calculations (total, in progress, completed, my tickets)
+- **Added**: Recent tickets sorting and display
+- **Added**: Quick stats cards with icons
+- **Added**: Two-column layout (activity feed + projects sidebar)
+- **Added**: Promotional card for Days 6-8 features
+
+### New Sections:
+
+#### 1. Stats Calculations (Lines 8-11):
+```javascript
+const totalTickets = tickets.length;
+const inProgressTickets = tickets.filter(t => t.status === 'In Progress').length;
+const completedTickets = tickets.filter(t => t.status === 'Resolved' || t.status === 'Closed').length;
+const myTickets = tickets.filter(t => t.assignedTo?._id === user?._id).length;
+```
+- Count total tickets
+- Count by status (in progress, completed)
+- Count tickets assigned to current user
+- Used in quick stats cards
+
+#### 2. Recent Tickets Sorting (Lines 13-16):
+```javascript
+const recentTickets = [...tickets]
+  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  .slice(0, 5);
+```
+- Copy array to avoid mutation
+- Sort by creation date (newest first)
+- Take only first 5 tickets
+- Displayed in activity feed
+
+#### 3. Quick Stats Cards (4 cards):
+```javascript
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+```
+- Responsive grid: 1 column → 2 columns → 4 columns
+- Cards show: Total, In Progress, Completed, Assigned to Me
+- Color-coded: Blue, Yellow, Green, Purple
+- Icons: 🎫 ⚡ ✅ 👤
+
+#### 4. Recent Activity Section (2/3 width on desktop):
+```javascript
+<div className="lg:col-span-2">
+```
+- Shows last 5 tickets
+- Type icons (🐛 bug, ✨ feature, 🔧 improvement, 📋 task)
+- Status and priority badges
+- Clickable to ticket detail page
+- If no tickets, shows "Create your first ticket" message
+
+#### 5. Projects Overview Sidebar (1/3 width on desktop):
+```javascript
+<div>
+  <div className="bg-white rounded-lg shadow-md p-6">
+    <h2 className="text-lg font-bold text-gray-900 mb-4">📁 Projects Overview</h2>
+```
+- Shows first 5 projects
+- Links to project detail pages
+- "View all X projects" link if more than 5
+- If no projects, shows "Create your first project" message
+
+#### 6. Promotional Card (Days 6-8 Features):
+```javascript
+<div className="bg-gradient-to-r from-primary-500 to-primary-700 rounded-lg shadow-md p-6 text-white">
+```
+- Gradient background (primary colors)
+- Feature list with checkmarks:
+  - ✓ Modern Dashboard Layout
+  - ✓ Responsive Navigation
+  - ✓ Visual Kanban Board
+- "Try Kanban Board →" call-to-action button
+- Links to `/kanban` page
+
+---
+
+## 📄 **frontend/src/App.jsx** (UPDATED)
+
+### What Changed:
+- **Added**: Import for Layout component
+- **Wrapped**: All 9 protected routes with `<Layout>` component
+
+### Before (Day 5):
+```javascript
+<Route path="/dashboard" element={
+  <ProtectedRoute>
+    <Dashboard />
+  </ProtectedRoute>
+} />
+```
+
+### After (Day 6):
+```javascript
+<Route path="/dashboard" element={
+  <ProtectedRoute>
+    <Layout>
+      <Dashboard />
+    </Layout>
+  </ProtectedRoute>
+} />
+```
+
+### All Wrapped Routes:
+1. `/dashboard` - Dashboard page
+2. `/projects` - Projects list
+3. `/projects/create` - Create project form
+4. `/projects/:id` - Project detail page
+5. `/projects/:id/edit` - Edit project (uses ProjectDetail)
+6. `/tickets` - Tickets list
+7. `/tickets/create` - Create ticket form
+8. `/tickets/:id` - Ticket detail page
+9. `/analytics` - Analytics/reports page
+10. `/kanban` - Kanban board (added in Day 8)
+
+### Unwrapped Routes (Public):
+- `/` - Redirects to login
+- `/login` - Login page
+- `/register` - Registration page
+
+**Why Layout Only on Protected Routes?**
+- Login/Register pages have their own centered layouts
+- No need for sidebar/navbar on public pages
+- Layout requires authentication (user data in Navbar)
+
+---
+
+# DAY 8: KANBAN BOARD WITH DRAG & DROP ⭐ NEW
+
+**Implementation Date:** January 22, 2026  
+**Focus:** Visual ticket management with drag-and-drop status updates
+
+**New Files Added:**
+1. `frontend/src/components/KanbanColumn.jsx` (124 lines)
+2. `frontend/src/pages/Kanban.jsx` (149 lines)
+
+**Modified Files:**
+- `frontend/src/App.jsx` (Added `/kanban` route)
+- `frontend/package.json` (Added react-beautiful-dnd dependency - NOT USED, went with native HTML5 drag-and-drop)
+
+**Note:** Initially installed `react-beautiful-dnd` but implemented using native HTML5 Drag and Drop API instead for simplicity and smaller bundle size.
+
+---
+
+## 📄 **frontend/src/components/KanbanColumn.jsx** (Kanban Column)
+
+### Purpose:
+Represents a single status column in the Kanban board with drag-and-drop functionality for ticket cards.
+
+### Key Features:
+- **Drag Source**: Tickets can be dragged from column
+- **Drop Target**: Accepts dropped tickets from other columns
+- **Visual Feedback**: Highlights drop zone on drag over
+- **Priority Indicators**: Color-coded left borders
+- **Type Icons**: Visual icons for bug, feature, task, improvement
+- **Card Details**: Title, description, project name, assignee
+- **Click Navigation**: Cards link to ticket detail page
+
+### Line-by-Line Explanation:
+
+```javascript
+import { Link } from 'react-router-dom';
+```
+**Line 1:** Import Link for navigation  
+- Cards clickable to ticket detail pages
+
+```javascript
+const KanbanColumn = ({ title, tickets, color, onDrop }) => {
+```
+**Line 3:** Component props  
+- `title` - Column name (Open, In Progress, etc.)
+- `tickets` - Array of tickets in this status
+- `color` - Tailwind background color class
+- `onDrop` - Callback function when ticket dropped
+
+```javascript
+  const handleDragStart = (e, ticket) => {
+    e.dataTransfer.setData('ticketId', ticket._id);
+    e.dataTransfer.setData('fromStatus', ticket.status);
+  };
+```
+**Lines 5-8:** Drag start handler  
+- Called when user starts dragging a ticket card
+- `e.dataTransfer.setData` - Store data for drop event
+- Stores ticket ID and current status
+- Both available in drop handler
+
+```javascript
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.currentTarget.classList.add('bg-gray-100');
+  };
+```
+**Lines 10-13:** Drag over handler  
+- Called continuously while dragging over column
+- `e.preventDefault()` - REQUIRED to allow drop
+- Add gray background for visual feedback
+- Shows user where ticket will drop
+
+```javascript
+  const handleDragLeave = (e) => {
+    e.currentTarget.classList.remove('bg-gray-100');
+  };
+```
+**Lines 15-17:** Drag leave handler  
+- Called when drag leaves column area
+- Remove highlight background
+- Returns to normal appearance
+
+```javascript
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.currentTarget.classList.remove('bg-gray-100');
+    const ticketId = e.dataTransfer.getData('ticketId');
+    const fromStatus = e.dataTransfer.getData('fromStatus');
+    
+    if (fromStatus !== title) {
+      onDrop(ticketId, title);
+    }
+  };
+```
+**Lines 19-27:** Drop handler  
+- Called when ticket dropped in column
+- Retrieve stored ticket ID and status
+- Check if status actually changed (`fromStatus !== title`)
+- Call parent's `onDrop` callback with ticket ID and new status
+- Parent handles API update
+
+```javascript
+  const getTypeIcon = (type) => {
+    const icons = {
+      'Bug': '🐛',
+      'Feature': '✨',
+      'Improvement': '🔧',
+      'Task': '📋'
+    };
+    return icons[type] || '📋';
+  };
+```
+**Lines 29-36:** Get ticket type icon  
+- Bug: 🐛 (bug emoji)
+- Feature: ✨ (sparkles)
+- Improvement: 🔧 (wrench)
+- Task: 📋 (clipboard)
+- Default to clipboard if unknown type
+
+```javascript
+  const getPriorityColor = (priority) => {
+    const colors = {
+      'Low': 'border-l-gray-400',
+      'Medium': 'border-l-blue-500',
+      'High': 'border-l-orange-500',
+      'Critical': 'border-l-red-500'
+    };
+    return colors[priority] || 'border-l-gray-400';
+  };
+```
+**Lines 38-45:** Get priority color  
+- Returns Tailwind left border class
+- Low: Gray
+- Medium: Blue
+- High: Orange
+- Critical: Red
+- Visual indicator on card left edge
+
+```javascript
+  return (
+    <div className="flex-1 min-w-[300px]">
+```
+**Lines 47-48:** Column container  
+- `flex-1` - Equal width columns
+- `min-w-[300px]` - Minimum 300px width
+- Allows horizontal scrolling if needed
+
+```javascript
+      <div className="bg-white rounded-lg shadow-md">
+        {/* Column Header */}
+        <div className={`${color} text-white p-4 rounded-t-lg`}>
+```
+**Lines 49-51:** Column header  
+- White background card
+- Colored header bar (passed as prop)
+- White text for contrast
+
+```javascript
+          <div className="flex items-center justify-between">
+            <h3 className="font-bold text-lg">{title}</h3>
+            <span className="bg-white bg-opacity-20 px-2 py-1 rounded-full text-sm font-medium">
+              {tickets.length}
+            </span>
+          </div>
+```
+**Lines 52-57:** Header content  
+- Title on left (e.g., "Open", "In Progress")
+- Ticket count badge on right
+- Semi-transparent white badge (20% opacity)
+
+```javascript
+        {/* Drop Zone */}
+        <div
+          className="p-4 space-y-3 min-h-[500px] transition-colors"
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+        >
+```
+**Lines 60-66:** Drop zone area  
+- Padding and spacing between cards
+- Minimum height 500px (keeps columns aligned)
+- Smooth color transition for highlight
+- Three drag event handlers
+
+```javascript
+          {tickets.length === 0 ? (
+            <div className="text-center text-gray-400 py-8">
+              <p className="text-sm">No tickets</p>
+              <p className="text-xs mt-1">Drag tickets here</p>
+            </div>
+```
+**Lines 67-71:** Empty state  
+- Shown when no tickets in column
+- Centered gray text
+- Instructions to drag tickets
+
+```javascript
+          ) : (
+            tickets.map((ticket) => (
+              <div
+                key={ticket._id}
+                draggable
+                onDragStart={(e) => handleDragStart(e, ticket)}
+                className={`bg-white border-l-4 ${getPriorityColor(ticket.priority)} rounded-lg shadow hover:shadow-lg cursor-move transition-all`}
+              >
+```
+**Lines 72-79:** Ticket card  
+- Loop through tickets array
+- `draggable` - Makes card draggable (HTML5 attribute)
+- `onDragStart` - Stores ticket data
+- Left border color based on priority
+- `cursor-move` - Shows move cursor on hover
+- Shadow increases on hover
+
+```javascript
+                <Link to={`/tickets/${ticket._id}`} className="block p-4">
+```
+**Line 80:** Card is clickable link  
+- Navigates to ticket detail page
+- Block display for full card clickability
+
+```javascript
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-lg">{getTypeIcon(ticket.type)}</span>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(ticket.priority).replace('border-l-', 'bg-')
+                        .replace('400', '100 text-gray-700')
+                        .replace('500', '100 text-blue-700')
+                        .replace('orange-100 text-blue-700', 'orange-100 text-orange-700')
+                        .replace('red-100 text-blue-700', 'red-100 text-red-700')}`}>
+                        {ticket.priority}
+                      </span>
+                    </div>
+                  </div>
+```
+**Lines 81-92:** Card header  
+- Type icon on left
+- Priority badge (colored pill)
+- Complex class manipulation:
+  - Converts border color to background color
+  - Changes shade: 500 → 100 (lighter)
+  - Adds appropriate text color
+  - Example: `border-l-red-500` → `bg-red-100 text-red-700`
+
+```javascript
+                  <h4 className="font-semibold text-gray-900 mb-2 line-clamp-2">
+                    {ticket.title}
+                  </h4>
+```
+**Lines 94-96:** Ticket title  
+- Bold, dark text
+- `line-clamp-2` - Truncate to 2 lines with ellipsis
+- Prevents overly long titles
+
+```javascript
+                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                    {ticket.description}
+                  </p>
+```
+**Lines 98-100:** Ticket description  
+- Smaller text, gray color
+- Truncate to 2 lines
+- Preview of full description
+
+```javascript
+                  <div className="flex items-center justify-between text-xs text-gray-500">
+                    <span className="truncate">{ticket.project?.name}</span>
+                    {ticket.assignedTo && (
+                      <span className="ml-2 flex-shrink-0 flex items-center space-x-1">
+                        <span>👤</span>
+                        <span className="truncate max-w-[100px]">{ticket.assignedTo.name}</span>
+                      </span>
+                    )}
+                  </div>
+```
+**Lines 102-110:** Card footer  
+- Project name on left (truncated)
+- Assignee on right (if assigned)
+- User icon: 👤
+- Small text size
+- Max width on assignee name
+
+```javascript
+export default KanbanColumn;
+```
+**Line 121:** Export component  
+- Used in Kanban page
+
+---
+
+## 📄 **frontend/src/pages/Kanban.jsx** (Kanban Board Page)
+
+### Purpose:
+Main Kanban board page displaying tickets in columns by status with drag-and-drop functionality.
+
+### Key Features:
+- **5 Status Columns**: Open, In Progress, In Review, Resolved, Closed
+- **Drag & Drop**: Move tickets between columns to update status
+- **Project Filter**: Dropdown to filter tickets by project
+- **Stats Display**: Total tickets, active, completed counts
+- **Loading Indicator**: Shows when updating ticket status
+- **Empty State**: Message when no tickets found
+- **Instructions Panel**: Usage guide for users
+- **Refresh Button**: Reload tickets data
+
+### Line-by-Line Explanation:
+
+```javascript
+import { useState, useEffect } from 'react';
+import { useTicket } from '../context/TicketContext';
+import { useProject } from '../context/ProjectContext';
+import { toast } from 'react-toastify';
+import KanbanColumn from '../components/KanbanColumn';
+```
+**Lines 1-5:** Import dependencies  
+- React hooks for state and effects
+- Ticket and Project contexts for data
+- Toast for success/error notifications
+- KanbanColumn component
+
+```javascript
+const Kanban = () => {
+  const { tickets, fetchTickets, updateTicket } = useTicket();
+  const { projects } = useProject();
+```
+**Lines 7-9:** Component setup  
+- Get tickets array and functions from context
+- Get projects list for filter dropdown
+- `updateTicket` - API function to change ticket status
+
+```javascript
+  const [selectedProject, setSelectedProject] = useState('all');
+  const [loading, setLoading] = useState(false);
+```
+**Lines 10-11:** Local state  
+- `selectedProject` - Current filter selection (default 'all')
+- `loading` - Shows spinner during API update
+
+```javascript
+  useEffect(() => {
+    loadTickets();
+  }, []);
+```
+**Lines 13-15:** Load tickets on mount  
+- Empty dependency array - runs once
+- Fetches all tickets from API
+
+```javascript
+  const loadTickets = () => {
+    fetchTickets();
+  };
+```
+**Lines 17-19:** Wrapper function for refresh  
+- Called by refresh button
+- Reloads all tickets
+
+```javascript
+  const handleStatusChange = async (ticketId, newStatus) => {
+    setLoading(true);
+    try {
+      const result = await updateTicket(ticketId, { status: newStatus });
+      if (result.success) {
+        toast.success(`Ticket moved to ${newStatus}`);
+      }
+    } catch (error) {
+      toast.error('Failed to update ticket status');
+    } finally {
+      setLoading(false);
+    }
+  };
+```
+**Lines 21-33:** Handle ticket drop  
+- Called when ticket dropped in new column
+- Set loading state (shows spinner)
+- Call API to update ticket status
+- Show success toast with new status
+- Show error toast if update fails
+- Always clear loading state (finally block)
+
+```javascript
+  const filteredTickets = selectedProject === 'all' 
+    ? tickets 
+    : tickets.filter(t => t.project?._id === selectedProject);
+```
+**Lines 35-37:** Filter tickets by project  
+- If "all" selected, show all tickets
+- Otherwise, filter by matching project ID
+- Uses optional chaining: `t.project?._id`
+
+```javascript
+  const columns = [
+    { 
+      title: 'Open', 
+      tickets: filteredTickets.filter(t => t.status === 'Open'),
+      color: 'bg-blue-500'
+    },
+    { 
+      title: 'In Progress', 
+      tickets: filteredTickets.filter(t => t.status === 'In Progress'),
+      color: 'bg-yellow-500'
+    },
+    { 
+      title: 'In Review', 
+      tickets: filteredTickets.filter(t => t.status === 'In Review'),
+      color: 'bg-purple-500'
+    },
+    { 
+      title: 'Resolved', 
+      tickets: filteredTickets.filter(t => t.status === 'Resolved'),
+      color: 'bg-green-500'
+    },
+    { 
+      title: 'Closed', 
+      tickets: filteredTickets.filter(t => t.status === 'Closed'),
+      color: 'bg-gray-500'
+    }
+  ];
+```
+**Lines 39-61:** Define columns  
+- Array of 5 column objects
+- Each has title, filtered tickets, and color
+- Tickets filtered by status for each column
+- Colors: Blue → Yellow → Purple → Green → Gray
+- Represents workflow progression
+
+```javascript
+  return (
+    <div>
+      {/* Header */}
+      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+```
+**Lines 63-66:** Page container and header  
+- White card with shadow
+- Padding and bottom margin
+
+```javascript
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">📋 Kanban Board</h1>
+            <p className="text-gray-600">Drag and drop tickets to update their status</p>
+          </div>
+```
+**Lines 67-72:** Header left side  
+- Title with clipboard icon
+- Subtitle with usage instructions
+- Responsive flex-wrap for mobile
+
+```javascript
+          <div className="flex items-center space-x-4">
+            {/* Project Filter */}
+            <select
+              value={selectedProject}
+              onChange={(e) => setSelectedProject(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            >
+              <option value="all">All Projects</option>
+              {projects.map(project => (
+                <option key={project._id} value={project._id}>
+                  {project.name}
+                </option>
+              ))}
+            </select>
+```
+**Lines 74-87:** Project filter dropdown  
+- Controlled select element
+- "All Projects" default option
+- Map through projects array
+- Updates `selectedProject` state on change
+- Triggers re-filter of tickets
+
+```javascript
+            <button
+              onClick={loadTickets}
+              className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition"
+            >
+              🔄 Refresh
+            </button>
+```
+**Lines 89-94:** Refresh button  
+- Primary colored button
+- Refresh icon: 🔄
+- Reloads all tickets from API
+
+```javascript
+        {/* Stats */}
+        <div className="mt-4 flex flex-wrap gap-4 text-sm">
+          <div className="flex items-center space-x-2">
+            <span className="text-gray-600">Total:</span>
+            <span className="font-bold text-gray-900">{filteredTickets.length}</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <span className="text-gray-600">Active:</span>
+            <span className="font-bold text-yellow-600">
+              {filteredTickets.filter(t => ['Open', 'In Progress', 'In Review'].includes(t.status)).length}
+            </span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <span className="text-gray-600">Completed:</span>
+            <span className="font-bold text-green-600">
+              {filteredTickets.filter(t => ['Resolved', 'Closed'].includes(t.status)).length}
+            </span>
+          </div>
+        </div>
+```
+**Lines 98-114:** Statistics row  
+- Total tickets count
+- Active tickets (Open + In Progress + In Review) - Yellow
+- Completed tickets (Resolved + Closed) - Green
+- Responsive wrap on small screens
+
+```javascript
+      {/* Loading Indicator */}
+      {loading && (
+        <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-xl p-4 z-50">
+          <div className="flex items-center space-x-3">
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-600"></div>
+            <span className="text-gray-700">Updating ticket...</span>
+          </div>
+        </div>
+      )}
+```
+**Lines 117-125:** Loading overlay  
+- Shown when `loading` state is true
+- Centered fixed position
+- Spinning circle animation
+- "Updating ticket..." message
+- High z-index (appears above everything)
+
+```javascript
+      {/* Kanban Board */}
+      <div className="flex space-x-4 overflow-x-auto pb-4">
+        {columns.map((column) => (
+          <KanbanColumn
+            key={column.title}
+            title={column.title}
+            tickets={column.tickets}
+            color={column.color}
+            onDrop={handleStatusChange}
+          />
+        ))}
+      </div>
+```
+**Lines 127-138:** Kanban columns  
+- Horizontal flex layout
+- `overflow-x-auto` - Horizontal scroll if needed
+- Map through columns array
+- Render KanbanColumn for each status
+- Pass `handleStatusChange` as drop callback
+
+```javascript
+      {/* Empty State */}
+      {filteredTickets.length === 0 && (
+        <div className="bg-white rounded-lg shadow-md p-12 text-center">
+          <div className="text-6xl mb-4">📭</div>
+          <h3 className="text-xl font-bold text-gray-900 mb-2">No tickets found</h3>
+          <p className="text-gray-600 mb-6">
+            {selectedProject === 'all' 
+              ? 'Create your first ticket to get started!'
+              : 'No tickets in this project. Try selecting a different project.'}
+          </p>
+          <a
+            href="/tickets/create"
+            className="inline-block px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition font-medium"
+          >
+            + Create First Ticket
+          </a>
+        </div>
+      )}
+```
+**Lines 140-157:** Empty state message  
+- Shown when no tickets match filter
+- Large mailbox icon: 📭
+- Different messages for "all projects" vs. specific project
+- Call-to-action button to create ticket
+- Centered, prominent design
+
+```javascript
+      {/* Instructions */}
+      <div className="mt-6 bg-primary-50 border border-primary-200 rounded-lg p-4">
+        <h3 className="font-semibold text-primary-900 mb-2">💡 How to use:</h3>
+        <ul className="text-sm text-primary-800 space-y-1">
+          <li>• <strong>Drag & Drop:</strong> Click and drag tickets between columns to update their status</li>
+          <li>• <strong>Click Ticket:</strong> Click on any ticket card to view full details</li>
+          <li>• <strong>Filter by Project:</strong> Use the dropdown to view tickets from specific projects</li>
+          <li>• <strong>Color Codes:</strong> Left border indicates priority (Gray=Low, Blue=Medium, Orange=High, Red=Critical)</li>
+        </ul>
+      </div>
+```
+**Lines 159-167:** Instructions panel  
+- Light blue background (primary-50)
+- Bulb icon: 💡
+- 4 usage tips with bullet points
+- Explains drag-and-drop, clicking, filtering, color codes
+- Helps new users understand interface
+
+```javascript
+export default Kanban;
+```
+**Line 172:** Export component  
+- Used in App.jsx routing
+
+---
+
+## Summary of Days 6-8 Implementation:
+
+### Day 6 Achievements:
+✅ **Professional Layout System**
+- Sidebar with collapsible mobile menu
+- Top navbar with search and user profile
+- Dynamic breadcrumb navigation
+- Unified Layout wrapper component
+
+✅ **Enhanced Dashboard**
+- Quick stats cards (4 metrics)
+- Recent activity feed (last 5 tickets)
+- Projects overview sidebar
+- Promotional card for new features
+
+✅ **Consistent User Experience**
+- All 9 protected pages wrapped in Layout
+- Active state highlighting in navigation
+- Responsive design (mobile → tablet → desktop)
+- Professional color scheme with gradients
+
+### Day 8 Achievements:
+✅ **Kanban Board System**
+- Visual ticket management interface
+- 5-column workflow (Open → In Progress → In Review → Resolved → Closed)
+- Native HTML5 drag-and-drop (no external library needed)
+- Real-time status updates via API
+
+✅ **User Experience Features**
+- Project filtering dropdown
+- Live statistics (total, active, completed)
+- Loading indicator during updates
+- Empty state with CTA
+- Usage instructions panel
+- Priority color coding (border indicators)
+- Type icons (bug, feature, task, improvement)
+
+### Technical Implementation:
+- **Native Drag & Drop API**: Used HTML5 `draggable`, `onDragStart`, `onDragOver`, `onDrop`
+- **Visual Feedback**: Column highlights when dragging over
+- **Optimistic Updates**: Context automatically refetches after update
+- **Error Handling**: Toast notifications for success/failure
+- **Responsive Layout**: Horizontal scroll on mobile, full view on desktop
+- **Performance**: Efficient filtering and state management
+
+### File Count After Days 6-8:
+**Backend:** 13 files (unchanged)  
+**Frontend:** 22 files (was 17)
+- **Added Components (5)**: Sidebar, Navbar, Breadcrumbs, Layout, KanbanColumn
+- **Added Pages (1)**: Kanban
+- **Enhanced (2)**: Dashboard, App.jsx
+
+**Total Project:** 35 code files + documentation
+
+### Technology Stack After Days 6-8:
+- React 18 + Hooks (useState, useEffect, useContext, useLocation)
+- React Router 6 (navigation, Layout pattern)
+- Tailwind CSS (responsive utilities, gradients, animations)
+- HTML5 Drag & Drop API (native browser API)
+- Context API (state management)
+- Toast notifications (user feedback)
+- Axios (API communication)
+
+---
+
+# DAY 10: ADVANCED FILTERING & SEARCH SYSTEM ⭐ NEW
+
+**Implementation Date:** January 23, 2026  
+**Focus:** Comprehensive filtering system with URL-based state management and reusable components
+
+**New Files Added:**
+1. `frontend/src/components/FilterBar.jsx` (237 lines)
+
+**Modified Files:**
+- `frontend/src/pages/Tickets.jsx` (Refactored to use FilterBar component + URL params)
+- `backend/controllers/ticketController.js` (Added keyword search support)
+
+---
+
+## 📄 **frontend/src/components/FilterBar.jsx** (Advanced Filter Component)
+
+### Purpose:
+Reusable filter bar component that provides comprehensive filtering and search capabilities for tickets with visual feedback and clear filter functionality.
+
+### Key Features:
+- **Multi-Filter Support**: Search, Project, Status, Priority, User filters
+- **Clear All Filters**: Single button to reset all filters
+- **Active Filters Display**: Visual badges showing applied filters with individual remove buttons
+- **User Filter Tabs**: Quick access to "All", "Assigned to Me", "Reported by Me"
+- **Real-time Counts**: Shows ticket counts for each user filter tab
+- **Visual Feedback**: Highlights when filters are active
+- **Responsive Design**: Adapts to mobile, tablet, and desktop screens
+
+### Line-by-Line Explanation:
+
+```javascript
+import { useAuth } from '../context/AuthContext';
+```
+**Line 1:** Import authentication context  
+- Access current user data for "Assigned to Me" filter
+- Used to count user-specific tickets
+
+```javascript
+const FilterBar = ({ 
+  searchTerm, 
+  setSearchTerm,
+  statusFilter,
+  setStatusFilter,
+  priorityFilter,
+  setPriorityFilter,
+  projectFilter,
+  setProjectFilter,
+  userFilter,
+  setUserFilter,
+  projects,
+  tickets,
+  onClearFilters
+}) => {
+```
+**Lines 3-18:** Component props definition  
+- **Filter State Props**: Current values and setters for each filter type
+- `searchTerm` / `setSearchTerm` - Text search input
+- `statusFilter` / `setStatusFilter` - Status dropdown
+- `priorityFilter` / `setPriorityFilter` - Priority dropdown
+- `projectFilter` / `setProjectFilter` - Project dropdown
+- `userFilter` / `setUserFilter` - User filter tabs (all/assigned/reported)
+- **Data Props**: `projects` array, `tickets` array
+- **Callback Props**: `onClearFilters` - Function to reset all filters
+- All state managed by parent component (Tickets.jsx)
+
+```javascript
+  const { user } = useAuth();
+```
+**Line 19:** Get current user  
+- Used for filtering tickets assigned to/reported by current user
+- Required for user filter tab counts
+
+```javascript
+  const hasActiveFilters = searchTerm || statusFilter || priorityFilter || projectFilter || userFilter !== 'all';
+```
+**Line 21:** Check if any filters are active  
+- Boolean flag for conditional rendering
+- Shows "Clear All" button and active filters summary
+- `userFilter !== 'all'` - Default state is 'all', others are active
+
+```javascript
+  return (
+    <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-semibold text-gray-900">🔍 Filter & Search</h2>
+```
+**Lines 23-26:** Filter bar header  
+- White card with shadow
+- Search icon 🔍 and title
+- Flex layout for title/clear button alignment
+
+```javascript
+        {hasActiveFilters && (
+          <button
+            onClick={onClearFilters}
+            className="text-sm text-gray-600 hover:text-primary-600 font-medium transition flex items-center space-x-1"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            <span>Clear All Filters</span>
+          </button>
+        )}
+```
+**Lines 27-37:** Clear All button (conditional)  
+- Only shown when `hasActiveFilters` is true
+- X icon (cross) next to text
+- Calls parent's `onClearFilters` function
+- Hover effect changes color to primary
+
+```javascript
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+```
+**Line 40:** Filter grid layout  
+- Responsive: 1 column → 2 columns → 5 columns
+- Mobile-first approach
+- 1rem gap between fields
+
+```javascript
+        {/* Search Input */}
+        <div className="lg:col-span-2">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Search
+          </label>
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search by title or description..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            />
+            <svg 
+              className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+        </div>
+```
+**Lines 41-62:** Search input field  
+- Spans 2 columns on desktop (`lg:col-span-2`)
+- Label "Search" above input
+- Left padding for search icon
+- Magnifying glass icon positioned absolutely
+- Focus ring in primary color
+- Controlled input (value + onChange)
+
+```javascript
+        {/* Project Filter */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Project
+          </label>
+          <select
+            value={projectFilter}
+            onChange={(e) => setProjectFilter(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+          >
+            <option value="">All Projects</option>
+            {projects.map(project => (
+              <option key={project._id} value={project._id}>
+                {project.name}
+              </option>
+            ))}
+          </select>
+        </div>
+```
+**Lines 64-80:** Project dropdown filter  
+- Label "Project" above dropdown
+- "All Projects" default option (empty value)
+- Maps through projects array
+- Each option uses project ID as value
+- Controlled select element
+
+```javascript
+        {/* Status Filter */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Status
+          </label>
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+          >
+            <option value="">All Status</option>
+            <option value="Open">Open</option>
+            <option value="In Progress">In Progress</option>
+            <option value="In Review">In Review</option>
+            <option value="Resolved">Resolved</option>
+            <option value="Closed">Closed</option>
+          </select>
+        </div>
+```
+**Lines 82-98:** Status dropdown filter  
+- 5 status options matching ticket schema
+- Default "All Status" (empty value)
+- Matches ticket lifecycle stages
+
+```javascript
+        {/* Priority Filter */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Priority
+          </label>
+          <select
+            value={priorityFilter}
+            onChange={(e) => setPriorityFilter(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+          >
+            <option value="">All Priority</option>
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+            <option value="Critical">Critical</option>
+          </select>
+        </div>
+```
+**Lines 100-115:** Priority dropdown filter  
+- 4 priority levels
+- Default "All Priority"
+- Matches ticket priority schema
+
+```javascript
+      {/* User Filter Tabs */}
+      <div className="flex flex-wrap gap-2 mt-4">
+        <button
+          onClick={() => setUserFilter('all')}
+          className={`px-4 py-2 rounded-lg font-medium transition ${
+            userFilter === 'all' 
+              ? 'bg-primary-600 text-white' 
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          }`}
+        >
+          All Tickets ({tickets.length})
+        </button>
+```
+**Lines 119-130:** "All Tickets" tab button  
+- Active state: Primary background, white text
+- Inactive state: Gray background, hover effect
+- Shows total ticket count
+- Sets userFilter to 'all'
+
+```javascript
+        <button
+          onClick={() => setUserFilter('assigned')}
+          className={`px-4 py-2 rounded-lg font-medium transition ${
+            userFilter === 'assigned' 
+              ? 'bg-primary-600 text-white' 
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          }`}
+        >
+          Assigned to Me ({tickets.filter(t => t.assignedTo?._id === user._id).length})
+        </button>
+```
+**Lines 131-140:** "Assigned to Me" tab button  
+- Filters tickets where assignedTo matches current user
+- Real-time count calculation
+- Optional chaining: `t.assignedTo?._id`
+
+```javascript
+        <button
+          onClick={() => setUserFilter('reported')}
+          className={`px-4 py-2 rounded-lg font-medium transition ${
+            userFilter === 'reported' 
+              ? 'bg-primary-600 text-white' 
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          }`}
+        >
+          Reported by Me ({tickets.filter(t => t.reportedBy._id === user._id).length})
+        </button>
+```
+**Lines 141-150:** "Reported by Me" tab button  
+- Filters tickets where reportedBy matches current user
+- Shows count of user's reported tickets
+
+```javascript
+      {/* Active Filters Summary */}
+      {hasActiveFilters && (
+        <div className="mt-4 pt-4 border-t border-gray-200">
+          <div className="flex flex-wrap gap-2 items-center">
+            <span className="text-sm text-gray-600 font-medium">Active Filters:</span>
+```
+**Lines 154-158:** Active filters section (conditional)  
+- Only shown when filters are active
+- Top border separator
+- "Active Filters:" label
+
+```javascript
+            {searchTerm && (
+              <span className="px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm flex items-center space-x-1">
+                <span>Search: "{searchTerm}"</span>
+                <button onClick={() => setSearchTerm('')} className="hover:text-primary-900">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </span>
+            )}
+```
+**Lines 159-168:** Search term badge  
+- Primary-colored pill badge
+- Shows search query text
+- X button to clear just this filter
+- Hover effect on X button
+
+```javascript
+            {statusFilter && (
+              <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm flex items-center space-x-1">
+                <span>Status: {statusFilter}</span>
+                <button onClick={() => setStatusFilter('')} className="hover:text-blue-900">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </span>
+            )}
+```
+**Lines 169-178:** Status filter badge  
+- Blue-colored badge
+- Shows selected status
+- Individual remove button
+
+```javascript
+            {priorityFilter && (
+              <span className="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm flex items-center space-x-1">
+                <span>Priority: {priorityFilter}</span>
+                <button onClick={() => setPriorityFilter('')} className="hover:text-orange-900">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </span>
+            )}
+```
+**Lines 179-188:** Priority filter badge  
+- Orange-colored badge
+- Shows selected priority
+- Individual remove button
+
+```javascript
+            {projectFilter && (
+              <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm flex items-center space-x-1">
+                <span>Project: {projects.find(p => p._id === projectFilter)?.name}</span>
+                <button onClick={() => setProjectFilter('')} className="hover:text-green-900">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </span>
+            )}
+```
+**Lines 189-198:** Project filter badge  
+- Green-colored badge
+- Looks up project name from ID: `projects.find(...)`
+- Shows project name instead of ID
+- Individual remove button
+
+```javascript
+            {userFilter !== 'all' && (
+              <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm flex items-center space-x-1">
+                <span>User: {userFilter === 'assigned' ? 'Assigned to Me' : 'Reported by Me'}</span>
+                <button onClick={() => setUserFilter('all')} className="hover:text-purple-900">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </span>
+            )}
+```
+**Lines 199-208:** User filter badge  
+- Purple-colored badge
+- Shows "Assigned to Me" or "Reported by Me"
+- Remove button sets back to 'all'
+
+```javascript
+export default FilterBar;
+```
+**Line 217:** Export component  
+- Used in Tickets.jsx page
+
+---
+
+## 📄 **frontend/src/pages/Tickets.jsx** (ENHANCED - Day 10)
+
+### Purpose:
+Ticket list page with advanced filtering, search, and URL-based state management.
+
+### What Changed:
+- **Added**: FilterBar component import and usage
+- **Added**: URL parameter support with `useSearchParams` hook
+- **Added**: `handleClearFilters` function to reset all filters
+- **Enhanced**: Empty state message with filter-aware text
+- **Enhanced**: Showing "X of Y tickets" count
+- **Removed**: Inline filter UI (moved to FilterBar component)
+
+### Key New Features:
+
+#### 1. URL Parameters Integration (Lines 12-36):
+```javascript
+const [searchParams, setSearchParams] = useSearchParams();
+
+// Initialize state from URL params
+const [userFilter, setUserFilter] = useState(searchParams.get('user') || 'all');
+const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
+// ... other filters
+
+// Update URL params when filters change
+useEffect(() => {
+  const params = {};
+  if (userFilter !== 'all') params.user = userFilter;
+  if (searchTerm) params.search = searchTerm;
+  // ... other params
+  
+  setSearchParams(params);
+}, [userFilter, searchTerm, statusFilter, priorityFilter, projectFilter, setSearchParams]);
+```
+**Purpose:** Sync filters with URL  
+- Read initial values from URL on page load
+- Update URL whenever filters change
+- Enables shareable filtered views
+- Browser back/forward buttons work correctly
+- Example URL: `/tickets?status=Open&priority=High&search=login`
+
+#### 2. Clear Filters Function (Lines 38-43):
+```javascript
+const handleClearFilters = () => {
+  setUserFilter('all');
+  setSearchTerm('');
+  setStatusFilter('');
+  setPriorityFilter('');
+  setProjectFilter('');
+};
+```
+**Purpose:** Reset all filters to default state  
+- Sets all filters to empty/default values
+- Called by FilterBar's "Clear All" button
+- URL params automatically updated via useEffect
+
+#### 3. FilterBar Component Usage (Lines 90-106):
+```javascript
+<FilterBar
+  searchTerm={searchTerm}
+  setSearchTerm={setSearchTerm}
+  statusFilter={statusFilter}
+  setStatusFilter={setStatusFilter}
+  priorityFilter={priorityFilter}
+  setPriorityFilter={setPriorityFilter}
+  projectFilter={projectFilter}
+  setProjectFilter={setProjectFilter}
+  userFilter={userFilter}
+  setUserFilter={setUserFilter}
+  projects={projects}
+  tickets={tickets}
+  onClearFilters={handleClearFilters}
+/>
+```
+**Purpose:** Render filter UI  
+- Pass all filter state and setters as props
+- FilterBar manages UI, Tickets.jsx manages state
+- Separation of concerns (presentation vs. logic)
+
+#### 4. Enhanced Empty State (Lines 108-123):
+```javascript
+{filteredTickets.length === 0 ? (
+  <div className="bg-white rounded-lg shadow-md p-12 text-center">
+    <div className="text-6xl mb-4">📭</div>
+    <h3 className="text-xl font-bold text-gray-900 mb-2">No tickets found</h3>
+    <p className="text-gray-600 mb-6">
+      {tickets.length === 0 
+        ? 'Create your first ticket to get started!' 
+        : 'Try adjusting your filters or search criteria.'}
+    </p>
+    <Link to="/tickets/create" className="...">
+      + Create Ticket
+    </Link>
+  </div>
+```
+**Purpose:** Context-aware empty state  
+- Different messages for "no tickets at all" vs. "no matches for filters"
+- Guides user to create ticket or adjust filters
+- Mailbox icon 📭 for visual appeal
+
+#### 5. Result Count Display (Lines 126-129):
+```javascript
+<div className="mb-4 text-sm text-gray-600">
+  Showing <span className="font-semibold text-gray-900">{filteredTickets.length}</span> of{' '}
+  <span className="font-semibold text-gray-900">{tickets.length}</span> tickets
+</div>
+```
+**Purpose:** Show filtered vs. total count  
+- Example: "Showing 5 of 23 tickets"
+- Helps users understand filter impact
+- Bold numbers for emphasis
+
+---
+
+## 📄 **backend/controllers/ticketController.js** (ENHANCED - Day 10)
+
+### Purpose:
+Ticket controller with enhanced search functionality.
+
+### What Changed:
+- **Added**: `search` query parameter support
+- **Added**: MongoDB text search using `$regex` operator
+- **Enhanced**: Search across both title and description fields
+
+### New Code (Lines 6-33):
+```javascript
+const { project, status, priority, assignedTo, search } = req.query;
+
+// ... existing filter logic ...
+
+// Search filter - search in title and description
+if (search) {
+  filter.$or = [
+    { title: { $regex: search, $options: 'i' } },
+    { description: { $regex: search, $options: 'i' } }
+  ];
+}
+```
+
+**How it works:**
+- `$regex` - MongoDB regex operator for pattern matching
+- `$options: 'i'` - Case-insensitive search
+- `$or` - Matches if either title OR description contains search term
+- Example: search="login" matches:
+  - Title: "Login Bug"
+  - Description: "User cannot login to dashboard"
+
+**API Usage:**
+```
+GET /api/tickets?search=login
+GET /api/tickets?search=bug&status=Open
+GET /api/tickets?search=critical&priority=High
+```
+
+---
+
+## Summary of Day 10 Implementation:
+
+### Achievements:
+✅ **Reusable FilterBar Component**
+- 237 lines of clean, documented code
+- 5 filter types: Search, Project, Status, Priority, User
+- Clear all filters button
+- Active filters summary with individual remove buttons
+- Responsive design (mobile → desktop)
+- Real-time ticket counts on user filter tabs
+
+✅ **URL-Based Filter State**
+- React Router's `useSearchParams` integration
+- Shareable filtered views via URL
+- Browser history support (back/forward)
+- State persistence on page reload
+- Clean URL structure: `?status=Open&priority=High&search=login`
+
+✅ **Backend Search Enhancement**
+- Keyword search in ticket title and description
+- Case-insensitive MongoDB regex search
+- Combines with existing filters (status, priority, project)
+- Efficient query building
+
+✅ **Enhanced User Experience**
+- "Clear All Filters" button for quick reset
+- Visual badges showing active filters
+- Individual remove buttons on each filter badge
+- Context-aware empty state messages
+- "X of Y tickets" count display
+- Color-coded filter badges (primary, blue, orange, green, purple)
+
+### Technical Implementation:
+- **Component Architecture**: Separation of concerns (FilterBar UI / Tickets logic)
+- **State Management**: Lift state up to parent, pass props down
+- **URL Synchronization**: useEffect hook to sync filters with URL
+- **Backend Filtering**: MongoDB aggregation with $or and $regex
+- **Performance**: Client-side filtering (fast), server-side search (scalable)
+
+### File Changes Summary:
+**New Files (1):**
+- `frontend/src/components/FilterBar.jsx` (237 lines)
+
+**Modified Files (2):**
+- `frontend/src/pages/Tickets.jsx` (Refactored, added URL params)
+- `backend/controllers/ticketController.js` (Added search parameter)
+
+### File Count After Day 10:
+**Backend:** 13 files (unchanged structure)  
+**Frontend:** 23 files (was 22)
+- **Added Components (1)**: FilterBar
+- **Enhanced Pages (1)**: Tickets
+
+**Total Project:** 36 code files + documentation
+
+### Technology Stack Additions:
+- **React Router `useSearchParams`**: URL state management
+- **MongoDB `$regex`**: Text search operator
+- **MongoDB `$or`**: Multi-field search logic
+
+### Usage Examples:
+
+**Share filtered view:**
+```
+Copy URL: https://app.com/tickets?status=Open&priority=Critical
+Send to teammate → They see same filtered view
+```
+
+**Search for specific issue:**
+```
+Type "login" in search → Shows all tickets with "login" in title or description
+Combine with status filter → Only show open login issues
+```
+
+**Quick user filters:**
+```
+Click "Assigned to Me" → See only tickets assigned to you
+Click "Reported by Me" → See only tickets you created
+```
+
+**Clear all filters:**
+```
+Applied 4 filters → Click "Clear All Filters" → Back to showing all tickets
+```
+
+---

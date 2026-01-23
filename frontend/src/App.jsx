@@ -19,6 +19,7 @@ import CreateTicket from './pages/CreateTicket';
 import TicketDetail from './pages/TicketDetail';
 import Analytics from './pages/Analytics';
 import Kanban from './pages/Kanban';
+import NotFound from './pages/NotFound';
 
 function App() {
   return (
@@ -134,6 +135,9 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
+                
+                {/* 404 Not Found - Must be last */}
+                <Route path="*" element={<NotFound />} />
               </Routes>
               <ToastContainer position="top-right" autoClose={3000} />
             </div>
