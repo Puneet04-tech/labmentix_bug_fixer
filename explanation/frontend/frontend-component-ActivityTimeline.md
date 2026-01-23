@@ -28,6 +28,19 @@ const ActivityTimeline = ({ ticketId }) => {
 - **activities**: Array of activity objects
 - **loading**: Boolean loading state
 
+### Technical Terms Glossary
+- **Activity object**: Normalized record derived from comments (id, type, action, user, content, timestamp, icon) suitable for timeline display.
+- **Sorting by timestamp**: Convert timestamps to `Date` objects and sort descending to show newest items first (`new Date(b.timestamp) - new Date(a.timestamp)`).
+- **min-w-0**: Utility to allow flex children to shrink below their content width and enable truncation with `overflow-hidden` + `text-ellipsis`.
+- **Absolute vs Relative time**: Timeline uses absolute timestamps (`toLocaleString`) for historical clarity, unlike recent relative times shown elsewhere.
+
+### Important Import & Syntax Explanations
+- `import API from '../utils/api'`: Reuse centralized axios instance for fetching comments; simplifies auth header management and error handling.
+- `response.data.map(comment => ({ ... }))`: Transform backend comment objects into activity records; keep mapping logic small and deterministic.
+- `sortedActivities = commentActivities.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp))`: Numeric subtraction of Date objects yields milliseconds difference for sorting.
+- `if (loading) { return (...) }`: Early-return pattern for loading state to avoid rendering the full component while data is pending.
+- Accessibility note: Each activity item should have clear text content and avoid relying solely on icons. Use `aria-live` region for real-time updates if needed.
+
 ### Lines 8-12: Auto-Fetch Effect
 ```jsx
   useEffect(() => {

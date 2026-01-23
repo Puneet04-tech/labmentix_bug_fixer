@@ -26,6 +26,35 @@ import { useAuth } from '../context/AuthContext';
 - **toast**: Success/error notifications
 - **useAuth**: Get current user for ownership checks
 
+### Technical Terms Glossary
+- **Controlled component**: A form input (textarea) whose value is driven by React state (`newComment`, `editContent`). This lets React be the single source of truth for the input value.
+- **Optimistic UI update**: Updating local state immediately after a successful response to show fast UI feedback (e.g., `setComments([...comments, response.data])`). Note: not fully optimistic because we wait for the server response first.
+- **Population (Mongoose)**: The backend returns comments with `author` populated (object with `_id`, `name`, `email`) so the frontend can display author info without extra fetches.
+- **Axios instance**: `API` is a configured axios client (base URL + auth interceptor). Using a single instance centralizes error handling and headers.
+- **Context API**: `useAuth()` reads authentication state from React Context; avoids prop-drilling user info.
+- **Guard clause**: Early return check like `if (!ticketId) return;` prevents unnecessary work when required data is missing.
+- **Controlled optimistic vs. eventual consistency**: UI updates from local state assume backend success; always handle errors to avoid desync.
+
+### Important Import & Syntax Explanations
+- `import { useState, useEffect } from 'react'`: `useState` creates reactive state variables; `useEffect` runs side-effects after render. The dependency array (`[ticketId]`) controls when the effect re-runs.
+- `import API from '../utils/api'`: A single axios instance. Key benefits: consistent `baseURL`, automatic `Authorization` header injection, and centralized interceptors for error/401 handling.
+- `import { toast } from 'react-toastify'`: Non-blocking notifications. Use `toast.success()` / `toast.error()` instead of alerts for better UX.
+- `import { useAuth } from '../context/AuthContext'`: `useAuth()` returns `{ user, token }` or similar. The `user` object is used for ownership checks and avatar initials via `user?.name?.charAt(0)`.
+
+- `e.preventDefault()` (in `handleSubmit`): Prevents full-page form submit; keeps SPA behavior.
+- `await API.post('/comments', {...})` / `await API.put(...)` / `await API.delete(...)`: Network calls that return Promises; always wrap in `try/catch` to surface errors and avoid unhandled promise rejections.
+- `setComments([...comments, response.data])`: Creates a new array reference so React detects the state change; appends the new comment to the end.
+- `setComments(comments.map(c => c._id === commentId ? response.data : c))`: Functional replace pattern — find matching `_id`, replace with updated object, keep identity for unchanged items.
+- `setComments(comments.filter(c => c._id !== commentId))`: Removal by filtering; again returns a new array reference.
+- `comment.author._id === user._id`: Ownership check. Note: both sides should be the same primitive type (string). If backend returns ObjectId objects, they should be serialized to strings before comparing.
+- `user?.name?.charAt(0).toUpperCase()`: Optional chaining avoids runtime errors when `user` or `name` is null/undefined; `toUpperCase()` formats the avatar initial.
+- `disabled={loading || !newComment.trim()}`: Disable while submitting or when trimmed content is empty. `trim()` removes whitespace-only inputs.
+- `maxLength={1000}`: Browser-enforced maximum characters; also validate on submit to be safe.
+- `whitespace-pre-wrap` in CSS: Preserves user-entered line breaks from textarea when rendering comment content.
+- `key={comment._id}`: Essential for list rendering; helps React identify changed/added/removed items and minimize re-renders.
+- Relative time calc: `now - date` returns milliseconds. Conversions use constants (`60000`, `3600000`, `86400000`) to produce minutes/hours/days. The `toLocaleDateString` options selectively include the year only when needed.
+
+
 ### Lines 6-12: Component Setup & State
 ```jsx
 const CommentSection = ({ ticketId }) => {

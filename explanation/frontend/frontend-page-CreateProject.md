@@ -21,6 +21,15 @@ import { useProject } from '../context/ProjectContext';
 import { useAuth } from '../context/AuthContext';
 ```
 
+### Technical Terms Glossary
+- **Date formatting for inputs**: Use `new Date().toISOString().split('T')[0]` to produce `YYYY-MM-DD` required by `<input type="date">`.
+- **Client-side validation**: Prevent invalid payloads by validating fields in the UI before sending to the backend.
+
+### Important Import & Syntax Explanations
+- `useNavigate()` is used to redirect after successful creation; always call inside an event handler or effect, not conditionally during render.
+- `validate()` returns an object of errors keyed by field name — use `Object.keys(errors).length` to check presence of validation errors.
+- Accessibility note: For date inputs, include labels and helper text indicating expected format for clarity.
+
 ### Lines 12-21: Form State with Defaults
 ```jsx
 const [formData, setFormData] = useState({

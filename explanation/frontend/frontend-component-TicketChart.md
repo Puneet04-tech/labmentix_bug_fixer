@@ -31,6 +31,20 @@ const TicketChart = ({ data, type = 'bar', title }) => {
 - **type**: 'bar' | 'donut' (default: 'bar')
 - **title**: Chart title
 
+### Technical Terms Glossary
+- **Entries**: `Object.entries(data)` converts an object into `[key, value]` pairs for iteration and numeric calculations.
+- **SVG donut math**: Uses percentages and `strokeDasharray`/`strokeDashoffset` to render arc segments proportional to values — percentages map to circumference portions.
+- **Responsive charts**: Widths and SVG sizes are chosen to scale; `transform -rotate-90` rotates the SVG so 0° starts at top instead of right.
+- **Fallback/defaults**: Components default to `type='bar'` and a fallback color when `getColor(key)` returns undefined.
+
+### Important Import & Syntax Explanations
+- `const entries = Object.entries(data)`: Produces an array used for mapping to bars or donut segments; stable ordering is important for consistent legend/segment order.
+- `Math.max(...entries.map(([_, value]) => value))`: Spread operator into `Math.max` finds the largest value for normalization; guard against `-Infinity` when entries is empty.
+- `style={{ width: `${...}%`, backgroundColor: getColor(key) }}`: Inline styles used for animated widths and dynamic colors; keep them minimal to avoid layout thrashing.
+- `entries.reduce((acc, [key, value], index) => {...}, [])` (donut): Using `reduce` builds an array of SVG elements with computed percentages and offsets; ensure `total > 0` to avoid division by zero.
+- Accessibility note: Provide textual legends and numeric values alongside charts; SVG alone is not sufficient for screen readers.
+
+
 **Empty state checks**:
 - `!data`: Data is null/undefined
 - `Object.keys(data).length === 0`: Data is empty object `{}`

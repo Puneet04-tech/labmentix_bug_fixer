@@ -30,6 +30,17 @@ import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
 - **useParams**: Extract ticket ID from URL
 - **4 child components**: CommentSection, ActivityTimeline, EditTicketModal, DeleteConfirmationModal
 
+### Technical Terms Glossary
+- **Permission checks**: Boolean flags (isReporter, isProjectOwner) evaluated from `currentTicket` and `user` to control visibility of Edit/Delete actions.
+- **Detail reload**: After mutating operations (edit/delete/assign), re-fetch or update `currentTicket` to keep UI state consistent with backend.
+- **Modal patterns**: Use local state to toggle modals (`showEditModal`, `showDeleteModal`) and pass callbacks to child components for actions.
+
+### Important Import & Syntax Explanations
+- `useParams()` returns route params (e.g., `{ id }`) — use this to load the relevant ticket on mount via `useEffect`.
+- `useTicket()` provides functions like `fetchTicket`, `updateTicket`, and `deleteTicket` — prefer calling context functions so logic and caching remain centralized.
+- `try/catch` around async handlers: Use `toast` to surface errors to users and `finally` to reset loading state when applicable.
+- Accessibility note: Ensure modals include `aria-modal`, `role="dialog"`, and focus is restored to the triggering element on close.
+
 ### Lines 13-18: State Management
 ```jsx
 const { id } = useParams();

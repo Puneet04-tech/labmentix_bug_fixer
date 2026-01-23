@@ -199,6 +199,28 @@ border-gray-600
 
 ## Size Comparison Visual
 
+### Technical Terms Glossary
+
+- **Default props**: In `({ size = 'medium', text = 'Loading...' })`, `size` and `text` get default values when not provided.
+- **Template literal**: Backtick string used to compose class names dynamically: `` `${sizeClasses[size]} ...` ``.
+- **Tailwind utility classes**: Atomic CSS classes (e.g., `h-10`, `w-10`, `border-3`) composing the component's style.
+- **`animate-spin`**: Tailwind utility that maps to a keyframes animation rotating the element indefinitely.
+- **Accessibility**: Loader should include `aria-busy="true"` or similar when used in larger components (not shown but recommended).
+
+---
+
+### Important Import & Syntax Explanations
+
+```jsx
+const Loader = ({ size = 'medium', text = 'Loading...' }) => { ... }
+```
+
+- `({ size = 'medium', text = 'Loading...' })`: Function parameter destructuring with default values — concise way to define props and defaults.
+- `const sizeClasses = { ... }`: Plain object mapping keys to Tailwind class strings; chosen at runtime via `sizeClasses[size]`.
+- ``className={`${sizeClasses[size]} border-blue-600 border-t-transparent rounded-full animate-spin`}``: Combines dynamic and static classes; dynamic part depends on `size` prop.
+- `text && <p>...</p>`: Short-circuit conditional rendering — if `text` is falsy (`null`, `''`, `false`) the paragraph is omitted.
+
+
 ```
 Small (20×20px):          ⟳
 Used in: Buttons, inline elements

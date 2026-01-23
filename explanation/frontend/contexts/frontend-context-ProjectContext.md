@@ -35,6 +35,33 @@ import { useAuth } from './AuthContext';
 **Line 3**: Axios instance with authentication
 **Line 4**: Access user state from AuthContext
 
+### Technical Terms Glossary
+
+- **Context API**: React system for global state; avoids prop drilling.
+- **Optimistic UI**: Immediately reflect changes in UI before server confirmation.
+- **API client (Axios instance)**: Centralized HTTP client used to call backend endpoints.
+- **useEffect dependency array**: Controls when effect runs; e.g., `[user]` means run when `user` changes.
+- **Spread operator `...`**: Expands elements of an array or properties of an object.
+- **Destructuring**: Extract values from objects/arrays into variables, e.g. `const { data } = response`.
+
+---
+
+### Important Import & Syntax Explanations
+
+```javascript
+import { createContext, useContext, useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
+import API from '../utils/api';
+import { useAuth } from './AuthContext';
+```
+
+- `createContext()`: Creates a context object for `ProjectContext`.
+- `useProject` pattern: Custom hook wrapping `useContext(ProjectContext)` to ensure proper usage.
+- `useAuth()`: Accesses logged-in user; used to trigger fetching when user logs in.
+- `API.get('/projects')`: Calls backend `GET /api/projects` endpoint; uses Axios instance with token header.
+- `setProjects([data, ...projects])`: Prepends new project to array using spread operator.
+
+
 ### **Lines 5-13: Create Context + Custom Hook**
 ```javascript
 const ProjectContext = createContext();

@@ -29,6 +29,23 @@ const KanbanColumn = ({ status, tickets, onDrop }) => {
 **State**:
 - **isDragOver**: Boolean to show drop zone indicator
 
+### Technical Terms Glossary
+- **HTML5 Drag and Drop API**: Browser API used here (`dragstart`, `dragover`, `drop`, `dataTransfer`) for moving elements between columns without external libraries.
+- **dataTransfer**: An object on the drag event storing transferable data (`setData`/`getData`) used to pass the `ticketId` and `currentStatus` between drag start and drop.
+- **Drop effect vs effectAllowed**: `effectAllowed` set on drag start hints the allowed operation ('move'); `dropEffect` during drag over communicates the intended effect to the browser/UI.
+- **Guarding with status check**: Comparing `currentStatus !== status` avoids unnecessary updates when a ticket is dropped into the same column.
+- **Visual affordances**: `ring-2 ring-blue-500` and left border color indicate drop targets and ticket priority; consistent visual cues reduce user error during drag-and-drop.
+
+### Important Import & Syntax Explanations
+- `const KanbanColumn = ({ status, tickets, onDrop }) => { ... }`: Destructuring props inline — `status` determines column behavior and `onDrop` is the upward callback to change ticket status.
+- `e.dataTransfer.setData('ticketId', ticket._id)`: Stores a simple string in the drag payload. Avoid large objects; serialize IDs and minimal metadata.
+- `e.preventDefault()` in `handleDragOver` and `handleDrop`: Required to allow dropping (browser default prevents drops). Always call `preventDefault()` in `onDragOver` to enable `onDrop`.
+- `setIsDragOver(true/false)`: Local state used for conditional class toggles; prefer minimal state and avoid re-rendering heavy subtrees during drag operations.
+- `tickets.map(ticket => ( <div key={ticket._id} ...` : Use `key` prop with stable IDs to help React diffing during reorder and re-renders.
+- `onDrop(ticketId, status)`: Keep `onDrop` lightweight — typically update server-side status via parent handler and optimistically update UI if desired.
+- Accessibility note: Native drag-and-drop isn't keyboard-accessible. Provide alternative controls (move buttons or keyboard drag handles) for accessibility.
+
+
 ### Lines 10-18: Status Configuration
 ```jsx
   const statusConfig = {

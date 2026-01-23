@@ -39,6 +39,25 @@ const FilterBar = ({ filters, onFilterChange }) => {
 - **useProject**: Get projects list for dropdown
 - **useNavigate/useLocation**: URL param management
 
+### Technical Terms Glossary
+- **URLSearchParams**: Web API for reading and writing URL query strings. Used to parse `location.search` and to build a query string when filters change.
+- **Replace navigation**: `navigate(url, { replace: true })` updates the URL without adding a history entry; good for filter state so the back button doesn't step through every filter change.
+- **Debounced search (optional)**: Not implemented here but recommended for large datasets — delay updating filters until user stops typing to reduce renders and network calls.
+- **Derived state vs. Single source of truth**: `filters` is passed from a parent; `FilterBar` treats it as the single source and never duplicates it locally, preventing state drift.
+- **Identity-preserving updates**: Using `Object.keys(newFilters).forEach(...)` then `navigate(...)` ensures the URL only contains non-empty values; keeps URLs concise and deterministic.
+
+### Important Import & Syntax Explanations
+- `import { useNavigate, useLocation } from 'react-router-dom'`: `useLocation()` gives access to the current URL (including query string). `useNavigate()` performs programmatic navigation; `replace: true` prevents polluting history.
+- `import { useAuth } from '../context/AuthContext'`: `useAuth()` provides the `user` object used for filters like 'me' and 'assigned'. Keep logic defensive: `user?.email` or `user?._id`.
+- `import { useProject } from '../context/ProjectContext'`: `projects` is expected to be an array; use `projects.find(p => p._id === value)` when mapping `projectId` to a display name.
+- `JSON.stringify(urlFilters) !== JSON.stringify(filters)`: Simple deep-equality check for small filter objects. Caveat: property order matters; keep keys stable. For larger objects prefer a stable comparator or lodash `isEqual()`.
+- `const newFilters = { ...filters, [filterName]: value }`: Computed property name (`[filterName]`) allows updating arbitrary filter fields generically from UI controls.
+- `Object.keys(newFilters).forEach(key => { if (newFilters[key]) params.set(key, newFilters[key]); })`: Skips falsy/empty values so URLs don't grow with empty params.
+- `navigate(location.pathname, { replace: true })` (in `clearAllFilters`): Navigate to the same path without query string to clear filters visually and on page refresh.
+- `hasActiveFilters()` logic: Treats `user === 'all'` as inactive to avoid showing a Clear All when only default user filter is present.
+- Accessibility note: Ensure dropdowns and buttons have accessible labels (`aria-label`) and keyboard support (tab order) for screen-reader users.
+
+
 ### Lines 10-20: Filter Options
 ```jsx
   const statusOptions = ['Open', 'In Progress', 'In Review', 'Resolved', 'Closed'];

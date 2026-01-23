@@ -66,6 +66,25 @@ const EditTicketModal = ({ ticket, onClose, onUpdate }) => {
 - Array of user objects from selected project
 - Used to populate assignedTo dropdown
 
+### Technical Terms Glossary
+- **Pre-filled form**: The UI loads an existing ticket into `formData` so the user updates fields; achieved via `useEffect` on `ticket` prop.
+- **Owner vs. members**: Projects include an `owner` and `members`; the UI merges these to present assignment options with owner first.
+- **Controlled form state**: `formData` is the single source of truth for all inputs (title, description, etc.). Each input uses `value={formData.field}` and `onChange={handleChange}`.
+- **Normalization for backend**: Convert empty strings to `null` for optional fields (like `assignedTo`) before sending to API to match backend expectations.
+- **Date normalization**: Convert ISO strings to `YYYY-MM-DD` for `<input type="date">` and back to ISO on submit if needed.
+
+### Important Import & Syntax Explanations
+- `import { useState, useEffect } from 'react'`: `useEffect` with `[ticket]` dependency pre-fills the form when `ticket` changes; `useState` holds `formData` and `members`.
+- `import { toast } from 'react-toastify'`: Use `toast.error()` for validation failures and `toast.success()` after successful update.
+- `import API from '../utils/api'`: Use centralized axios `API.put(`/tickets/${ticket._id}`, updateData)` for network calls; wrapped in `try/catch` for robust error handling.
+- `setFormData(prev => ({ ...prev, [name]: value }))`: Computed property name pattern lets `handleChange` generically update any field from the `name` attribute of inputs.
+- `if (name === 'project') { ... fetchMembers(value); }`: Special-case project changes — reset `assignedTo` and fetch new project members to avoid invalid assignment IDs.
+- `new Date(ticket.dueDate).toISOString().split('T')[0]`: Format conversion for date inputs (strip time component). When sending back, confirm backend accepts `YYYY-MM-DD` or convert to ISO if required.
+- `assignedTo: formData.assignedTo || null`: Normalize empty string to `null` so the backend can distinguish unassigned vs empty string; avoids data type mismatches.
+- `onUpdate(response.data)`: Passes updated ticket to parent; prefer passing the full object instead of signalling a re-fetch for immediate consistency.
+- Accessibility note: Modal should trap focus while open and restore focus on close; ensure inputs have `label` elements and the close button has `aria-label`.
+
+
 ### Lines 26-44: Pre-fill Form Effect
 ```jsx
   useEffect(() => {

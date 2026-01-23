@@ -25,6 +25,17 @@ import './index.css';
 - **App**: Root application component
 - **./index.css**: Global styles (Tailwind CSS directives)
 
+### Technical Terms Glossary
+- **Entry point**: The file that bootstraps the React app and mounts it into the DOM (`createRoot(...).render(<App />)`).
+- **Strict Mode**: Development-only wrapper that helps detect side-effects and unsafe lifecycle usage by double-invoking some functions.
+- **Module import**: ES module static imports (`import ... from ...`) are hoisted and executed before runtime code.
+
+### Important Import & Syntax Explanations
+- `import ReactDOM from 'react-dom/client'`: Use React 18's `createRoot` API for concurrent rendering and automatic batching.
+- `ReactDOM.createRoot(document.getElementById('root')).render(...)`: Creates and renders the root. Ensure `index.html` has the `root` element.
+- `import './index.css'`: Side-effect import for global styles (Tailwind CSS directives); ordering matters for global CSS.
+- Accessibility note: Ensure `index.html` includes language attributes (`<html lang="en">`) and meta viewport for responsive behavior.
+
 ### Lines 5-9: Create Root and Render
 ```jsx
 ReactDOM.createRoot(document.getElementById('root')).render(

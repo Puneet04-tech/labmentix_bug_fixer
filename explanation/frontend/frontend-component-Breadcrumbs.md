@@ -24,6 +24,28 @@ const Breadcrumbs = () => {
 - **useLocation**: Hook to get current route
 - **location.pathname**: Current path (e.g., '/projects/123abc')
 
+### Technical Terms Glossary
+
+- **`Link`**: React Router element that enables client-side navigation using the History API, avoiding full page reloads.
+- **`useLocation()`**: Hook returning the current location object with `pathname`, `search`, and `hash` values; used to derive breadcrumbs.
+- **Regex**: Regular expression used here to detect 24-character hex ObjectIDs (`/^[a-f\d]{24}$/i`).
+- **`split()` and `filter()`**: String and array methods to break the path into segments and remove empty elements.
+- **`isLast` flag**: Custom property to mark the current breadcrumb (not clickable), used to render as plain text.
+
+---
+
+### Important Import & Syntax Explanations
+
+```jsx
+import { Link, useLocation } from 'react-router-dom';
+```
+
+- `import { Link, useLocation } from 'react-router-dom'`: Named imports from `react-router-dom`. `Link` replaces `<a>` for internal navigation; `useLocation` reads the URL.
+- `location.pathname.split('/').filter(x => x)`: Splits `/projects/create` into `['projects', 'create']`. `filter` removes empty strings from leading slash.
+- `segment.charAt(0).toUpperCase() + segment.slice(1)`: Simple fallback to Title Case a URL segment when no mapping exists.
+- `key={crumb.path}`: Using path as list key ensures stable keys across navigations; avoid using index when items can reorder.
+
+
 ### Lines 5-12: Path Mapping
 ```jsx
   const pathMap = {

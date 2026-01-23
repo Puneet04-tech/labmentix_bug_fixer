@@ -23,6 +23,15 @@ import KanbanColumn from '../components/KanbanColumn';
 ```
 - **KanbanColumn**: Handles drag-drop for individual columns
 
+### Technical Terms Glossary
+- **Drag-and-drop model**: Uses HTML5 Drag and Drop API via child components (`KanbanColumn`) and parent handler `handleStatusChange` to persist status updates.
+- **Optimistic vs Confirmed update**: Consider optimistic UI update on drop for responsiveness, but revert on API failure.
+
+### Important Import & Syntax Explanations
+- `KanbanColumn` exposes drag event handlers that call `onDrop(ticketId, status)` — parent should implement patch/update logic and error handling.
+- `useState` for `selectedProject` manages filtering; ensure derived `filteredTickets` recalculates when selection changes.
+- Accessibility note: Provide non-drag keyboard alternatives for reassigning status (e.g., action menu) because native drag-and-drop is not keyboard-friendly.
+
 ### Lines 10-12: State Management
 ```jsx
 const [selectedProject, setSelectedProject] = useState('all');

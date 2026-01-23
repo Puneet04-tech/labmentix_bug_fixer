@@ -21,6 +21,16 @@ import { useTicket } from '../context/TicketContext';
 import { useProject } from '../context/ProjectContext';
 ```
 
+### Technical Terms Glossary
+- **Form normalization**: Converting UI values into API-ready payloads (e.g., `assignedTo: ''` → `null`).
+- **Controlled inputs**: Inputs whose values are stored in React state (`formData`) and updated via `onChange` handlers.
+- **Derived state**: `projectMembers` derived from `projects` and `formData.project` — computed in a `useEffect` to avoid duplication.
+
+### Important Import & Syntax Explanations
+- `useNavigate()` from `react-router-dom` enables programmatic navigation after successful creation (e.g., `navigate('/tickets')`).
+- `useEffect(() => {...}, [formData.project, projects])` recalculates `projectMembers` when either dependency changes — be cautious of stale closures.
+- Accessibility note: Ensure form fields have `label` elements and error messages use `aria-describedby`.
+
 ### Lines 11-22: Form State with Defaults
 ```jsx
 const [formData, setFormData] = useState({

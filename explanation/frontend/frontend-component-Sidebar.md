@@ -14,6 +14,32 @@ Navigation sidebar with menu items, quick actions, active route highlighting, mo
 
 ## Line-by-Line Analysis
 
+### Technical Terms Glossary
+
+- **`useLocation()`**: React Router hook that returns the current location object (`pathname`, `search`, `hash`) used for route-aware UI.
+- **`map()`**: Array method to transform items into React elements; each child must have a unique `key` prop.
+- **`startsWith()`**: String method used to implement prefix matching for nested routes.
+- **`onClick={() => window.innerWidth < 1024 && toggleSidebar()}`**: Inline arrow function used to conditionally execute `toggleSidebar` on mobile.
+- **Z-index (`z-`)**: CSS stacking order; higher z-index values render above lower ones, used here for overlay and sidebar layering.
+
+---
+
+### Important Import & Syntax Explanations
+
+```jsx
+import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+```
+
+- `useState`: Hook to manage local component state (not necessary in all sidebars but common for collapsed sections).
+- `Link`: Client-side navigation element that updates history without reload.
+- `useLocation()`: Gives access to `location.pathname` used in `isActive()` to determine which menu item should be highlighted.
+- `key={item.path}`: `key` prop helps React identify which items changed, are added, or removed for efficient re-rendering.
+- `className={
+  isActive(item.path) ? 'active-classes' : 'inactive-classes'
+}`: Conditional classes pattern for active vs inactive menu items.
+
+
 ### Lines 1-3: Imports
 ```jsx
 import { useState } from 'react';

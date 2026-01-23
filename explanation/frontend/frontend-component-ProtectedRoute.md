@@ -11,6 +11,29 @@ Route guard component that redirects unauthenticated users to login page, with l
 
 ## Line-by-Line Analysis
 
+### Technical Terms Glossary
+
+- **`Navigate`**: React Router component that performs a declarative redirect to another route.
+- **Route Guard / Protected Route**: Component pattern that controls access to routes based on auth state.
+- **`replace` prop**: When `true`, `Navigate` replaces current history entry instead of pushing a new one.
+- **Loading spinner**: Simple UI to indicate asynchronous work (token validation) is in progress.
+- **Higher-Order Component (HOC) pattern**: Pattern where a component wraps children to add behavior (here, auth checks).
+
+---
+
+### Important Import & Syntax Explanations
+
+```jsx
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+```
+
+- `Navigate`: Replaces imperative `history.push()` calls with declarative JSX (`<Navigate to="/login" />`).
+- `useAuth()`: Returns `{ user, loading }`. `loading` prevents flash-of-unauthenticated UI while token verification completes.
+- `if (loading) return <Spinner/>;`: Early return pattern to avoid rendering rest of component while async checks run.
+- `if (!user) return <Navigate to="/login" replace />;`: Redirect pattern used to block access and ensure good UX with `replace` to avoid back-button loops.
+
+
 ### Lines 1-3: Imports
 ```jsx
 import { Navigate } from 'react-router-dom';

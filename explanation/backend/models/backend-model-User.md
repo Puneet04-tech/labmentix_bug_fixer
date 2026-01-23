@@ -14,39 +14,67 @@ Mongoose schema for user authentication with bcrypt password hashing and validat
 
 ---
 
+## 📚 Technical Terms Glossary
+
+- **Mongoose**: ODM (Object Data Modeling) library for MongoDB. Adds schemas, validation, and model methods.
+- **Schema**: Blueprint for MongoDB documents (defines fields, types, validation).
+- **Model**: Mongoose class for interacting with a MongoDB collection.
+- **Bcrypt**: Library for hashing passwords securely.
+- **Pre-save Hook**: Mongoose middleware that runs before saving a document.
+- **Validation**: Ensures data meets requirements before saving.
+- **Unique**: Ensures no two documents have the same value for a field.
+- **select: false**: Field is excluded from query results by default (e.g., password).
+
+---
+
 ## 🔍 Code Analysis
 
-**Imports (Lines 1-2):**
+### Import Statements
 ```javascript
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 ```
+- `mongoose`: Main ODM library for MongoDB. Handles schemas, models, and database connection.
+- `bcrypt`: Library for hashing and comparing passwords securely.
 
-**Schema Definition (Lines 4-32):**
-- `name`: Required, max 50 chars, trimmed
-- `email`: Required, unique, lowercase, email regex validation
-- `password`: Required, min 6 chars, **`select: false`** (excluded from queries)
-- `createdAt`: Auto-timestamp
+### Schema Definition
+```javascript
+const userSchema = new mongoose.Schema({
+  name: { type: String, required: true, trim: true, maxlength: 50 },
+  email: { type: String, required: true, unique: true, lowercase: true, match: /.+@.+\..+/ },
+  password: { type: String, required: true, minlength: 6, select: false },
+  createdAt: { type: Date, default: Date.now }
+});
+```
+- `mongoose.Schema({...})`: Defines the structure and validation for user documents.
+- `required: true`: Field must be present.
+- `unique: true`: No duplicate emails allowed.
+- `trim: true`: Removes whitespace from start/end.
+- `lowercase: true`: Converts email to lowercase.
+- `match: /.+@.+\..+/`: Regex for email validation.
+- `select: false`: Password is not returned in queries by default.
 
-**Pre-save Hook (Lines 35-42):**
+### Pre-save Hook
 ```javascript
 userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) {
-    next();  // Skip if password unchanged
-  }
+  if (!this.isModified('password')) return next();
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
 ```
-Only hashes password if modified. Uses 10 salt rounds for security.
+- `pre('save', ...)`: Runs before saving a user.
+- `this.isModified('password')`: Only hash if password changed.
+- `bcrypt.genSalt(10)`: Generates salt for hashing (10 rounds).
+- `bcrypt.hash(...)`: Hashes the password.
 
-**Compare Method (Lines 45-47):**
+### Password Comparison Method
 ```javascript
 userSchema.methods.comparePassword = async function(enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 ```
-Used in login to verify entered password against hashed password.
+- `comparePassword`: Custom method to check if entered password matches hashed password.
+- `bcrypt.compare(...)`: Compares plain and hashed passwords.
 
 ---
 

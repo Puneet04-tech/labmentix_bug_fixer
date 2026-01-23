@@ -47,6 +47,21 @@ const DeleteConfirmationModal = ({
 - **Why**: Prevents rendering modal in DOM when hidden
 - **Alternative approach**: Could use `display: none`, but unmounting is cleaner
 
+### Technical Terms Glossary
+- **Destructive action**: Any operation that permanently removes data (delete). UI should confirm intent and indicate irreversibility.
+- **Modal overlay/backdrop**: The semi-opaque backdrop (`bg-black bg-opacity-50`) that sits behind the modal to focus user attention and capture backdrop clicks to cancel.
+- **Unmount vs hidden**: Returning `null` when `isOpen` is false unmounts the modal from DOM rather than hiding it — preferred for accessibility and resource cleanup.
+- **Stop propagation**: `e.stopPropagation()` on modal content prevents the backdrop `onClick` from closing the modal when interacting with inner elements.
+- **Disabled state during async**: `isDeleting` disables buttons and shows a spinner to prevent duplicate requests and accidental navigation.
+
+### Important Import & Syntax Explanations
+- `if (!isOpen) { return null; }`: Early return pattern to short-circuit rendering when modal closed. Keeps DOM clean and avoids focus trap logic when not open.
+- `onClick={onClose}` on backdrop vs `onClick={(e) => e.stopPropagation()}` on container: Backdrop click closes modal but clicks inside the modal stop propagation to prevent closing.
+- `disabled={isDeleting}`: Standard pattern to prevent user interactions while a promise is pending. Combine with visual affordances (spinner, opacity) for clarity.
+- `{isDeleting && (<div className="... animate-spin" />)}`: Conditional rendering for spinner; the short-circuit `&&` pattern renders the spinner only when `isDeleting` is true.
+- `className` utility usage: Tailwind utility classes (`bg-red-600`, `rounded-lg`, `max-w-md`) compose the visual design; prefer semantic class grouping for readability.
+- Accessibility notes: Ensure modal has `role="dialog"` and `aria-modal="true"`, and the header is referenced by `aria-labelledby` for screen readers. Also trap focus inside the modal while open.
+
 ### Lines 14-92: JSX Render
 
 #### Lines 14-18: Modal Overlay

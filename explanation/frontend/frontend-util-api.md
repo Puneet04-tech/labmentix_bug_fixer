@@ -9,6 +9,61 @@ Axios instance configuration with automatic JWT token injection for all API requ
 - Environment variable support
 - Token from localStorage
 
+---
+
+### Technical Terms Glossary
+
+- **Axios**: Promise-based HTTP client for the browser and Node.js.
+- **Instance**: Custom axios object with default config (baseURL, headers, etc).
+- **Interceptor**: Function that runs before a request or after a response.
+- **JWT (JSON Web Token)**: Token format for authentication.
+- **localStorage**: Browser storage for key-value pairs (persists after reload).
+- **Environment Variable**: Value set outside code, e.g., in .env file.
+- **Vite**: Frontend build tool that exposes env variables with VITE_ prefix.
+
+---
+
+## 🧑‍💻 Important Code Explanations
+
+### Import Statement
+```javascript
+import axios from 'axios';
+```
+- `import ... from ...`: ES6 module import syntax.
+- `axios`: HTTP client for making API requests.
+
+### Axios Instance
+```javascript
+const API = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+});
+```
+- `axios.create({...})`: Creates a custom axios instance.
+- `baseURL`: Prefix for all API requests.
+- `import.meta.env.VITE_API_URL`: Reads env variable from Vite config.
+- `||`: Fallback to localhost if env not set.
+
+### Request Interceptor
+```javascript
+API.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+```
+- `interceptors.request.use(...)`: Runs before every request.
+- `localStorage.getItem('token')`: Gets JWT token from browser storage.
+- `config.headers.Authorization`: Sets Authorization header for JWT auth.
+- ``Bearer ${token}``: Format required by backend.
+
+### Export
+```javascript
+export default API;
+```
+- `export default`: Makes API available to other files.
+
 ## Line-by-Line Analysis
 
 ### Lines 1-2: Import

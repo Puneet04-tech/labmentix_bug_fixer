@@ -21,6 +21,31 @@ import Breadcrumbs from './Breadcrumbs';
 ```
 - **3 child components**: Sidebar (navigation), Navbar (top bar), Breadcrumbs (page location)
 
+### Technical Terms Glossary
+
+- **`useState`**: React hook for local component state; returns `[state, setState]`.
+- **`children` prop**: Special prop that contains nested JSX passed from parent component.
+- **Prop drilling**: Passing props through multiple components; `children` helps keep layout simpler.
+- **Controlled component**: Component state (sidebarOpen) is controlled within `Layout` and passed down as props.
+- **Responsive classes (Tailwind)**: Utility classes prefixed with breakpoints like `lg:` to change layout at specific widths.
+
+---
+
+### Important Import & Syntax Explanations
+
+```jsx
+import { useState } from 'react';
+import Sidebar from './Sidebar';
+import Navbar from './Navbar';
+import Breadcrumbs from './Breadcrumbs';
+```
+
+- `import { useState } from 'react'`: Named import from React. `useState(false)` initializes boolean state.
+- `Sidebar`, `Navbar`, `Breadcrumbs`: Local component imports (relative paths). These are default exports from their files.
+- `const Layout = ({ children }) => { ... }`: Arrow function component using destructuring to extract `children` from props.
+- `const toggleSidebar = () => setSidebarOpen(!sidebarOpen)`: Function closes/opens sidebar; `setSidebarOpen` schedules state update and triggers re-render.
+
+
 ### Lines 6-8: Component Props
 ```jsx
 const Layout = ({ children }) => {

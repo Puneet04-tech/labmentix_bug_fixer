@@ -23,6 +23,15 @@ import { toast } from 'react-toastify';
 ```
 - **Similar to Login**: Same import pattern for form handling
 
+### Technical Terms Glossary
+- **Password confirmation**: UI-level check ensuring `password === confirmPassword` before sending to API.
+- **Destructuring before submit**: Remove `confirmPassword` before sending payload to backend via `const { confirmPassword, ...registerData } = formData;`.
+
+### Important Import & Syntax Explanations
+- `register()` from `useAuth()` should return a normalized response object; handle `result.success` and common errors (email exists) gracefully.
+- `navigate('/dashboard')` after registration relies on the AuthContext auto-logging in the user; ensure state is updated before navigation.
+- Accessibility note: Use `aria-invalid` on inputs when validation fails and associate the error message via `aria-describedby`.
+
 ### Lines 10-17: Form State (4 Fields)
 ```jsx
 const [formData, setFormData] = useState({

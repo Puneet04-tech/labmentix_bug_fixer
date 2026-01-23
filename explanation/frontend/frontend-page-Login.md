@@ -26,6 +26,16 @@ import { toast } from 'react-toastify';
 - **useAuth**: Access login function and user state
 - **toast**: Display success/error notifications
 
+### Technical Terms Glossary
+- **Controlled form**: Inputs where value is managed by React state (`formData`) and updated via `onChange`.
+- **Redirect on auth**: Use `Navigate` or `useNavigate` to redirect authenticated users away from public pages.
+- **Validation patterns**: Common small regex for email validation and minimal password length checks.
+
+### Important Import & Syntax Explanations
+- `useAuth()` typically provides `login()` which returns `{ success, message }` — handle both success and failure paths and show notifications via `toast`.
+- `Navigate` component can be used to declaratively redirect when `user` is already authenticated instead of imperatively calling `navigate()`.
+- Accessibility note: Mark error messages with `role="alert"` or `aria-live="polite"` so screen readers announce them.
+
 ### Lines 8-10: Context and Navigation
 ```jsx
 const { user, login } = useAuth();

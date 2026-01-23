@@ -24,6 +24,15 @@ import { useAuth } from '../context/AuthContext';
 - **useProject**: Access projects array and deleteProject function
 - **useAuth**: Check user ownership permissions
 
+### Technical Terms Glossary
+- **Filter tabs**: UI pattern switching between different subsets of data (all, owned, member) via internal state rather than separate routes.
+- **Search normalization**: Lowercase both source and query strings for case-insensitive matching (`toLowerCase()`).
+
+### Important Import & Syntax Explanations
+- `projects.filter(...)` combined with `searchTerm` and `filter` creates the `filteredProjects` array; consider `useMemo` if projects are large to avoid recalculation on every render.
+- `window.confirm()` is synchronous and blocks UI; for better UX, prefer a modal confirmation component that can be styled and is testable.
+- Accessibility note: Ensure filter buttons are accessible as `button` elements with clear labels and ARIA-selected when active.
+
 ### Lines 10-13: State Management
 ```jsx
 const [filter, setFilter] = useState('all');

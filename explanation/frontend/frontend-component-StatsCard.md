@@ -35,6 +35,19 @@ const StatsCard = ({ title, value, icon, color = 'indigo', subtitle, trend }) =>
 - **subtitle**: Optional secondary text (e.g., "Last 30 days")
 - **trend**: Optional trend object `{ positive: boolean, value: string }`
 
+### Technical Terms Glossary
+- **Stat card**: Compact UI element presenting a single metric with contextual metadata (subtitle, trend, icon).
+- **Trend indicator**: Visual cue showing change over time; uses `trend.positive` to select color and arrow direction.
+- **Color tokenization**: `colorClasses` maps a semantic color key to Tailwind classes to keep styling consistent across cards.
+- **Responsive spacing**: Card sizes rely on typography scale (`text-3xl`) and padding (`p-6`) to maintain visual hierarchy.
+
+### Important Import & Syntax Explanations
+- `const StatsCard = ({ title, value, icon, color = 'indigo', subtitle, trend }) => { ... }`: Default param `color='indigo'` provides a sensible fallback.
+- `const colorClasses = { ... }`: Centralized mapping avoids scattering Tailwind class strings across markup and enables easy theming.
+- `{subtitle && (<p>...</p>)}` and `{trend && (<div>...</div>)}`: Conditional rendering short-circuits to avoid rendering optional UI when props absent.
+- `className={`flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center ${colorClasses[color]}`}`: Template literal composes dynamic classes; ensure `color` is a valid key to prevent undefined class names.
+- Accessibility note: Provide `aria-label` on icon container if the icon conveys semantic meaning beyond decoration.
+
 **colorClasses Object**:
 - **Key**: Color name
 - **Value**: Tailwind classes for icon container

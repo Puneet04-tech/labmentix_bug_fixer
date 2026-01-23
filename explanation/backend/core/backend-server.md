@@ -6,6 +6,72 @@ This is the main entry point for the Express.js backend server. It sets up the s
 
 ---
 
+## 📚 Technical Terms Glossary
+
+- **Express.js**: Minimal, unopinionated web framework for Node.js. Handles routing, middleware, and HTTP utilities.
+- **CORS (Cross-Origin Resource Sharing)**: Security feature that allows or blocks requests from different origins (domains/ports).
+- **Helmet**: Express middleware that sets HTTP headers for security (prevents XSS, clickjacking, etc).
+- **dotenv**: Loads environment variables from a `.env` file into `process.env`.
+- **Middleware**: Functions that run during the request/response cycle, can modify req/res or end the cycle.
+- **Route**: URL pattern and HTTP method (GET, POST, etc) handled by the server.
+- **HTTP Status Codes**: Numbers indicating result of HTTP request (200=OK, 404=Not Found, 500=Server Error).
+- **Module.exports/require()**: Node.js module system for importing/exporting code.
+
+---
+
+## 🧑‍💻 Important Code Explanations
+
+### Import Statements
+```javascript
+const express = require('express');
+const cors = require('cors');
+const helmet = require('helmet');
+const dotenv = require('dotenv');
+const connectDB = require('./config/db');
+```
+- `const ... = require('...')`: Node.js CommonJS import. Loads a package or file.
+- `express`: Main web server framework. Handles routes, middleware, and server startup.
+- `cors`: Middleware to allow cross-origin requests (frontend <-> backend communication).
+- `helmet`: Middleware to set secure HTTP headers.
+- `dotenv`: Loads environment variables from `.env` file.
+- `connectDB`: Custom function to connect to MongoDB (see backend-config-db.md).
+
+### Middleware Example
+```javascript
+app.use(helmet());
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+```
+- `app.use(...)`: Registers middleware to run for every request.
+- `helmet()`: Adds security headers.
+- `cors()`: Enables cross-origin requests.
+- `express.json()`: Parses JSON request bodies.
+- `express.urlencoded({ extended: true })`: Parses URL-encoded form data.
+
+### Route Example
+```javascript
+app.get('/', (req, res) => {
+  res.json({ message: 'Bug Tracker API is running!' });
+});
+```
+- `app.get(path, handler)`: Defines a GET route.
+- `req`: Request object (info about HTTP request).
+- `res`: Response object (methods to send data back).
+- `res.json(...)`: Sends JSON response.
+
+### Server Startup
+```javascript
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+```
+- `app.listen(port, callback)`: Starts the server.
+- `PORT`: Port number (from env or default).
+- `console.log(...)`: Prints message to terminal.
+
+---
+
 ## Line-by-Line Breakdown
 
 ### Lines 1-5: Import Dependencies
@@ -17,12 +83,162 @@ const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 ```
 
-**Explanation:**
-- **Line 1**: Imports Express.js framework for building the web server
-- **Line 2**: Imports CORS middleware to enable Cross-Origin Resource Sharing (allows frontend to communicate with backend)
-- **Line 3**: Imports Helmet.js for security headers (protects against common web vulnerabilities)
-- **Line 4**: Imports dotenv to load environment variables from `.env` file
-- **Line 5**: Imports custom database connection function from `config/db.js`
+**Line 1: Import Express.js**
+```javascript
+const express = require('express');
+```
+-**`const`**: Constant variable (cannot be reassigned)
+- **`express`**: Variable name (lowercase convention for modules)
+- **`require('express')`**: CommonJS import from node_modules
+- **Express.js**: Web application framework for Node.js
+
+**What is Express.js?**
+- Minimal, flexible Node.js web framework
+- Provides robust features for web and mobile applications
+- Standard for building REST APIs
+- Simplifies HTTP server creation
+
+**What Express provides:**
+```javascript
+// Without Express (raw Node.js) - Complex!
+const http = require('http');
+http.createServer((req, res) => {
+  if (req.url === '/api/users' && req.method === 'GET') {
+    // Handle request manually
+    res.writeHead(200, {'Content-Type': 'application/json'});
+    res.end(JSON.stringify({users: []}));
+  }
+}).listen(5000);
+
+// With Express - Simple!
+const app = express();
+app.get('/api/users', (req, res) => {
+  res.json({users: []});
+});
+app.listen(5000);
+```
+
+**Line 2: Import CORS Middleware**
+```javascript
+const cors = require('cors');
+```
+- **CORS**: Cross-Origin Resource Sharing
+- **Purpose**: Allow frontend (different origin) to access backend API
+- **Problem it solves**: Browser security blocks cross-origin requests by default
+
+**What is Cross-Origin?**
+```javascript
+// Same Origin (✅ Allowed by default)
+Frontend: http://localhost:3000
+Backend:  http://localhost:3000
+
+// Different Origin (❌ Blocked without CORS)
+Frontend: http://localhost:3000  // Port 3000
+Backend:  http://localhost:5000  // Port 5000 (different!)
+
+// Also different origins:
+http vs https
+domain.com vs api.domain.com
+domain.com vs another.com
+```
+
+**How CORS works:**
+```javascript
+// Request from frontend
+fetch('http://localhost:5000/api/users')
+
+// Without cors() middleware:
+// ❌ Error: CORS policy: No 'Access-Control-Allow-Origin' header
+
+// With app.use(cors()):
+// ✅ Backend adds header: Access-Control-Allow-Origin: *
+// ✅ Browser allows the request
+```
+
+**Line 3: Import Helmet**
+```javascript
+const helmet = require('helmet');
+```
+- **Helmet**: Security middleware for Express apps
+- **Purpose**: Sets HTTP headers to protect against common web vulnerabilities
+- **Security headers**: XSS Protection, Click-jacking, MIME sniffing, etc.
+
+**Headers Helmet sets:**
+```javascript
+// Without helmet
+Response Headers:
+  Content-Type: application/json
+  
+// With helmet()
+Response Headers:
+  Content-Security-Policy: default-src 'self'
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN  
+  X-XSS-Protection: 1; mode=block
+  Strict-Transport-Security: max-age=15552000
+```
+
+**Vulnerabilities Helmet prevents:**
+1. **XSS (Cross-Site Scripting)**: Malicious scripts injection
+2. **Clickjacking**: Invisible iframe overlays
+3. **MIME Sniffing**: Browser guessing content types
+4. **Downgrade Attacks**: Force HTTPS connections
+
+**Line 4: Import dotenv**
+```javascript
+const dotenv = require('dotenv');
+```
+- **dotenv**: Loads environment variables from `.env` file
+- **Purpose**: Keep secrets out of code (passwords, API keys, etc.)
+- **Usage**: Must call `dotenv.config()` to load variables
+
+**How dotenv works:**
+```javascript
+// .env file content:
+PORT=5000
+MONGODB_URI=mongodb+srv://user:pass@cluster.net/db
+JWT_SECRET=mysecret123
+
+// After dotenv.config():
+process.env.PORT           // "5000"
+process.env.MONGODB_URI    // "mongodb+srv://..."
+process.env.JWT_SECRET     // "mysecret123"
+
+// Without dotenv:
+process.env.PORT           // undefined (unless set in system)
+```
+
+**Why use .env files?**
+1. **Security**: Secrets not in code/git
+2. **Flexibility**: Different values per environment
+   ```
+   development.env: MONGODB_URI=mongodb://localhost/dev
+   production.env:  MONGODB_URI=mongodb+srv://prod...
+   ```
+3. **Team**: Each developer has own .env (not shared)
+4. **Deployment**: Platform provides env variables
+
+**Line 5: Import Database Connection**
+```javascript
+const connectDB = require('./config/db');
+```
+- **`'./config/db'`**: Relative path (`./ = current directory`)
+- **Local module**: Our own file (not from node_modules)
+- **Default import**: Gets `module.exports` from db.js
+
+**Path Resolution:**
+```javascript
+// Starts with ./ or ../ → relative path
+require('./config/db')      // ./config/db.js
+require('../models/User')    // ../models/User.js
+
+// No prefix → node_modules package
+require('express')           // node_modules/express
+require('mongoose')          // node_modules/mongoose
+
+// Absolute path (rare)
+require('/home/user/app/db') // Absolute file path
+```
 
 ---
 

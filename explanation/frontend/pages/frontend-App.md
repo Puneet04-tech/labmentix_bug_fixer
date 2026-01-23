@@ -83,6 +83,23 @@ function App() {
 
 ---
 
+### Technical Terms Glossary
+
+- **Router hierarchy**: The order of providers matters — children can consume parent contexts. Keep `AuthProvider` near the top so other providers can access authentication info.
+- **Protected Route pattern**: A wrapper component (`ProtectedRoute`) that either renders children (if authorized) or redirects to login. Use `replace` to avoid back-button issues.
+- **Toast container**: Global non-blocking notification area (`ToastContainer`) that receives toasts from anywhere in the app.
+
+---
+
+### Important Import & Syntax Explanations
+
+- `BrowserRouter as Router`: Use `BrowserRouter` for SPA routing with HTML5 history; on server-rendered apps a different router is required.
+- `ProtectedRoute` usage: Wrap protected routes with `<ProtectedRoute><Layout>...</Layout></ProtectedRoute>` so auth checks run before layout children render.
+- Context nesting: `AuthProvider` → `ProjectProvider` → `TicketProvider` ensures providers can depend on parents; changing order can break hooks that expect parent context.
+- Accessibility note: Ensure `ToastContainer` does not steal focus; configure `toast` for `role='status'` or `aria-live` as appropriate for screen readers.
+
+---
+
 ### **Lines 30-35: Public Routes**
 
 ```jsx

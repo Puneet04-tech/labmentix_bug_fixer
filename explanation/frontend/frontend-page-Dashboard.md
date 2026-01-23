@@ -23,6 +23,16 @@ import { useAuth } from '../context/AuthContext';
 - **useProject**: Access projects array
 - **useAuth**: Access current user info
 
+### Technical Terms Glossary
+- **Derived metrics**: Calculations computed from arrays (`.reduce`, `.filter`) such as `totalProjects`, `activeTickets`, and `totalMembers`.
+- **Recent list**: Using date math (`new Date()` and `setDate()`) to filter recent items (e.g., last 7 days).
+
+### Important Import & Syntax Explanations
+- `useProject()` provides the projects array; perform null-safe operations (`projects?.length || 0`) to avoid runtime errors.
+- `Array.prototype.reduce()` pattern accumulates values; ensure initial accumulator is provided (e.g., 0) to avoid `undefined` results.
+- Sorting by date: `new Date(b.createdAt) - new Date(a.createdAt)` yields descending order (newest first).
+- Accessibility note: Cards presenting key metrics should have semantic headings and accessible labels for screen readers.
+
 ### Lines 8-11: Context Access
 ```jsx
 const { projects, loading } = useProject();

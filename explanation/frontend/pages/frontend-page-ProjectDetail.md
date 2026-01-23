@@ -45,6 +45,25 @@ import { useAuth } from '../context/AuthContext';
 
 ---
 
+### Technical Terms Glossary
+
+- **Inline editing**: Allowing the user to edit fields directly within the page UI. Implemented by copying `currentProject` into `formData`, toggling `isEditing`, and only saving when user confirms.
+- **Owner-only actions**: Authorization checks comparing `user._id` with `currentProject.owner._id` to show/hide edit/delete controls.
+- **Normalization**: Converting date strings for `<input type="date">` and back when sending to the API (use ISO → `YYYY-MM-DD` → ISO as required).
+- **Derived local state**: Use `formData` and `projectTickets` to avoid mutating `currentProject` from context until the user saves edits.
+
+---
+
+## 🧑‍💻 Important Import & Syntax Explanations
+
+- `useParams()`/`useNavigate()`: `useParams()` reads route parameters (e.g., project `id`); `useNavigate()` performs programmatic navigation (e.g., after delete).
+- `useProject()` and `useTicket()`: Context hooks centralize data fetching and mutations; prefer calling context functions (`fetchProject`, `updateProject`, `fetchTicketsByProject`) instead of direct API calls from the page.
+- `setFormData({ ... })` on load: Pre-fill edit form and avoid two-way binding to context values to prevent accidental live edits.
+- `await fetchTicketsByProject(id)`: Fetch project-specific tickets for stats; wrap in `try/catch` and set loading states for UX.
+- Accessibility note: Ensure inline edit controls have clear labels and focus management (move focus into first input when entering edit mode, restore focus to trigger button on close).
+
+---
+
 ### **Component Declaration (Lines 7-24)**
 
 ```jsx

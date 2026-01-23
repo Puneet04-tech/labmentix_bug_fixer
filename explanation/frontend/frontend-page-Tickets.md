@@ -25,6 +25,18 @@ import FilterBar from '../components/FilterBar';
 - **useSearchParams**: React Router hook to read/write URL query params
 - **FilterBar**: Complex filtering UI component
 
+### Technical Terms Glossary
+- **URL-sync filters**: Persisting UI filter state in the URL (`useSearchParams`) so page state is shareable and bookmarkable.
+- **Derived filtering**: Building `filteredTickets` by applying multiple predicate checks (search/status/priority/project/user) over the tickets array.
+- **Performance consideration**: For large lists, consider memoizing filtered results with `useMemo` to avoid repeated expensive computations on each render.
+
+### Important Import & Syntax Explanations
+- `useSearchParams()`: Hook to read and update the URL query string without a full reload; `setSearchParams(params)` updates the URL.
+- `tickets.filter(...)`: Functional filtering pattern; each predicate should be short and return boolean quickly.
+- `ticket.title.toLowerCase().includes(searchTerm.toLowerCase())`: Case-insensitive search — normalize both strings to lowercase before comparing.
+- `setSearchParams(params)` inside `useEffect` with dependencies: keeps URL in sync whenever filter state changes; avoid cycles by ensuring initial state reads from `searchParams`.
+- Accessibility note: Ensure table/list rows have appropriate landmarks and that filter controls are keyboard-accessible with labels.
+
 ### Lines 11-17: URL Params Initialization (CRITICAL)
 ```jsx
 const [userFilter, setUserFilter] = useState(searchParams.get('user') || 'all');

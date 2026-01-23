@@ -14,6 +14,31 @@ Top navigation bar with hamburger menu, search input, notifications, user profil
 
 ## Line-by-Line Analysis
 
+### Technical Terms Glossary
+
+- **`Link`**: React Router component for client-side navigation without full page reloads.
+- **Context (`useAuth`)**: React Context hook to access authentication state and actions provided by `AuthContext`.
+- **SVG**: Scalable Vector Graphic used for icons; renders crisply at any size.
+- **`charCodeAt()`**: JavaScript string method returning Unicode code point of character at given index.
+- **Modulo operator (`%`)**: Returns remainder after division; used for deterministic hashing to an array index.
+- **Conditional class strings**: Template literals used to apply conditional Tailwind CSS classes based on state.
+
+---
+
+### Important Import & Syntax Explanations
+
+```jsx
+import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+```
+
+- `import { Link } from 'react-router-dom'`: Named import from `react-router-dom`; `Link` prevents full page reloads by using the history API.
+- `useAuth()`: Custom hook that returns `{ user, logout }` from `AuthContext`. `user` may be `null` while authentication is loading; `logout()` clears token and redirects.
+- `onClick={toggleSidebar}`: Passing functions as props to child components; not executed until click event occurs.
+- `user?.name`: Optional chaining safely accesses `user.name` without throwing if `user` is `null` or `undefined`.
+- ``className={`... ${isActive(item.path) ? '...' : '...'}`}``: Template literal used to compute class names dynamically; `isActive` controls active state styling.
+
+
 ### Lines 1-3: Imports
 ```jsx
 import { Link } from 'react-router-dom';

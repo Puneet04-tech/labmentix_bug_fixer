@@ -18,6 +18,36 @@
 **Used By**: Every page and component that needs authentication
 
 ---
+ 
+### Technical Terms Glossary
+
+- **Context API**: React feature to provide global state without prop drilling. Create with `createContext()` and consume with `useContext()`.
+- **Hook**: Special function (prefixed with `use`) that lets you tap into React features (state, lifecycle). Examples: `useState`, `useEffect`, `useContext`.
+- **JWT (JSON Web Token)**: Compact token format used for stateless authentication. Sent in `Authorization` header as `Bearer <token>`.
+- **localStorage**: Browser API to store key/value pairs that persist across sessions.
+- **Axios instance**: Configured HTTP client with default `baseURL` and interceptors (see `api.js`).
+- **Interceptor**: Function that runs before a request or after a response to modify config or handle errors globally.
+- **Optimistic update**: UI update applied before server confirms change to improve perceived responsiveness.
+
+---
+
+### Important Import & Syntax Explanations
+
+```javascript
+import { createContext, useContext, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import API from '../utils/api';
+```
+
+- `import { ... } from 'react'`: ES module named imports. Each name is a specific export from the `react` package.
+- `createContext()`: Creates a Context object which holds the shared value.
+- `useContext(Context)`: Subscribes the component to context updates; returns current context value.
+- `useState(initial)`: Returns `[state, setState]`. `state` holds current value; `setState` schedules updates and triggers re-render.
+- `useEffect(fn, deps)`: Runs `fn` after render; `deps` array controls when effect runs. `[]` means run once on mount.
+- `useNavigate()`: React Router v6 hook that returns a function to programmatically change route.
+- `toast`: UI notifications for feedback. `toast.success()`, `toast.error()`.
+- `API`: Axios instance with an interceptor that injects `Authorization: Bearer <token>` header when token present.
 
 ## 📝 LINE-BY-LINE BREAKDOWN
 

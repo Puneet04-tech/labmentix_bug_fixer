@@ -49,6 +49,23 @@ import TicketChart from '../components/TicketChart';
 
 ---
 
+### Technical Terms Glossary
+
+- **Parallel fetching (`Promise.all`)**: Execute multiple API calls concurrently and wait for all to finish before updating related state variables — reduces overall latency compared to sequential calls.
+- **Overview vs. detailed endpoints**: Keep small, focused endpoints (`/analytics/overview`, `/analytics/trends`) to avoid monolithic payloads and enable targeted caching.
+- **Chart data normalization**: Convert raw API counts into percentages or formatted series for chart components (`TicketChart`).
+
+---
+
+## 🧑‍💻 Important Import & Syntax Explanations
+
+- `API.get('/analytics/...')` calls use the centralized axios instance; handle auth errors and consider caching or memoization for expensive analytics calls.
+- `Promise.all([...])`: Use `const [a,b] = await Promise.all([...])` to run requests in parallel; wrap in `try/catch` to handle any failure case cleanly.
+- `setState` per endpoint: Keep separate state slices (`overview`, `trends`, `teamPerformance`) so components can render parts of the page as soon as relevant data arrives if you switch to incremental loading.
+- Performance note: For very large datasets, consider server-side pre-aggregation to reduce client CPU and payload sizes.
+
+---
+
 ### **Component Declaration & State (Lines 8-14)**
 
 ```jsx

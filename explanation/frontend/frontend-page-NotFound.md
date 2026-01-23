@@ -19,6 +19,15 @@ import { Link } from 'react-router-dom';
 ```
 - **Link**: Navigation without page reload
 
+### Technical Terms Glossary
+- **404 page**: Fallback UI when no route matches — should be helpful and include navigation options back to useful areas of the app.
+- **Graceful navigation**: Provide multiple ways to recover (home, projects, browser back) to accommodate different user flows.
+
+### Important Import & Syntax Explanations
+- `Link` allows client-side navigation without page reload; prefer `Link` for app-internal navigation instead of `<a>` to preserve SPA behavior.
+- `window.history.back()` uses browser history, which may take users outside the app; prefer explicit app routes for predictable navigation.
+- Accessibility note: Ensure 404 heading is an `h1` and action buttons are keyboard-accessible.
+
 ### Lines 4-81: JSX Template
 
 ### Lines 6-12: 404 Display
