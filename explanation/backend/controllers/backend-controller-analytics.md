@@ -196,3 +196,15 @@ Frontend: Renders charts and stat cards
 ---
 
 Powerful analytics - provides insights into project health! 📊✨
+
+---
+
+## 📚 Technical Terms Glossary
+- `aggregate()`: MongoDB aggregation pipeline method for grouping, projecting, and transforming data efficiently.
+- `$match`, `$group`, `$sort`, `$project`: Core aggregation stages used in analytics queries.
+- `Promise.all`: Runs multiple async operations in parallel and waits for all to complete.
+
+## 🧑‍💻 Important Import & Syntax Explanations
+- `const result = await Model.aggregate([...])`: Use aggregation for complex DB-side calculations rather than multiple round trips.
+- `$dateToString`: Convert date fields to strings for grouping by day/month in aggregation pipelines.
+- `Array.map` + `Promise.all` pattern: Map over items to start async operations, then await all results in parallel.

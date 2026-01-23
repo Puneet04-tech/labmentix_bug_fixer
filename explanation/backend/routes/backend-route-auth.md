@@ -41,3 +41,15 @@ router.get('/me', auth, getMe);
 ## 🔗 Related Files
 - [authController.js](backend-controller-auth.md) - Controller functions
 - [auth.js middleware](backend-middleware-auth.md) - JWT verification
+ - [authController.js](backend-controller-auth.md) - Controller functions
+ - [auth.js middleware](backend-middleware-auth.md) - JWT verification
+
+---
+
+## 📚 Technical Terms Glossary
+- `auth` middleware: Verifies JWT and attaches `req.user` to the request.
+- Public vs Protected routes: Public routes are accessible without a token (register/login), protected routes require a valid token.
+
+## 🧑‍💻 Important Import & Syntax Explanations
+- Route-level middleware: `router.get('/me', auth, getMe)` shows how to protect a single route with middleware.
+- Keep authentication logic out of controllers where possible; centralize in middleware to avoid duplication.

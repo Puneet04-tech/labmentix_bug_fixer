@@ -52,3 +52,15 @@ Automatically sets `isEdited=true` and `editedAt` when content is updated (but n
 
 ## 🔗 Related Files
 - [commentController.js](backend-controller-comment.md) - CRUD operations
+
+---
+
+## 📚 Technical Terms Glossary
+- `timestamps`: Mongoose schema option that adds `createdAt` and `updatedAt` fields automatically.
+- `isModified('content')`: Mongoose document method to check if a field was changed before saving.
+- `index`: Database index to speed up queries on fields like `ticket` and `createdAt`.
+
+## 🧑‍💻 Important Import & Syntax Explanations
+- Use `commentSchema.pre('save', ...)` to detect edits and set `isEdited`/`editedAt` fields.
+- `commentSchema.index({ ticket: 1, createdAt: -1 })` optimizes fetching latest comments for a ticket.
+- Use `.populate('author', 'name email')` when returning comments so front-end can show author details.

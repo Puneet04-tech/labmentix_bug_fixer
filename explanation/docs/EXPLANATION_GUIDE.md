@@ -590,3 +590,16 @@ Context → Provider → useState → API Call → Update State → Re-render
 ---
 
 *Happy learning and may your bugs be few! 🐛→✅*
+
+---
+
+## 📚 Technical Terms Glossary (Guide)
+- `File Overview`: The metadata block at the top of each explanation file (location, purpose, line count).
+- `Line-by-Line Breakdown`: Detailed explanation section where code lines or blocks are annotated with purpose and rationale.
+- `Common Pitfalls`: Frequent mistakes and their fixes to save debugging time.
+
+## 🧑‍💻 Important Import & Syntax Explanations (Guide)
+- Use consistent headings (`#`, `##`, `###`) across files: title, major sections, subsections.
+- Use fenced code blocks with language tags (```javascript```, ```env```) for readability and syntax highlighting.
+- Prefer relative links inside the `explanation/` folder so documentation remains portable and works in any clone.
+

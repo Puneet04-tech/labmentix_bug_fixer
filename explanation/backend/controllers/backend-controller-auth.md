@@ -276,3 +276,15 @@ if (!user || !isMatch) return res.json({ message: 'Invalid credentials' });
 ---
 
 Foundation of security - handles all authentication! 🔐✨
+
+---
+
+## 📚 Technical Terms Glossary
+- `jwt.sign(payload, secret, opts)`: Creates JWT tokens used for authentication.
+- `.select('+password')`: Explicitly include a field excluded by default in the model (used to verify passwords).
+- `comparePassword()`: Model method (bcrypt) to compare plain text to hashed password.
+
+## 🧑‍💻 Important Import & Syntax Explanations
+- `process.env.JWT_SECRET`: Environment variable holding the JWT signing secret — never commit this to source.
+- `res.status(401).json({ message: 'Invalid credentials' })`: Use generic error messages to avoid account enumeration.
+- `user.create()` vs `new User()` + `save()`: Two common patterns to create documents in Mongoose.

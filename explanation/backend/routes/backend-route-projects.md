@@ -45,3 +45,14 @@ Only project owner can add/remove members (checked in controller).
 
 ## 🔗 Related Files
 - [projectController.js](backend-controller-project.md) - Authorization checks
+ - [projectController.js](backend-controller-project.md) - Authorization checks
+
+---
+
+## 📚 Technical Terms Glossary
+- `router.use(auth)`: Protect all routes below this call with the auth middleware.
+- `router.post('/:id/members', addMember)`: Route for modifying nested resources (members subresource).
+
+## 🧑‍💻 Important Import & Syntax Explanations
+- Member management routes use `req.params` to get path variables such as `:id` and `:userId`.
+- Use controller-level checks (owner-only) for sensitive operations like adding/removing members.

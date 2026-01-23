@@ -49,3 +49,14 @@ Controller checks authorization:
 
 ## 🔗 Related Files
 - [commentController.js](backend-controller-comment.md) - Authorization matrix
+ - [commentController.js](backend-controller-comment.md) - Authorization matrix
+
+---
+
+## 📚 Technical Terms Glossary
+- `router.use(auth)`: Ensures `req.user` is available for route handlers.
+- `router.get('/ticket/:ticketId', ...)`: Ticket-scoped routes should be defined before `/:id` routes.
+
+## 🧑‍💻 Important Import & Syntax Explanations
+- Use `req.params.ticketId` for ticket-specific queries and `req.params.id` for comment-specific operations.
+- Controller-level checks ensure only authors or project owners can delete comments.

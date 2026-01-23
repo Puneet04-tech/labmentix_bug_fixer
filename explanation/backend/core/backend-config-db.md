@@ -976,3 +976,15 @@ mongoose.connection.on('disconnected', () => {
 ---
 
 This simple but critical file ensures the application can communicate with the database!
+
+---
+
+## 📚 Technical Terms Glossary
+- `MONGODB_URI`: Environment variable containing the connection string used by Mongoose to connect to MongoDB.
+- `mongoose.connect(uri)`: Initiates a connection to MongoDB and returns a Promise that resolves to the connection object.
+- `readyState`: Mongoose connection state (0=disconnected, 1=connected, 2=connecting, 3=disconnecting).
+
+## 🧑‍💻 Important Import & Syntax Explanations
+- Keep secrets in environment variables and never commit `.env` to source control.
+- Consider adding retry logic or exponential backoff for production-ready connection handling.
+- Use `console.error` for errors and `process.exit(1)` to fail fast when a critical dependency can't start.

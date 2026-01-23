@@ -398,6 +398,22 @@ exports.assignTicket = async (req, res) => {
 
 **Key differences from projects**:
 - Members can update tickets (collaborative)
+
+---
+
+## 📚 Technical Terms Glossary
+- `populate`: Mongoose method to replace referenced ObjectId fields with actual documents (e.g., `.populate('project', 'name')`).
+- `req.user`: The authenticated user object added by the auth middleware; commonly used for authorization checks.
+- `runValidators`: Option for Mongoose update operations that ensures schema validators run on updates.
+- `select`: Mongoose method to include/exclude specific fields from query results (e.g., `.select('_id')`).
+- `findByIdAndUpdate`: Mongoose helper to update a document by id; often used with `{ new: true }` to return the updated doc.
+
+## 🧑‍💻 Important Import & Syntax Explanations
+- `const X = require('x')` vs `import X from 'x'`: Common module import styles (Node `require` in CommonJS, `import` in ESM/TypeScript).
+- `async/await` and `try/catch`: Asynchronous control flow used throughout controllers; wrap `await` calls in `try/catch` to handle errors and return proper HTTP responses.
+- `.populate(field, projection)`: Use to load referenced documents and optionally limit fields.
+- `res.status(code).json(obj)`: Pattern to return HTTP status codes with JSON payloads.
+- `if (!resource) return res.status(404).json(...)`: Standard existence check for resources fetched by id.
 - Reporters can delete their own tickets
 
 ---

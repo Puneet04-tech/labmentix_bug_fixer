@@ -46,3 +46,15 @@ Updates `updatedAt` every time document is saved.
 
 ## 🔗 Related Files
 - [projectController.js](backend-controller-project.md) - CRUD + member management
+
+---
+
+## 📚 Technical Terms Glossary
+- `pre('save')`: Mongoose middleware that runs before a document is saved; used here to update timestamps.
+- `ObjectId ref`: Schema field type indicating a relation to another model (e.g., owner: { type: Schema.Types.ObjectId, ref: 'User' }).
+- `timestamps`: Schema option that auto-creates `createdAt` and `updatedAt` fields.
+
+## 🧑‍💻 Important Import & Syntax Explanations
+- Use `projectSchema.pre('save', fn)` to keep `updatedAt` in sync whenever the document changes.
+- `members` is an array of ObjectIds — use `.populate('members', 'name email')` to fetch member details.
+- Enums constrain allowed values; update both frontend and backend if you change enum options.

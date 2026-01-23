@@ -42,3 +42,15 @@ All routes use MongoDB aggregation pipelines for efficient data processing.
 ## 🔗 Related Files
 - [analyticsController.js](backend-controller-analytics.md) - Aggregation pipelines
 - [Analytics.jsx](frontend-page-Analytics.md) - Uses `Promise.all` to fetch all endpoints
+ - [analyticsController.js](backend-controller-analytics.md) - Aggregation pipelines
+ - [Analytics.jsx](frontend-page-Analytics.md) - Uses `Promise.all` to fetch all endpoints
+
+---
+
+## 📚 Technical Terms Glossary
+- `router.use(auth)`: Protect analytics endpoints so queries respect the current user's projects.
+- `aggregation pipeline`: A sequence of MongoDB stages (`$match`, `$group`, `$project`, etc.) for server-side data processing.
+
+## 🧑‍💻 Important Import & Syntax Explanations
+- Use aggregation (`Model.aggregate`) for heavy analytics to reduce data transfer and processing on the application server.
+- When returning analytics results, normalize formats (e.g., `{ Open: 5, Closed: 3 }`) for easier frontend consumption.

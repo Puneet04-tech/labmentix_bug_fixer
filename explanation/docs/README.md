@@ -398,4 +398,14 @@ Every explanation file meets these standards:
 
 ---
 
+## 📚 Technical Terms Glossary (Docs)
+- `INDEX.md`: Master index listing all explanation files and quick links.
+- `EXPLANATION_GUIDE.md`: How-to for using the explanation set and recommended reading order.
+- `Related Files`: Cross-reference links inside explanations that point to other explanation pages.
+
+## 🧑‍💻 Important Import & Syntax Explanations (Docs)
+- Use consistent heading levels (`#` for file title, `##` for sections, `###` for subsections) across all explanation files.
+- Use relative links to other explanation files to ensure portability (`[text](../path/to/file.md)`).
+- Keep code fence blocks triple-backticks and specify language where helpful (e.g., ```javascript, ```env).
+
 *Your complete code explanation system is ready to use! Start with INDEX.md and happy learning! 🚀*

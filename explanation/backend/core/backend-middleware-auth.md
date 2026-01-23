@@ -514,3 +514,15 @@ Expected: 401 with "Token is not valid"
 ---
 
 This middleware is the gatekeeper that protects all sensitive routes!
+
+---
+
+## 📚 Technical Terms Glossary
+- `Authorization: Bearer <token>`: Standard HTTP header format for bearer tokens.
+- `jwt.verify(token, secret)`: Verifies a JWT token and returns the decoded payload when valid.
+- `req.header('Authorization')?.replace('Bearer ', '')`: Safely extract token using optional chaining and string replace.
+
+## 🧑‍💻 Important Import & Syntax Explanations
+- Optional chaining (`?.`) prevents errors when a nested property is missing.
+- Always return `res.status(401)` when token missing/invalid to stop request processing.
+- Attach `req.user` and call `next()` to make authentication data available to downstream handlers.

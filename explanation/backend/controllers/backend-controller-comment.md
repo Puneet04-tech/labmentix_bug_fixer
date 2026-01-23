@@ -195,3 +195,15 @@ exports.getCommentCount = async (req, res) => {
 ---
 
 Simple but essential - enables ticket collaboration! 💬✨
+
+---
+
+## 📚 Technical Terms Glossary
+- `populate`: Load referenced documents (e.g., author details) from ObjectId fields.
+- `req.user`: Authenticated user payload from JWT used for permission checks.
+- `countDocuments`: Mongoose method to count documents matching a filter (used for comment counts).
+
+## 🧑‍💻 Important Import & Syntax Explanations
+- `content.trim()` : Removes leading/trailing whitespace from user input to validate non-empty comments.
+- `.sort({ createdAt: 1 })`: Sort results ascending by creation date (oldest first).
+- Authorization pattern: check ownership with `resource.author.toString() === req.user.id`.

@@ -397,7 +397,21 @@ res.json(project);  // owner is just an ID!
 const project = await Project.create({...});
 const populated = await Project.findById(project._id)
   .populate('owner', 'name email');
-res.json(populated);
+  res.json(populated);
+
+---
+
+## 📚 Technical Terms Glossary
+- `populate`: Mongoose method to replace referenced ObjectId fields with full documents (e.g., `.populate('owner', 'name email')`).
+- `req.user`: Authenticated user object attached by the auth middleware; used for authorization checks.
+- `runValidators`: Option for update operations that runs schema validators on updates.
+- `findByIdAndUpdate`: Mongoose helper that updates a document by id and can return the updated doc with `{ new: true }`.
+
+## 🧑‍💻 Important Import & Syntax Explanations
+- `const X = require('x')` vs `import X from 'x'`: CommonJS (`require`) vs ESM (`import`) module styles.
+- `async/await` and `try/catch`: Used to handle asynchronous database operations; always catch errors and return appropriate HTTP responses.
+- `res.status(code).json(payload)`: Standard pattern to send HTTP responses with status codes and JSON bodies.
+- `if (!resource) return res.status(404).json(...)`: Standard resource-existence check after `findById`.
 ```
 
 ---

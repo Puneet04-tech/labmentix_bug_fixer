@@ -44,3 +44,16 @@ Updates `updatedAt` on every save.
 
 ## 🔗 Related Files
 - [ticketController.js](backend-controller-ticket.md) - CRUD + filtering
+ - [ticketController.js](backend-controller-ticket.md) - CRUD + filtering
+
+---
+
+## 📚 Technical Terms Glossary
+- `schema.index({ ... })`: Create indexes on fields to speed up queries.
+- `ref`: In schema field, indicates referenced model (e.g., `ref: 'User'`).
+- `pre('save')`: Mongoose middleware hook that runs before saving a document.
+
+## 🧑‍💻 Important Import & Syntax Explanations
+- Use enums in schema to restrict allowed values (e.g., status, priority).
+- `ticketSchema.index({ project: 1, status: 1 })` improves performance for project+status queries.
+- Prefer `findById` and `findByIdAndUpdate` for id-based operations to keep intent clear.

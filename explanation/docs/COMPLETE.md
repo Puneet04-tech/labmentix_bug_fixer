@@ -381,7 +381,6 @@ code d:\labmentix_bug_fixer\explanation\INDEX.md
 ✅ **Debugging aid** for issue resolution
 ✅ **Best practices guide** for MERN development
 
----
 
 ## 🚀 **Next Steps:**
 
@@ -392,13 +391,23 @@ code d:\labmentix_bug_fixer\explanation\INDEX.md
 5. **Practice** - Try all examples
 6. **Build** - Create your own features
 
----
 
 **🎓 Happy Learning! Your complete MERN stack explanation system is ready to use!**
 
 *Start with: `d:\labmentix_bug_fixer\explanation\INDEX.md`*
 
+
 ---
+
+## 📚 Technical Terms Glossary (Complete)
+- `INDEX.md`: Master index listing all explanation files and short descriptions.
+- `EXPLANATION_GUIDE.md`: Navigation and usage guide for the explanation set.
+- `README.md`: High-level summary and quick start points.
+
+## 🧑‍💻 Important Import & Syntax Explanations (Complete)
+- Keep all explanation links relative to the `explanation/` folder to ensure they work in repository viewers.
+- Use descriptive file naming (`frontend-pages-Tickets.md`, `backend-controllers-ticket.md`) to make the index discoverable.
+- Maintain consistent section structure across files (Overview, Line-by-Line, Flow, Common Operations, Pitfalls, Testing Examples).
 
 **P.S.** The most detailed explanations are in:
 - backend-models-User.md (3,000+ lines on authentication)

@@ -56,3 +56,14 @@ Separate endpoint for assigning tickets (has different authorization logic).
 
 ## 🔗 Related Files
 - [ticketController.js](backend-controller-ticket.md) - Filtering + authorization
+ - [ticketController.js](backend-controller-ticket.md) - Filtering + authorization
+
+---
+
+## 📚 Technical Terms Glossary
+- `router.use(auth)`: Apply auth middleware to all routes defined after this line.
+- `router.route('/path').get(...).post(...)`: Route chaining to handle multiple HTTP methods for same path.
+
+## 🧑‍💻 Important Import & Syntax Explanations
+- Route order matters: define `router.get('/project/:projectId')` before `router.get('/:id')` to avoid conflicts.
+- `router.put('/:id/assign', assignTicket)`: Separate endpoints for specialized actions (assignment) keep controllers focused.

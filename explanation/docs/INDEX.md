@@ -302,3 +302,15 @@ Created by analyzing every line of code in the Labmentix Bug Fixer project. Each
 ---
 
 *Use this index to navigate all explanation files. Happy learning! 🚀*
+
+---
+
+## 📚 Technical Terms Glossary (Index)
+- `INDEX.md`: Master table of contents for all explanation files.
+- `EXPLANATION_GUIDE.md`: How to use the explanations and recommended learning paths.
+- `Related Files`: Section links inside index that point to detailed explanation pages.
+
+## 🧑‍💻 Important Import & Syntax Explanations (Index)
+- Keep link paths relative to the `explanation/` folder to preserve portability across clones.
+- Use consistent naming for explanation files (e.g., `frontend-pages-Tickets.md`) so indexes remain accurate.
+- When adding new explanation files, update `INDEX.md` with a short one-line summary and category placement.
