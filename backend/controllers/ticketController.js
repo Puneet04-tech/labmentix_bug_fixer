@@ -2,6 +2,15 @@ const Ticket = require('../models/Ticket');
 const Project = require('../models/Project');
 const User = require('../models/User');
 
+// Helper to extract an ID string from a ref which may be an ObjectId, string, or populated object
+const refToId = (ref) => {
+  if (!ref) return null;
+  if (typeof ref === 'string') return ref;
+  if (ref._id) return ref._id.toString();
+  if (ref.toString) return ref.toString();
+  return null;
+};
+
 // @desc    Get all tickets
 // @route   GET /api/tickets
 // @access  Private
@@ -70,10 +79,11 @@ exports.getTicket = async (req, res) => {
       return res.status(404).json({ message: 'Ticket not found' });
     }
 
-    // Check if user has access to the project
+    // Check if user has access to the project (handle populated objects and raw ids)
     const project = ticket.project;
-    const isOwner = project.owner.toString() === req.user.id;
-    const isMember = project.members.some(member => member.toString() === req.user.id);
+    const ownerId = refToId(project.owner);
+    const isOwner = ownerId === req.user.id;
+    const isMember = project.members.some(member => refToId(member) === req.user.id);
 
     if (!isOwner && !isMember) {
       return res.status(403).json({ message: 'Not authorized to access this ticket' });
@@ -103,8 +113,9 @@ exports.createTicket = async (req, res) => {
       return res.status(404).json({ message: 'Project not found' });
     }
 
-    const isOwner = projectDoc.owner.toString() === req.user.id;
-    const isMember = projectDoc.members.some(member => member.toString() === req.user.id);
+    const ownerId = refToId(projectDoc.owner);
+    const isOwner = ownerId === req.user.id;
+    const isMember = projectDoc.members.some(member => refToId(member) === req.user.id);
 
     if (!isOwner && !isMember) {
       return res.status(403).json({ message: 'Not authorized to create tickets in this project' });
@@ -112,8 +123,8 @@ exports.createTicket = async (req, res) => {
 
     // If assignedTo is provided, validate they're part of the project and exist
     if (assignedTo) {
-      const isAssigneeValid = projectDoc.owner.toString() === assignedTo ||
-                             projectDoc.members.some(member => member.toString() === assignedTo);
+      const isAssigneeValid = refToId(projectDoc.owner) === assignedTo ||
+                             projectDoc.members.some(member => refToId(member) === assignedTo);
       if (!isAssigneeValid) {
         return res.status(400).json({ message: 'Assigned user is not part of the project' });
       }
@@ -160,8 +171,9 @@ exports.updateTicket = async (req, res) => {
 
     // Check if user has access to the project
     const project = ticket.project;
-    const isOwner = project.owner.toString() === req.user.id;
-    const isMember = project.members.some(member => member.toString() === req.user.id);
+    const ownerId = refToId(project.owner);
+    const isOwner = ownerId === req.user.id;
+    const isMember = project.members.some(member => refToId(member) === req.user.id);
 
     if (!isOwner && !isMember) {
       return res.status(403).json({ message: 'Not authorized to update this ticket' });
@@ -169,8 +181,8 @@ exports.updateTicket = async (req, res) => {
 
     // If assignedTo is being changed, validate
     if (req.body.assignedTo) {
-      const isAssigneeValid = project.owner.toString() === req.body.assignedTo ||
-                             project.members.some(member => member.toString() === req.body.assignedTo);
+      const isAssigneeValid = refToId(project.owner) === req.body.assignedTo ||
+                             project.members.some(member => refToId(member) === req.body.assignedTo);
       if (!isAssigneeValid) {
         return res.status(400).json({ message: 'Assigned user is not part of the project' });
       }
@@ -208,8 +220,8 @@ exports.deleteTicket = async (req, res) => {
     }
 
     // Check if user is project owner or ticket reporter
-    const isProjectOwner = ticket.project.owner.toString() === req.user.id;
-    const isReporter = ticket.reportedBy.toString() === req.user.id;
+    const isProjectOwner = refToId(ticket.project.owner) === req.user.id;
+    const isReporter = refToId(ticket.reportedBy) === req.user.id;
 
     if (!isProjectOwner && !isReporter) {
       return res.status(403).json({ message: 'Not authorized to delete this ticket' });
@@ -234,8 +246,8 @@ exports.getTicketsByProject = async (req, res) => {
       return res.status(404).json({ message: 'Project not found' });
     }
 
-    const isOwner = project.owner.toString() === req.user.id;
-    const isMember = project.members.some(member => member.toString() === req.user.id);
+    const isOwner = refToId(project.owner) === req.user.id;
+    const isMember = project.members.some(member => refToId(member) === req.user.id);
 
     if (!isOwner && !isMember) {
       return res.status(403).json({ message: 'Not authorized to access this project' });
@@ -266,8 +278,8 @@ exports.assignTicket = async (req, res) => {
 
     // Check if user has access to the project
     const project = ticket.project;
-    const isOwner = project.owner.toString() === req.user.id;
-    const isMember = project.members.some(member => member.toString() === req.user.id);
+    const isOwner = refToId(project.owner) === req.user.id;
+    const isMember = project.members.some(member => refToId(member) === req.user.id);
 
     if (!isOwner && !isMember) {
       return res.status(403).json({ message: 'Not authorized to assign this ticket' });
@@ -275,8 +287,8 @@ exports.assignTicket = async (req, res) => {
 
     // Validate assignee is part of project and exists
     if (userId) {
-      const isAssigneeValid = project.owner.toString() === userId ||
-                             project.members.some(member => member.toString() === userId);
+      const isAssigneeValid = refToId(project.owner) === userId ||
+                             project.members.some(member => refToId(member) === userId);
       if (!isAssigneeValid) {
         return res.status(400).json({ message: 'User is not part of the project' });
       }

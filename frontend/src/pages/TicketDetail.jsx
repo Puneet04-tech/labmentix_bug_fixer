@@ -105,9 +105,16 @@ const TicketDetail = () => {
     );
   }
 
-  const isReporter = currentTicket.reportedBy._id === user._id;
-  const isProjectOwner = currentTicket.project.owner === user._id;
-  const canEdit = isReporter || isProjectOwner || currentTicket.project.members?.some(m => m === user._id);
+  // Robust checks for id equality (handle populated objects or raw ids)
+  const reportedById = currentTicket.reportedBy?._id ? currentTicket.reportedBy._id : currentTicket.reportedBy;
+  const ownerId = currentTicket.project.owner?._id ? currentTicket.project.owner._id : currentTicket.project.owner;
+  const isReporter = reportedById === user._id;
+  const isProjectOwner = ownerId === user._id;
+  const isMember = Array.isArray(currentTicket.project.members)
+    ? currentTicket.project.members.some(m => (m._id ? m._id === user._id : m === user._id))
+    : false;
+
+  const canEdit = isReporter || isProjectOwner || isMember;
   const canDelete = isReporter || isProjectOwner;
 
   // Get all project members for assignment (owner + members)
