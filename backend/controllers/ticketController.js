@@ -55,7 +55,14 @@ exports.getTickets = async (req, res) => {
 exports.getTicket = async (req, res) => {
   try {
     const ticket = await Ticket.findById(req.params.id)
-      .populate('project', 'name owner members')
+      .populate({
+        path: 'project',
+        select: 'name owner members',
+        populate: [
+          { path: 'owner', select: 'name email' },
+          { path: 'members', select: 'name email' }
+        ]
+      })
       .populate('assignedTo', 'name email')
       .populate('reportedBy', 'name email');
 

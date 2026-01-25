@@ -110,12 +110,17 @@ const TicketDetail = () => {
   const canEdit = isReporter || isProjectOwner || currentTicket.project.members?.some(m => m === user._id);
   const canDelete = isReporter || isProjectOwner;
 
-  // Get all project members for assignment
-  const projectMembers = currentTicket.project.members || [];
-  const allMembers = [
-    { _id: currentTicket.project.owner, name: 'Owner' },
-    ...projectMembers
-  ];
+  // Get all project members for assignment (owner + members)
+  const projectMembers = Array.isArray(currentTicket.project.members)
+    ? currentTicket.project.members
+    : [];
+
+  // Normalize owner object (could be id or populated object)
+  const ownerObj = currentTicket.project.owner && currentTicket.project.owner.name
+    ? currentTicket.project.owner
+    : { _id: currentTicket.project.owner, name: currentTicket.project.owner?.toString() || 'Owner' };
+
+  const allMembers = [ownerObj, ...projectMembers];
 
   return (
     <div>
@@ -239,7 +244,9 @@ const TicketDetail = () => {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
                 >
                   <option value="">Unassigned</option>
-                  {/* Note: Would need to fetch project members here */}
+                  {allMembers.map(m => (
+                    <option key={m._id} value={m._id}>{m.name} {m.email ? `(${m.email})` : ''}</option>
+                  ))}
                 </select>
               </div>
             )}

@@ -124,8 +124,8 @@ exports.getTicket = async (req, res) => {
 };
 ```
 
-**Line 54**: Populate project with **owner and members** fields
-- Needed for authorization check
+**Line 54**: Populate project with **owner and members** fields (owner and members are now populated with `name` and `email` for better UI display)
+- Needed for authorization check and to list members in the assignment dropdown
 
 **Lines 64-70**: **Authorization check**
 - User must be project owner OR member to view ticket

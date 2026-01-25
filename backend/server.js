@@ -38,6 +38,8 @@ app.use('/api/projects', require('./routes/projects'));
 app.use('/api/tickets', require('./routes/tickets'));
 app.use('/api/comments', require('./routes/comments'));
 app.use('/api/analytics', require('./routes/analytics'));
+// Users: search endpoint (protected)
+app.use('/api/users', require('./routes/users'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {

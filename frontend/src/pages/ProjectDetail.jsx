@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useProject } from '../context/ProjectContext';
 import { useTicket } from '../context/TicketContext';
 import { useAuth } from '../context/AuthContext';
+import API from '../utils/api';
 
 const ProjectDetail = () => {
   const { id } = useParams();
@@ -22,6 +23,10 @@ const ProjectDetail = () => {
   });
   const [errors, setErrors] = useState({});
 
+  // Add member search state
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+
   useEffect(() => {
     loadProject();
   }, [id]);
@@ -40,6 +45,9 @@ const ProjectDetail = () => {
       // Load project tickets
       const tickets = await fetchTicketsByProject(id);
       setProjectTickets(tickets);
+      // clear search state
+      setSearchQuery('');
+      setSearchResults([]);
     }
   };
 
@@ -94,6 +102,31 @@ const ProjectDetail = () => {
         navigate('/projects');
       }
     }
+  };
+
+  // Search users to add as member
+  const handleSearchUsers = async () => {
+    if (!searchQuery.trim()) return setSearchResults([]);
+    try {
+      const { data } = await API.get(`/users?q=${encodeURIComponent(searchQuery.trim())}`);
+      // filter out owner and existing members
+      const filtered = data.filter(u => u._id !== currentProject.owner._id && !currentProject.members.some(m => m._id === u._id));
+      setSearchResults(filtered);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleAddMember = async (userId) => {
+    const result = await addMember(id, userId);
+    if (result.success) {
+      setSearchResults(prev => prev.filter(u => u._id !== userId));
+    }
+  };
+
+  const handleRemoveMember = async (userId) => {
+    if (!window.confirm('Remove this member from the project?')) return;
+    await removeMember(id, userId);
   };
 
   const getStatusColor = (status) => {
@@ -346,6 +379,49 @@ const ProjectDetail = () => {
         {/* Team Members */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
           <h3 className="text-xl font-bold text-gray-900 mb-4">Team Members ({currentProject.members.length + 1})</h3>
+
+          {/* Add Member (owner-only) */}
+          {isOwner && (
+            <div className="mb-4">
+              <label className="block text-sm text-gray-700 font-medium mb-2">Add Member</label>
+              <div className="flex space-x-2">
+                <input
+                  type="text"
+                  placeholder="Search by name or email"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg"
+                />
+                <button
+                  onClick={handleSearchUsers}
+                  className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+                >
+                  Search
+                </button>
+              </div>
+
+              {/* Search Results */}
+              {searchResults.length > 0 && (
+                <div className="mt-3 space-y-2">
+                  {searchResults.map(u => (
+                    <div key={u._id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                      <div>
+                        <div className="font-medium">{u.name}</div>
+                        <div className="text-sm text-gray-500">{u.email}</div>
+                      </div>
+                      <div>
+                        <button
+                          onClick={() => handleAddMember(u._id)}
+                          className="px-3 py-1 bg-green-600 text-white rounded-md"
+                        >Add</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
           <div className="space-y-3">
             {/* Owner */}
             <div className="flex items-center justify-between p-3 bg-primary-50 rounded-lg">
@@ -375,9 +451,15 @@ const ProjectDetail = () => {
                     <p className="text-sm text-gray-500">{member.email}</p>
                   </div>
                 </div>
-                <span className="px-3 py-1 bg-gray-200 text-gray-700 text-xs font-medium rounded-full">
-                  Member
-                </span>
+                <div className="flex items-center space-x-2">
+                  <span className="px-3 py-1 bg-gray-200 text-gray-700 text-xs font-medium rounded-full">Member</span>
+                  {isOwner && (
+                    <button
+                      onClick={() => handleRemoveMember(member._id)}
+                      className="px-3 py-1 bg-red-600 text-white rounded-md"
+                    >Remove</button>
+                  )}
+                </div>
               </div>
             ))}
 
