@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 import Breadcrumbs from './Breadcrumbs';
+import { useTheme } from '../context/ThemeContext';
 
 const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -10,8 +11,10 @@ const Layout = ({ children }) => {
     setSidebarOpen(!sidebarOpen);
   };
 
+  const { theme } = useTheme();
+
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className={`flex h-screen ${theme === 'dark' ? 'dark' : ''} bg-surface-light dark:bg-surface-dark text-slate-800 dark:text-slate-100`}>
       {/* Sidebar */}
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
 

@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 
 const Navbar = ({ toggleSidebar }) => {
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
 
   const getInitials = (name) => {
     return name
@@ -15,19 +17,18 @@ const Navbar = ({ toggleSidebar }) => {
 
   const getAvatarColor = (name) => {
     const colors = [
-      'bg-blue-500',
-      'bg-green-500',
-      'bg-purple-500',
-      'bg-pink-500',
-      'bg-yellow-500',
-      'bg-indigo-500'
+      'bg-primary-500',
+      'bg-accent-500',
+      'bg-amethyst-500',
+      'bg-accent-300',
+      'bg-primary-600'
     ];
-    const index = name.charCodeAt(0) % colors.length;
+    const index = (name && name.charCodeAt(0)) ? name.charCodeAt(0) % colors.length : 0;
     return colors[index];
   };
 
   return (
-    <nav className="bg-white border-b border-gray-200 sticky top-0 z-10">
+    <nav className="bg-surface-card dark:bg-surface-cardDark border-b border-surface-muted dark:border-gray-700 sticky top-0 z-10">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Left: Hamburger Menu */}
@@ -63,8 +64,26 @@ const Navbar = ({ toggleSidebar }) => {
 
           {/* Right: Notifications & Profile */}
           <div className="flex items-center space-x-4">
+            {/* Theme toggle */}
+            <button
+              onClick={toggleTheme}
+              aria-label="Toggle theme"
+              className="p-2 rounded-lg hover:bg-surface-muted dark:hover:bg-gray-700 transition"
+              title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+            >
+              {theme === 'dark' ? (
+                <svg className="w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 2a.75.75 0 01.75.75V4a.75.75 0 01-1.5 0V2.75A.75.75 0 0110 2zM14.95 4.05a.75.75 0 011.06 1.06l-1 1a.75.75 0 11-1.06-1.06l1-1zM18 10a.75.75 0 01-.75.75H16a.75.75 0 010-1.5h1.25A.75.75 0 0118 10zM14.95 15.95a.75.75 0 00-1.06 1.06l1 1a.75.75 0 101.06-1.06l-1-1zM10 16a.75.75 0 01.75.75V18a.75.75 0 01-1.5 0v-1.25A.75.75 0 0110 16zM5.05 15.95a.75.75 0 011.06 1.06l-1 1a.75.75 0 11-1.06-1.06l1-1zM4 10a.75.75 0 01-.75.75H2.5a.75.75 0 010-1.5H3.25A.75.75 0 014 10zM5.05 4.05a.75.75 0 00-1.06 1.06l1 1a.75.75 0 001.06-1.06l-1-1z" />
+                </svg>
+              ) : (
+                <svg className="w-6 h-6 text-gray-700" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M17.293 13.293a8 8 0 11-10.586-10.586 8.001 8.001 0 0010.586 10.586z" />
+                </svg>
+              )}
+            </button>
+
             {/* Notifications */}
-            <button className="relative p-2 text-gray-600 hover:text-primary-600 hover:bg-gray-100 rounded-lg transition">
+            <button className="relative p-2 text-gray-600 hover:text-primary-500 hover:bg-surface-muted rounded-lg transition">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
               </svg>
