@@ -8,7 +8,7 @@ import API from '../utils/api';
 const ProjectDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { currentProject, fetchProject, updateProject, deleteProject, loading } = useProject();
+  const { currentProject, fetchProject, updateProject, deleteProject, loading, addMember, removeMember } = useProject();
   const { fetchTicketsByProject } = useTicket();
   const { user, logout } = useAuth();
   const [isEditing, setIsEditing] = useState(false);

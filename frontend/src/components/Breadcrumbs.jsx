@@ -45,6 +45,13 @@ const Breadcrumbs = () => {
     let currentPath = '';
     pathnames.forEach((segment, index) => {
       currentPath += `/${segment}`;
+
+      // Avoid adding Dashboard twice when the path is `/dashboard`
+      if (currentPath === '/dashboard') {
+        breadcrumbs[0].isLast = index === pathnames.length - 1;
+        return; // skip pushing duplicate
+      }
+
       const name = pathMap[currentPath] || segment.charAt(0).toUpperCase() + segment.slice(1);
       breadcrumbs.push({
         name,
