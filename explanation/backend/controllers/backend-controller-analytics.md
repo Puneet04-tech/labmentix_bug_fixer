@@ -208,3 +208,22 @@ Powerful analytics - provides insights into project health! 📊✨
 - `const result = await Model.aggregate([...])`: Use aggregation for complex DB-side calculations rather than multiple round trips.
 - `$dateToString`: Convert date fields to strings for grouping by day/month in aggregation pipelines.
 - `Array.map` + `Promise.all` pattern: Map over items to start async operations, then await all results in parallel.
+
+---
+
+### Sample Requests & Responses
+
+GET /api/analytics/overview
+Response (200):
+```json
+{
+  "totalProjects": 3,
+  "ticketsByStatus": { "Open": 5, "Closed": 10 },
+  "recentActivity": [ { "date": "2026-01-20", "created": 3 } ]
+}
+```
+
+Edge cases:
+- No projects for user → return empty stats or zeros (avoid 500)
+- Large datasets → aggregation may be slow; consider pagination or pre-aggregated counters
+

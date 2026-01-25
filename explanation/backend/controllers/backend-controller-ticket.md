@@ -382,6 +382,32 @@ exports.assignTicket = async (req, res) => {
 
 **Line 271**: `userId || null` - Can unassign ticket by sending null
 
+**Sample request**: Assign ticket to a member (only project owner or member can do this)
+```http
+PUT /api/tickets/507.../assign
+Content-Type: application/json
+Authorization: Bearer <token>
+
+{
+  "userId": "507..."  // user must be part of the project
+}
+```
+
+Response (200):
+```json
+{
+  "_id": "507...",
+  "title": "Fix login bug",
+  "assignedTo": { "_id": "507...", "name": "Bob", "email": "bob@example.com" },
+  "status": "Open",
+  "project": { "_id": "projId", "name": "Website Redesign" }
+}
+```
+
+**Edge cases**:
+- Assigning to a user who is not in the project → `400 Bad Request` (`User is not part of the project`)
+- Assigning to a non-existent user id → `400 Bad Request` (`Assigned user not found`)
+
 **Used by**: TicketDetail.jsx assignment dropdown
 
 ---
@@ -457,6 +483,50 @@ filter = {
 ---
 
 ## 🚨 Common Issues
+### Sample Requests & Responses
+
+POST /api/tickets (Create Ticket)
+Request:
+```http
+POST /api/tickets
+Content-Type: application/json
+
+{
+  "title": "Login fails on Safari",
+  "description": "Users report 401 error when logging in via Safari",
+  "project": "63f...",
+  "priority": "High",
+  "type": "Bug"
+}
+```
+Success Response (201):
+```json
+{
+  "_id": "640...",
+  "title": "Login fails on Safari",
+  "status": "Open",
+  "priority": "High",
+  "project": { "_id": "63f...", "name": "Website" },
+  "reportedBy": { "_id": "507...", "name": "Alice" }
+}
+```
+
+Edge cases:
+- Missing `title`/`description`/`project` → 400 Bad Request
+- `assignedTo` not a project member → 400 with explanatory message
+- Invalid `project` id format → 400 or 404 depending on validation
+
+GET /api/tickets/:id (Get Ticket)
+Edge cases:
+- Ticket not found → 404 Not Found
+- User not a project member/owner → 403 Forbidden
+
+PUT /api/tickets/:id (Update Ticket)
+Edge cases:
+- Trying to assign to a user not in project → 400
+- Updating protected fields without permission → 403
+
+---
 
 **Issue**: Users can assign tickets to anyone
 ```javascript

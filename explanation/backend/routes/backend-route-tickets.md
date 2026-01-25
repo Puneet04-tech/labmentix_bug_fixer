@@ -50,7 +50,20 @@ router.route('/:id')
 ```javascript
 router.put('/:id/assign', assignTicket);
 ```
-Separate endpoint for assigning tickets (has different authorization logic).
+ Separate endpoint for assigning tickets (has different authorization logic).
+
+---
+
+### Sample Requests & Edge Cases
+
+GET /api/tickets
+Request example: `GET /api/tickets?status=Open&priority=High`
+Response: 200 JSON array of ticket objects (populated `project`, `assignedTo`, `reportedBy`).
+
+POST /api/tickets (see controller for payload)
+Edge cases:
+- Requesting tickets for a project the user isn't a member of → 403 Forbidden
+- Passing malformed query params (invalid ObjectId) → 400 Bad Request or empty result depending on validation
 
 ---
 

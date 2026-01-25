@@ -424,3 +424,35 @@ const populated = await Project.findById(project._id)
 ---
 
 Core project management - handles all project operations! 📁✨
+
+---
+
+### Sample Requests & Responses
+
+POST /api/projects (Create Project)
+Request:
+```http
+POST /api/projects
+Content-Type: application/json
+
+{
+  "name":"Website Redesign",
+  "description":"Update UI for accessibility",
+  "members": ["507...", "508..."]
+}
+```
+Response (201):
+```json
+{
+  "_id":"63f...",
+  "name":"Website Redesign",
+  "owner": {"_id":"507...","name":"Alice"},
+  "members": [{"_id":"507...","name":"Alice"}]
+}
+```
+
+Edge cases:
+- Missing required fields (`name`/`description`) → 400 Bad Request
+- Non-owner attempting to update/delete project → 403 Forbidden
+- Removing a member that doesn't exist → No-op or 400 depending on controller logic
+

@@ -156,7 +156,7 @@ User refreshes page → React unmounts/remounts → Need to restore user state f
 - Backend route:
   ```javascript
   router.get('/me', protect, (req, res) => {
-    res.json({ _id: req.user._id, name: req.user.name, email: req.user.email });
+    res.json({ _id: req.user._id, name: req.user.name, email: req.user.email, role: req.user.role });
   });
   ```
 - If token valid → Returns user data
@@ -174,9 +174,9 @@ User refreshes page → React unmounts/remounts → Need to restore user state f
 
 ### **Lines 38-49: Register Function**
 ```javascript
-const register = async (name, email, password) => {
+const register = async (registerData) => {
   try {
-    const { data } = await API.post('/auth/register', { name, email, password });
+    const { data } = await API.post('/auth/register', registerData);
     localStorage.setItem('token', data.token);
     setUser(data);
     toast.success('Registration successful!');

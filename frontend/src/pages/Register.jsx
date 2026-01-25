@@ -7,7 +7,9 @@ const Register = () => {
     name: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    role: 'member',
+    adminKey: ''
   });
   const [errors, setErrors] = useState({});
   const { register, user } = useAuth();
@@ -48,6 +50,10 @@ const Register = () => {
       newErrors.confirmPassword = 'Passwords do not match';
     }
 
+    if (formData.role === 'admin' && !formData.adminKey.trim()) {
+      newErrors.adminKey = 'Admin key is required to register as admin';
+    }
+
     return newErrors;
   };
 
@@ -60,7 +66,8 @@ const Register = () => {
       return;
     }
 
-    await register(formData.name, formData.email, formData.password);
+    const { confirmPassword, ...registerData } = formData;
+    await register(registerData);
   };
 
   return (
@@ -150,6 +157,45 @@ const Register = () => {
                 <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>
               )}
             </div>
+
+            {/* Role Selector */}
+            <div>
+              <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">
+                Role
+              </label>
+              <select
+                id="role"
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
+              >
+                <option value="member">Member</option>
+                <option value="core">Core</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+
+            {/* Admin key (only if role === 'admin') */}
+            {formData.role === 'admin' && (
+              <div>
+                <label htmlFor="adminKey" className="block text-sm font-medium text-gray-700 mb-2">
+                  Admin Key (required to register as admin)
+                </label>
+                <input
+                  type="text"
+                  id="adminKey"
+                  name="adminKey"
+                  value={formData.adminKey}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition ${
+                    errors.adminKey ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                  placeholder="Enter admin registration key"
+                />
+                {errors.adminKey && <p className="text-red-500 text-sm mt-1">{errors.adminKey}</p>}
+              </div>
+            )}
 
             {/* Submit Button */}
             <button

@@ -1,10 +1,12 @@
 # Register.jsx - Frontend Page Line-by-Line Explanation
 
 ## Overview
-User registration page with 4-field form (name, email, password, confirmPassword), password matching validation, and redirect logic.
+User registration page with fields for name, email, password, confirmPassword, and **role** (plus optional adminKey). Includes password matching validation and redirect logic.
 
 ## Key Features
 - Name, email, password, confirm password fields
+- **Role selection** (`member`, `core`, `admin`) during registration
+- Optional **Admin Key** input (required if registering as `admin`)
 - Password matching validation
 - Email format validation with regex
 - Controlled form inputs
@@ -32,18 +34,21 @@ import { toast } from 'react-toastify';
 - `navigate('/dashboard')` after registration relies on the AuthContext auto-logging in the user; ensure state is updated before navigation.
 - Accessibility note: Use `aria-invalid` on inputs when validation fails and associate the error message via `aria-describedby`.
 
-### Lines 10-17: Form State (4 Fields)
+### Lines 10-17: Form State (6 Fields)
 ```jsx
 const [formData, setFormData] = useState({
   name: '',
   email: '',
   password: '',
-  confirmPassword: ''
+  confirmPassword: '',
+  role: 'member',
+  adminKey: ''
 });
 const [errors, setErrors] = useState({});
 ```
-- **4 fields**: Name, email, password, confirmPassword
-- **confirmPassword**: Extra field to verify password entry
+- **Fields**: Name, email, password, confirmPassword, role, adminKey
+- **role**: Default `member`; user can choose `member`, `core`, or `admin`
+- **adminKey**: Required if role === `admin` (used to validate admin registration)
 
 ### Lines 19-29: Email Validation
 ```jsx
@@ -80,6 +85,10 @@ const validate = () => {
   if (formData.password !== formData.confirmPassword) {
     newErrors.confirmPassword = 'Passwords do not match';
   }
+
+  if (formData.role === 'admin' && !formData.adminKey.trim()) {
+    newErrors.adminKey = 'Admin key is required to register as admin';
+  }
   
   return newErrors;
 };
@@ -88,6 +97,7 @@ const validate = () => {
 - **Email validation**: Format check with regex
 - **Password validation**: Minimum 6 characters
 - **Password match**: `formData.password !== formData.confirmPassword` ensures both passwords are identical
+- **Admin key validation**: If `role === 'admin'`, `adminKey` must be present and non-empty
 - **Critical check**: confirmPassword validation prevents typos during registration
 
 ### Lines 57-82: Form Submission

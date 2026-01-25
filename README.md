@@ -293,7 +293,7 @@ Frontend will run on `http://localhost:3000`
    
    # Create .env file
    cp .env.example .env
-   # Add your MongoDB URI and JWT secret
+   # Add your MongoDB URI, JWT secret, and optional ADMIN_REGISTRATION_KEY (if you want to allow creating admin users during registration)
    
    # Start backend
    npm run dev

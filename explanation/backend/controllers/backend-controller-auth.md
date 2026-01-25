@@ -24,15 +24,15 @@ const jwt = require('jsonwebtoken');
 
 ### **Lines 4-9: Generate JWT Token**
 ```javascript
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+const generateToken = (id, role) => {
+  return jwt.sign({ id, role }, process.env.JWT_SECRET, {
     expiresIn: '30d'
   });
 };
 ```
 
 **Creates JWT token with**:
-- Payload: `{ id: userId }` - User's MongoDB _id
+- Payload: `{ id: userId, role: userRole }` - User's MongoDB _id and role (useful for quick authorization checks)
 - Secret: `process.env.JWT_SECRET` - Signing key (keep secret!)
 - Expiration: 30 days - Token becomes invalid after this
 
@@ -288,3 +288,75 @@ Foundation of security - handles all authentication! 🔐✨
 - `process.env.JWT_SECRET`: Environment variable holding the JWT signing secret — never commit this to source.
 - `res.status(401).json({ message: 'Invalid credentials' })`: Use generic error messages to avoid account enumeration.
 - `user.create()` vs `new User()` + `save()`: Two common patterns to create documents in Mongoose.
+
+---
+
+### Sample Requests & Responses
+
+POST /api/auth/register
+Request:
+```http
+POST /api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Alice",
+  "email": "alice@example.com",
+  "password": "secret123",
+  "role": "core"  # optional: "member" | "core" | "admin"
+}
+```
+Response (201):
+```json
+{
+  "_id": "507...",
+  "name": "Alice",
+  "email": "alice@example.com",
+  "role": "core",
+  "token": "eyJ..."
+}
+```
+
+> Note: Creating an `admin` account via registration requires a server-side key for safety. Example using header `x-admin-key`:
+
+```http
+POST /api/auth/register
+Content-Type: application/json
+x-admin-key: <ADMIN_REGISTRATION_KEY>
+
+{
+  "name": "Admin",
+  "email": "admin@example.com",
+  "password": "securepass",
+  "role": "admin"
+}
+```
+
+If `x-admin-key` does not match the server `ADMIN_REGISTRATION_KEY`, the request will be rejected with `403 Forbidden`.
+
+POST /api/auth/login
+Request:
+```http
+POST /api/auth/login
+Content-Type: application/json
+
+{
+  "email": "alice@example.com",
+  "password": "secret123"
+}
+```
+Response (200):
+```json
+{
+  "_id": "507...",
+  "name": "Alice",
+  "email": "alice@example.com",
+  "token": "eyJ..."
+}
+```
+
+Edge cases:
+- Registering with an already used email → 400 (User already exists)
+- Missing fields → 400 Bad Request
+- Incorrect login credentials → 401 Unauthorized (generic message)
+

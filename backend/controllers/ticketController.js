@@ -1,5 +1,6 @@
 const Ticket = require('../models/Ticket');
 const Project = require('../models/Project');
+const User = require('../models/User');
 
 // @desc    Get all tickets
 // @route   GET /api/tickets
@@ -102,12 +103,16 @@ exports.createTicket = async (req, res) => {
       return res.status(403).json({ message: 'Not authorized to create tickets in this project' });
     }
 
-    // If assignedTo is provided, validate they're part of the project
+    // If assignedTo is provided, validate they're part of the project and exist
     if (assignedTo) {
       const isAssigneeValid = projectDoc.owner.toString() === assignedTo ||
                              projectDoc.members.some(member => member.toString() === assignedTo);
       if (!isAssigneeValid) {
         return res.status(400).json({ message: 'Assigned user is not part of the project' });
+      }
+      const assigneeUser = await User.findById(assignedTo);
+      if (!assigneeUser) {
+        return res.status(400).json({ message: 'Assigned user not found' });
       }
     }
 
@@ -161,6 +166,10 @@ exports.updateTicket = async (req, res) => {
                              project.members.some(member => member.toString() === req.body.assignedTo);
       if (!isAssigneeValid) {
         return res.status(400).json({ message: 'Assigned user is not part of the project' });
+      }
+      const assigneeUser = await User.findById(req.body.assignedTo);
+      if (!assigneeUser) {
+        return res.status(400).json({ message: 'Assigned user not found' });
       }
     }
 
@@ -257,12 +266,16 @@ exports.assignTicket = async (req, res) => {
       return res.status(403).json({ message: 'Not authorized to assign this ticket' });
     }
 
-    // Validate assignee is part of project
+    // Validate assignee is part of project and exists
     if (userId) {
       const isAssigneeValid = project.owner.toString() === userId ||
                              project.members.some(member => member.toString() === userId);
       if (!isAssigneeValid) {
         return res.status(400).json({ message: 'User is not part of the project' });
+      }
+      const assigneeUser = await User.findById(userId);
+      if (!assigneeUser) {
+        return res.status(400).json({ message: 'Assigned user not found' });
       }
     }
 

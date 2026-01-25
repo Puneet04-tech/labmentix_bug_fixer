@@ -11,6 +11,7 @@ Mongoose schema for user authentication with bcrypt password hashing and validat
 - Password hashing with bcrypt (10 salt rounds)
 - Password comparison method
 - Password excluded from queries by default (`select: false`)
+- **Role** field with values `admin`, `core`, or `member` (defaults to `member`)
 
 ---
 
@@ -43,6 +44,7 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: true, trim: true, maxlength: 50 },
   email: { type: String, required: true, unique: true, lowercase: true, match: /.+@.+\..+/ },
   password: { type: String, required: true, minlength: 6, select: false },
+  role: { type: String, enum: ['admin', 'core', 'member'], default: 'member' },
   createdAt: { type: Date, default: Date.now }
 });
 ```

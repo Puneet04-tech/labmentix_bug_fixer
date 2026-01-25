@@ -207,3 +207,35 @@ Simple but essential - enables ticket collaboration! 💬✨
 - `content.trim()` : Removes leading/trailing whitespace from user input to validate non-empty comments.
 - `.sort({ createdAt: 1 })`: Sort results ascending by creation date (oldest first).
 - Authorization pattern: check ownership with `resource.author.toString() === req.user.id`.
+
+---
+
+### Sample Requests & Responses
+
+POST /api/comments (Create Comment)
+Request:
+```http
+POST /api/comments
+Content-Type: application/json
+
+{
+  "content": "This is a critical bug, please investigate",
+  "ticket": "640..."
+}
+```
+Response (201):
+```json
+{
+  "_id": "641...",
+  "content": "This is a critical bug, please investigate",
+  "ticket": "640...",
+  "author": { "_id": "507...", "name": "Alice" },
+  "createdAt": "2026-01-24T12:34:56.789Z"
+}
+```
+
+Edge cases:
+- Empty or whitespace-only `content` → 400 Bad Request
+- Ticket ID invalid or not found → 404 Not Found
+- User not in the project → 403 Forbidden
+

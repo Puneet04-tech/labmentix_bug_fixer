@@ -2,8 +2,8 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
 // Generate JWT Token
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+const generateToken = (id, role) => {
+  return jwt.sign({ id, role }, process.env.JWT_SECRET, {
     expiresIn: '30d'
   });
 };
@@ -13,7 +13,7 @@ const generateToken = (id) => {
 // @access  Public
 exports.register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, role, adminKey } = req.body;
 
     // Validation
     if (!name || !email || !password) {
@@ -26,11 +26,31 @@ exports.register = async (req, res) => {
       return res.status(400).json({ message: 'User already exists' });
     }
 
+    // Validate role selection
+    const allowedRoles = ['admin', 'core', 'member'];
+    let userRole = 'member';
+    if (role) {
+      if (!allowedRoles.includes(role)) {
+        return res.status(400).json({ message: 'Invalid role specified' });
+      }
+      if (role === 'admin') {
+        // Creating an admin via registration requires a server-side key for safety
+        const key = req.headers['x-admin-key'] || adminKey;
+        if (!process.env.ADMIN_REGISTRATION_KEY || key !== process.env.ADMIN_REGISTRATION_KEY) {
+          return res.status(403).json({ message: 'Invalid admin registration key' });
+        }
+        userRole = 'admin';
+      } else {
+        userRole = role;
+      }
+    }
+
     // Create user
     const user = await User.create({
       name,
       email,
-      password
+      password,
+      role: userRole
     });
 
     if (user) {
@@ -38,7 +58,8 @@ exports.register = async (req, res) => {
         _id: user._id,
         name: user.name,
         email: user.email,
-        token: generateToken(user._id)
+        role: user.role,
+        token: generateToken(user._id, user.role)
       });
     } else {
       res.status(400).json({ message: 'Invalid user data' });
@@ -78,7 +99,8 @@ exports.login = async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
-      token: generateToken(user._id)
+      role: user.role,
+      token: generateToken(user._id, user.role)
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -99,7 +121,8 @@ exports.getMe = async (req, res) => {
     res.json({
       _id: user._id,
       name: user.name,
-      email: user.email
+      email: user.email,
+      role: user.role
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
