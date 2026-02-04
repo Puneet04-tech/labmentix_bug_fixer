@@ -12,7 +12,7 @@ exports.getOverview = async (req, res) => {
     const userProjects = await Project.find({
       $or: [
         { owner: req.user.id },
-        { members: req.user.id }
+        { 'members.user': req.user.id }
       ]
     });
 
@@ -83,7 +83,7 @@ exports.getProjectStats = async (req, res) => {
     const userProjects = await Project.find({
       $or: [
         { owner: req.user.id },
-        { members: req.user.id }
+        { 'members.user': req.user.id }
       ]
     }).select('name status priority');
 
@@ -126,7 +126,7 @@ exports.getTicketTrends = async (req, res) => {
     const userProjects = await Project.find({
       $or: [
         { owner: req.user.id },
-        { members: req.user.id }
+        { 'members.user': req.user.id }
       ]
     });
 
@@ -203,7 +203,7 @@ exports.getUserActivity = async (req, res) => {
     const userProjects = await Project.find({
       $or: [
         { owner: req.user.id },
-        { members: req.user.id }
+        { 'members.user': req.user.id }
       ]
     });
 

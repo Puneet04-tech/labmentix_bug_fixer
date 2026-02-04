@@ -8,9 +8,7 @@ const Register = () => {
     name: '',
     email: '',
     password: '',
-    confirmPassword: '',
-    role: 'member',
-    adminKey: ''
+    confirmPassword: ''
   });
   const [errors, setErrors] = useState({});
   const { register, user } = useAuth();
@@ -53,10 +51,6 @@ const Register = () => {
       newErrors.confirmPassword = 'Passwords do not match';
     }
 
-    if (formData.role === 'admin' && !formData.adminKey.trim()) {
-      newErrors.adminKey = 'Admin key is required to register as admin';
-    }
-
     return newErrors;
   };
 
@@ -69,7 +63,10 @@ const Register = () => {
       return;
     }
 
-    const { confirmPassword, ...registerData } = formData;
+    const { confirmPassword, ...registerData } = {
+      ...formData,
+      role: 'member' // All users register as members by default
+    };
     await register(registerData);
   };
 
@@ -170,23 +167,6 @@ const Register = () => {
                   <input name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} type="password" className={`w-full px-4 py-3 rounded-lg bg-slate-800 text-slate-100 placeholder:text-slate-500 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-300 transition ${errors.confirmPassword ? 'border-red-500' : ''}`} placeholder="••••••••" />
                   {errors.confirmPassword && <div className="text-xs text-red-400 mt-1">{errors.confirmPassword}</div>}
                 </div>
-
-                <div>
-                  <label htmlFor="role" className="block text-sm font-medium text-slate-300 mb-2">Role</label>
-                  <select id="role" name="role" value={formData.role} onChange={handleChange} className="w-full px-4 py-3 rounded-lg bg-slate-800 text-slate-100 placeholder:text-slate-500 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-300 transition">
-                    <option value="member">Member</option>
-                    <option value="core">Core</option>
-                    <option value="admin">Admin</option>
-                  </select>
-                </div>
-
-                {formData.role === 'admin' && (
-                  <div>
-                    <label htmlFor="adminKey" className="block text-sm font-medium text-slate-300 mb-2">Admin Key (required to register as admin)</label>
-                    <input type="text" id="adminKey" name="adminKey" value={formData.adminKey} onChange={handleChange} className={`w-full px-4 py-3 rounded-lg bg-slate-800 text-slate-100 placeholder:text-slate-500 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-300 transition ${errors.adminKey ? 'border-red-500' : ''}`} placeholder="Enter admin registration key" />
-                    {errors.adminKey && <div className="text-xs text-red-400 mt-1">{errors.adminKey}</div>}
-                  </div>
-                )}
 
                 <button type="submit" className="w-full py-3 rounded-xl bg-gradient-to-r from-orange-500 to-accent-500 text-white font-semibold hover:from-orange-600 hover:to-accent-600 transition-shadow shadow-md">Create account</button>
               </form>

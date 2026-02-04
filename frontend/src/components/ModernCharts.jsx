@@ -147,7 +147,7 @@ const ModernCharts = ({
   };
 
   const renderRechartsBar = () => (
-    <div style={{ width: '100%', height: height }}>
+    <div style={{ width: '100%', height: height, minHeight: 300 }}>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
           <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? '#374151' : '#E5E7EB'} />
@@ -170,7 +170,7 @@ const ModernCharts = ({
   );
 
   const renderRechartsLine = () => (
-    <div style={{ width: '100%', height: height }}>
+    <div style={{ width: '100%', height: height, minHeight: 300 }}>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
           <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? '#374151' : '#E5E7EB'} />
@@ -192,7 +192,7 @@ const ModernCharts = ({
   );
 
   const renderRechartsPie = () => (
-    <div style={{ width: '100%', height: height }}>
+    <div style={{ width: '100%', height: height, minHeight: 300 }}>
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie
@@ -221,7 +221,7 @@ const ModernCharts = ({
   );
 
   const renderRechartsArea = () => (
-    <div style={{ width: '100%', height: height }}>
+    <div style={{ width: '100%', height: height, minHeight: 300 }}>
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
           <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? '#374151' : '#E5E7EB'} />
@@ -243,7 +243,7 @@ const ModernCharts = ({
   );
 
   const renderRechartsRadar = () => (
-    <div style={{ width: '100%', height: height }}>
+    <div style={{ width: '100%', height: height, minHeight: 300 }}>
       <ResponsiveContainer width="100%" height="100%">
         <RadarChart data={data} margin={{ top: 20, right: 80, left: 80, bottom: 20 }}>
           <PolarGrid stroke={theme === 'dark' ? '#374151' : '#E5E7EB'} />

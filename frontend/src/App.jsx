@@ -11,7 +11,9 @@ import { useTheme } from './context/ThemeContext';
 // Pages
 import Login from './pages/Login';
 import Register from './pages/Register';
+import AdminSetup from './pages/AdminSetup';
 import Dashboard from './pages/Dashboard';
+import AdminDashboard from './pages/AdminDashboard';
 import Projects from './pages/Projects';
 import CreateProject from './pages/CreateProject';
 import ProjectDetail from './pages/ProjectDetail';
@@ -27,7 +29,7 @@ function App() {
   const { theme } = useTheme();
 
   return (
-    <Router>
+    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <AuthProvider>
         <ProjectProvider>
           <TicketProvider>
@@ -38,6 +40,17 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/signup" element={<Register />} />
+                <Route path="/admin-setup" element={<AdminSetup />} />
+                
+                {/* Admin Routes - No Layout, Full Screen */}
+                <Route
+                  path="/admin"
+                  element={
+                    <ProtectedRoute requiredRole="admin">
+                      <AdminDashboard />
+                    </ProtectedRoute>
+                  }
+                />
                 
                 {/* Protected Routes with Layout */}
                 <Route

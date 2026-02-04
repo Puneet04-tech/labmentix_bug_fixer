@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTicket } from '../context/TicketContext';
 import { useProject } from '../context/ProjectContext';
+import ScreenshotUpload from '../components/ScreenshotUpload';
 
 const CreateTicket = () => {
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ const CreateTicket = () => {
   });
 
   const [projectMembers, setProjectMembers] = useState([]);
+  const [screenshots, setScreenshots] = useState([]);
 
   useEffect(() => {
     if (projects.length === 0) {
@@ -58,7 +60,15 @@ const CreateTicket = () => {
     const ticketData = {
       ...formData,
       assignedTo: formData.assignedTo || undefined,
-      dueDate: formData.dueDate || undefined
+      dueDate: formData.dueDate || undefined,
+      attachments: screenshots.map(screenshot => ({
+        name: screenshot.name,
+        size: screenshot.size,
+        type: screenshot.type,
+        url: screenshot.uploadedUrl || null,
+        filename: screenshot.filename || null,
+        status: screenshot.uploadedUrl ? 'uploaded' : 'pending'
+      }))
     };
 
     const newTicket = await createTicket(ticketData);
@@ -216,6 +226,18 @@ const CreateTicket = () => {
             onChange={handleChange}
             min={today}
             className="w-full px-4 py-2 border border-slate-700 bg-[#0f1724] text-slate-100 placeholder-slate-400 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+          />
+        </div>
+
+        {/* Screenshots */}
+        <div className="mb-8">
+          <label className="block text-slate-400 font-medium mb-2">
+            Screenshots & Attachments
+          </label>
+          <ScreenshotUpload
+            onFilesChange={setScreenshots}
+            maxFiles={5}
+            maxSize={5 * 1024 * 1024}
           />
         </div>
 

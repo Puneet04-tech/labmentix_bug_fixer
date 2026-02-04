@@ -11,7 +11,38 @@ const ScreenshotUpload = ({
   const [files, setFiles] = useState([]);
   const [dragActive, setDragActive] = useState(false);
   const [errors, setErrors] = useState([]);
+  const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef(null);
+
+  const uploadFile = async (file) => {
+    const formData = new FormData();
+    formData.append('screenshot', file);
+    
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('/api/screenshots/upload', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      });
+
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+
+      const data = await response.json();
+      return {
+        ...file,
+        uploadedUrl: data.screenshotUrl,
+        filename: data.filename
+      };
+    } catch (error) {
+      console.error('Upload error:', error);
+      throw error;
+    }
+  };
 
   const validateFile = (file) => {
     const newErrors = [];
@@ -31,7 +62,7 @@ const ScreenshotUpload = ({
     return true;
   };
 
-  const handleFiles = (newFiles) => {
+  const handleFiles = async (newFiles) => {
     const validFiles = [];
     const newErrors = [];
     
@@ -56,9 +87,23 @@ const ScreenshotUpload = ({
     }
     
     if (validFiles.length > 0) {
-      const updatedFiles = [...files, ...validFiles];
-      setFiles(updatedFiles);
-      onFilesChange?.(updatedFiles);
+      setUploading(true);
+      
+      try {
+        // Upload each file
+        const uploadedFiles = await Promise.all(
+          validFiles.map(file => uploadFile(file))
+        );
+        
+        const updatedFiles = [...files, ...uploadedFiles];
+        setFiles(updatedFiles);
+        onFilesChange?.(updatedFiles);
+      } catch (error) {
+        newErrors.push('Failed to upload one or more files. Please try again.');
+        setErrors(newErrors);
+      } finally {
+        setUploading(false);
+      }
     }
   };
 
@@ -138,19 +183,30 @@ const ScreenshotUpload = ({
         
         <div className="space-y-3">
           <div className="mx-auto w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
-            <Upload className="w-6 h-6 text-gray-500 dark:text-gray-400" />
+            {uploading ? (
+              <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <Upload className="w-6 h-6 text-gray-500 dark:text-gray-400" />
+            )}
           </div>
           
           <div>
             <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-              Drop files here or{' '}
-              <button
-                type="button"
-                onClick={openFileDialog}
-                className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
-              >
-                browse
-              </button>
+              {uploading ? (
+                'Uploading files...'
+              ) : (
+                <>
+                  Drop files here or{' '}
+                  <button
+                    type="button"
+                    onClick={openFileDialog}
+                    disabled={uploading}
+                    className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    browse
+                  </button>
+                </>
+              )}
             </p>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               Maximum {maxFiles} files, up to {Math.round(maxSize / 1024 / 1024)}MB each
@@ -183,7 +239,7 @@ const ScreenshotUpload = ({
             </h4>
             <div className="flex items-center space-x-1 text-xs text-green-600 dark:text-green-400">
               <CheckCircle className="w-3 h-3" />
-              <span>Ready to upload</span>
+              <span>Uploaded</span>
             </div>
           </div>
           
@@ -203,14 +259,29 @@ const ScreenshotUpload = ({
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
                       {formatFileSize(file.size)}
+                      {file.uploadedUrl && (
+                        <span className="ml-2 text-green-600 dark:text-green-400">
+                          ✓ Uploaded
+                        </span>
+                      )}
                     </p>
+                    {file.uploadedUrl && (
+                      <a 
+                        href={file.uploadedUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                      >
+                        View file
+                      </a>
+                    )}
                   </div>
                 </div>
                 
                 <button
-                  type="button"
                   onClick={() => removeFile(index)}
-                  className="flex-shrink-0 p-1 text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                  className="p-1 text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                  title="Remove file"
                 >
                   <X className="w-4 h-4" />
                 </button>

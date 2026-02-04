@@ -23,6 +23,6 @@ router.delete('/:id', deleteProject);
 
 // Member management routes
 router.post('/:id/members', addMember);
-router.delete('/:id/members/:userId', removeMember);
+router.delete('/:id/members/:memberId', removeMember);
 
 module.exports = router;

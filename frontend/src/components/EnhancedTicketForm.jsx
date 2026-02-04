@@ -102,7 +102,9 @@ const EnhancedTicketForm = ({
         name: file.name,
         size: file.size,
         type: file.type,
-        status: 'uploaded'
+        url: file.uploadedUrl || null,
+        filename: file.filename || null,
+        status: file.uploadedUrl ? 'uploaded' : 'pending'
       }))
     };
     

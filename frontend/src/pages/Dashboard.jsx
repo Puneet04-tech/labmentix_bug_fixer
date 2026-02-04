@@ -173,37 +173,34 @@ const Dashboard = () => {
 
         {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-          <div className="min-h-0">
+          <div className="min-h-[400px]">
             <ModernCharts
               data={statusData}
               title="Tickets by Status"
               subtitle="Distribution of tickets across different statuses"
-              height={400}
-              theme="dark"
-              showTooltip={true}
-              showLegend={true}
+              height={350}
+              chartType="pie"
+              className="w-full"
             />
           </div>
-          <div className="min-h-0">
+          <div className="min-h-[400px]">
             <ModernCharts
               data={priorityData}
               title="Tickets by Priority"
               subtitle="Priority breakdown of all tickets"
-              height={400}
-              theme="dark"
-              showTooltip={true}
-              showLegend={true}
+              height={350}
+              chartType="bar"
+              className="w-full"
             />
           </div>
-          <div className="min-h-0">
+          <div className="min-h-[400px]">
             <ModernCharts
               data={typeData}
               title="Tickets by Type"
               subtitle="Categorization by ticket type"
-              height={400}
-              theme="dark"
-              showTooltip={true}
-              showLegend={true}
+              height={350}
+              chartType="doughnut"
+              className="w-full"
             />
           </div>
         </div>

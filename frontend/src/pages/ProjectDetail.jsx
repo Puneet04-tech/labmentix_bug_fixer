@@ -4,6 +4,7 @@ import { useProject } from '../context/ProjectContext';
 import { useTicket } from '../context/TicketContext';
 import { useAuth } from '../context/AuthContext';
 import API from '../utils/api';
+import TeamMemberManager from '../components/TeamMemberManager';
 
 const ProjectDetail = () => {
   const { id } = useParams();
@@ -23,31 +24,32 @@ const ProjectDetail = () => {
   });
   const [errors, setErrors] = useState({});
 
-  // Add member search state
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
-
   useEffect(() => {
     loadProject();
   }, [id]);
 
   const loadProject = async () => {
-    const project = await fetchProject(id);
-    if (project) {
-      setFormData({
-        name: project.name,
-        description: project.description,
-        status: project.status,
-        priority: project.priority,
-        startDate: project.startDate ? new Date(project.startDate).toISOString().split('T')[0] : '',
-        endDate: project.endDate ? new Date(project.endDate).toISOString().split('T')[0] : ''
-      });
-      // Load project tickets
-      const tickets = await fetchTicketsByProject(id);
-      setProjectTickets(tickets);
-      // clear search state
-      setSearchQuery('');
-      setSearchResults([]);
+    try {
+      const project = await fetchProject(id);
+      if (project) {
+        setFormData({
+          name: project.name,
+          description: project.description,
+          status: project.status,
+          priority: project.priority,
+          startDate: project.startDate ? new Date(project.startDate).toISOString().split('T')[0] : '',
+          endDate: project.endDate ? new Date(project.endDate).toISOString().split('T')[0] : ''
+        });
+        // Load project tickets
+        const tickets = await fetchTicketsByProject(id);
+        setProjectTickets(tickets || []);
+      } else {
+        console.error('Project not found');
+        navigate('/projects');
+      }
+    } catch (error) {
+      console.error('Error loading project:', error);
+      navigate('/projects');
     }
   };
 
@@ -104,31 +106,6 @@ const ProjectDetail = () => {
     }
   };
 
-  // Search users to add as member
-  const handleSearchUsers = async () => {
-    if (!searchQuery.trim()) return setSearchResults([]);
-    try {
-      const { data } = await API.get(`/users?q=${encodeURIComponent(searchQuery.trim())}`);
-      // filter out owner and existing members
-      const filtered = data.filter(u => u._id !== currentProject.owner._id && !currentProject.members.some(m => m._id === u._id));
-      setSearchResults(filtered);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const handleAddMember = async (userId) => {
-    const result = await addMember(id, userId);
-    if (result.success) {
-      setSearchResults(prev => prev.filter(u => u._id !== userId));
-    }
-  };
-
-  const handleRemoveMember = async (userId) => {
-    if (!window.confirm('Remove this member from the project?')) return;
-    await removeMember(id, userId);
-  };
-
   const getStatusColor = (status) => {
     const colors = {
       'Planning': 'bg-primary-900 text-primary-100',
@@ -153,7 +130,27 @@ const ProjectDetail = () => {
   if (loading || !currentProject) {
     return (
       <div className="min-h-screen bg-[#0b1220] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
+          <p className="text-gray-400">Loading project...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Additional safety check
+  if (!currentProject._id || !currentProject.name) {
+    return (
+      <div className="min-h-screen bg-[#0b1220] flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-400 mb-4">Invalid project data</p>
+          <button
+            onClick={() => navigate('/projects')}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            Back to Projects
+          </button>
+        </div>
       </div>
     );
   }
@@ -378,95 +375,18 @@ const ProjectDetail = () => {
 
         {/* Team Members */}
         <div className="bg-[#0f1724] rounded-xl shadow-sm p-6 sm:p-8 mb-6">
-          <h3 className="text-xl font-bold text-slate-100 mb-4">Team Members ({currentProject.members.length + 1})</h3>
-
-          {/* Add Member (owner-only) */}
-          {isOwner && (
-            <div className="mb-4">
-              <label className="block text-sm text-slate-600 dark:text-slate-300 font-medium mb-2">Add Member</label>
-              <div className="flex space-x-2">
-                <input
-                  type="text"
-                  placeholder="Search by name or email"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="flex-1 px-3 py-2 border border-surface-200 dark:border-surface-700 rounded-lg"
-                />
-                <button
-                  onClick={handleSearchUsers}
-                  className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
-                >
-                  Search
-                </button>
-              </div>
-
-              {/* Search Results */}
-              {searchResults.length > 0 && (
-                <div className="mt-3 space-y-2">
-                    {searchResults.map(u => (
-                      <div key={u._id} className="flex items-center justify-between p-2 bg-[#0f1724] rounded">
-                      <div>
-                        <div className="font-medium">{u.name}</div>
-                        <div className="text-sm text-slate-500 dark:text-slate-400">{u.email}</div>
-                      </div>
-                      <div>
-                        <button
-                          onClick={() => handleAddMember(u._id)}
-                          className="px-3 py-1 bg-green-600 text-white rounded-md"
-                        >Add</button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-            <div className="space-y-3">
-            {/* Owner */}
-            <div className="flex items-center justify-between p-3 bg-[#122433] rounded-lg">
-                <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold">
-                  {currentProject.owner.name.charAt(0).toUpperCase()}
-                </div>
-                <div>
-                  <p className="font-medium text-slate-100">{currentProject.owner.name}</p>
-                  <p className="text-sm text-slate-300">{currentProject.owner.email}</p>
-                </div>
-              </div>
-              <span className="px-3 py-1 bg-emerald-600 text-white text-xs font-medium rounded-full">
-                Owner
-              </span>
-            </div>
-
-            {/* Members */}
-            {currentProject.members.map((member) => (
-              <div key={member._id} className="flex items-center justify-between p-3 bg-[#0f1724] rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-slate-400 rounded-full flex items-center justify-center text-white font-bold">
-                    {member.name.charAt(0).toUpperCase()}
-                  </div>
-                  <div>
-                      <p className="font-medium text-slate-100">{member.name}</p>
-                      <p className="text-sm text-slate-300">{member.email}</p>
-                    </div>
-                </div>
-                  <div className="flex items-center space-x-2">
-                    <span className="px-3 py-1 bg-[#122433] text-slate-100 text-xs font-medium rounded-full">Member</span>
-                  {isOwner && (
-                    <button
-                      onClick={() => handleRemoveMember(member._id)}
-                      className="px-3 py-1 bg-red-600 text-white rounded-md"
-                    >Remove</button>
-                  )}
-                </div>
-              </div>
-            ))}
-
-            {currentProject.members.length === 0 && (
-              <p className="text-slate-500 dark:text-slate-400 text-center py-4">No team members added yet</p>
-            )}
-          </div>
+          <TeamMemberManager
+            project={currentProject}
+            currentUser={user}
+            onMemberAdded={(updatedProject) => {
+              // Update the current project in context or state
+              fetchProject(id);
+            }}
+            onMemberRemoved={(updatedProject) => {
+              // Update the current project in context or state
+              fetchProject(id);
+            }}
+          />
         </div>
 
         {/* Activity / Stats */}

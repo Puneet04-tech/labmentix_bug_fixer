@@ -26,23 +26,23 @@ exports.register = async (req, res) => {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    // Validate role selection
-    const allowedRoles = ['admin', 'core', 'member'];
+    // Handle role assignment
     let userRole = 'member';
-    if (role) {
-      if (!allowedRoles.includes(role)) {
-        return res.status(400).json({ message: 'Invalid role specified' });
+    
+    if (role === 'admin') {
+      // Check for admin setup key or registration key
+      const key = adminKey || req.headers['x-admin-key'];
+      if (!process.env.ADMIN_REGISTRATION_KEY || key !== process.env.ADMIN_REGISTRATION_KEY) {
+        return res.status(403).json({ message: 'Invalid admin setup key' });
       }
-      if (role === 'admin') {
-        // Creating an admin via registration requires a server-side key for safety
-        const key = req.headers['x-admin-key'] || adminKey;
-        if (!process.env.ADMIN_REGISTRATION_KEY || key !== process.env.ADMIN_REGISTRATION_KEY) {
-          return res.status(403).json({ message: 'Invalid admin registration key' });
-        }
-        userRole = 'admin';
-      } else {
-        userRole = role;
+      userRole = 'admin';
+    } else if (role === 'core') {
+      // Core role also requires admin key
+      const key = adminKey || req.headers['x-admin-key'];
+      if (!process.env.ADMIN_REGISTRATION_KEY || key !== process.env.ADMIN_REGISTRATION_KEY) {
+        return res.status(403).json({ message: 'Invalid admin setup key for core role' });
       }
+      userRole = 'core';
     }
 
     // Create user

@@ -25,7 +25,7 @@ exports.getTickets = async (req, res) => {
     const userProjects = await Project.find({
       $or: [
         { owner: req.user.id },
-        { members: req.user.id }
+        { 'members.user': req.user.id }
       ]
     }).select('_id');
     
