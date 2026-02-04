@@ -21,27 +21,27 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       {/* Mobile Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden"
+          className="fixed inset-0 bg-black bg-opacity-40 z-20 lg:hidden"
           onClick={toggleSidebar}
         ></div>
       )}
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 h-full bg-white shadow-xl z-30 transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 left-0 h-full bg-[#0b1220] shadow-xl z-30 transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:translate-x-0 lg:static lg:z-0 w-64`}
       >
         <div className="h-full flex flex-col">
           {/* Logo */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
-            <Link to="/dashboard" className="flex items-center space-x-2">
-              <span className="text-3xl">🐛</span>
-              <span className="text-xl font-bold text-primary-600">Bug Tracker</span>
-            </Link>
+            <div className="flex items-center justify-between p-6 border-b border-slate-700">
+              <Link to="/dashboard" className="flex items-center space-x-2 neon-text">
+                <span className="text-3xl">🐛</span>
+                <span className="text-xl font-bold text-emerald-600 neon-text">Bug Tracker</span>
+              </Link>
             <button
               onClick={toggleSidebar}
-              className="lg:hidden text-gray-600 hover:text-primary-600"
+                className="lg:hidden text-slate-600 hover:text-emerald-600"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -59,8 +59,8 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                   onClick={() => window.innerWidth < 1024 && toggleSidebar()}
                   className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition ${
                     isActive(item.path)
-                      ? 'bg-primary-100 text-primary-700 font-semibold'
-                      : 'text-gray-700 hover:bg-gray-100'
+                        ? 'bg-[#122433] text-emerald-100 font-semibold'
+                         : 'text-slate-100 hover:bg-[#122433]'
                   }`}
                 >
                   <span className="text-2xl">{item.icon}</span>
@@ -71,14 +71,14 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
             {/* Quick Actions */}
             <div className="mt-6 px-3">
-              <h3 className="px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+              <h3 className="px-4 text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
                 Quick Actions
               </h3>
               <div className="space-y-1">
                 <Link
                   to="/projects/create"
                   onClick={() => window.innerWidth < 1024 && toggleSidebar()}
-                  className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition"
+                  className="flex items-center space-x-3 px-4 py-3 text-slate-100 hover:bg-[#122433] rounded-lg transition neon-btn neon-glow"
                 >
                   <span className="text-2xl">➕</span>
                   <span>New Project</span>
@@ -86,7 +86,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                 <Link
                   to="/tickets/create"
                   onClick={() => window.innerWidth < 1024 && toggleSidebar()}
-                  className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition"
+                  className="flex items-center space-x-3 px-4 py-3 text-slate-100 hover:bg-[#122433] rounded-lg transition neon-btn neon-glow"
                 >
                   <span className="text-2xl">🎟️</span>
                   <span>New Ticket</span>
@@ -96,10 +96,10 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t border-gray-200">
-            <div className="bg-primary-50 rounded-lg p-3 text-center">
-              <p className="text-xs text-primary-700 font-medium">Day 6-8 Complete!</p>
-              <p className="text-xs text-gray-600 mt-1">UI Enhanced + Kanban</p>
+          <div className="p-4 border-t border-slate-700">
+            <div className="bg-[#122433] rounded-lg p-3 text-center">
+              <p className="text-xs text-slate-100 font-medium">Day 6-8 Complete!</p>
+              <p className="text-xs text-slate-400 mt-1">UI Enhanced + Kanban</p>
             </div>
           </div>
         </div>

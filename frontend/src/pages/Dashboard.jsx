@@ -2,7 +2,11 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useProject } from '../context/ProjectContext';
 import { useTicket } from '../context/TicketContext';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import ModernCharts from '../components/ModernCharts';
+import RoleGuard from '../components/RoleGuard';
+import { hasPermission, getRoleDisplayName, getRoleColor } from '../utils/roles';
+import { Plus, Users, Settings, BarChart3 } from 'lucide-react';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -19,128 +23,232 @@ const Dashboard = () => {
   // Recent activity (last 5 tickets)
   const recentTickets = [...tickets].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 5);
 
+  // Prepare chart data
+  const statusData = [
+    { name: 'Open', value: tickets.filter(t => t.status === 'Open').length },
+    { name: 'In Progress', value: tickets.filter(t => t.status === 'In Progress').length },
+    { name: 'In Review', value: tickets.filter(t => t.status === 'In Review').length },
+    { name: 'Resolved', value: tickets.filter(t => t.status === 'Resolved').length },
+    { name: 'Closed', value: tickets.filter(t => t.status === 'Closed').length }
+  ];
+
+  const priorityData = [
+    { name: 'Low', value: tickets.filter(t => t.priority === 'Low').length },
+    { name: 'Medium', value: tickets.filter(t => t.priority === 'Medium').length },
+    { name: 'High', value: tickets.filter(t => t.priority === 'High').length },
+    { name: 'Critical', value: tickets.filter(t => t.priority === 'Critical').length }
+  ];
+
+  const typeData = [
+    { name: 'Bug', value: tickets.filter(t => t.type === 'Bug').length },
+    { name: 'Feature', value: tickets.filter(t => t.type === 'Feature').length },
+    { name: 'Improvement', value: tickets.filter(t => t.type === 'Improvement').length },
+    { name: 'Task', value: tickets.filter(t => t.type === 'Task').length }
+  ];
+
   return (
-    <div>
-      {/* Welcome Section */}
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Welcome back, {user?.name}! 👋
-            </h1>
-            <p className="text-gray-600">
-              Here's what's happening with your projects today
-            </p>
-          </div>
-          <div className="hidden sm:block">
-            <div className="flex items-center space-x-2">
-              <Link
-                to="/tickets/create"
-                className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition font-medium"
+    <div className="min-h-screen px-4 bg-[#0b1220]">
+      <div className="container mx-auto px-6 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl font-bold text-orange-400 mb-2">Dashboard</h1>
+              <p className="text-lg text-purple-100">Welcome back, {user?.name}! 👋 Here's what's happening with your projects today.</p>
+              <div className="flex items-center space-x-2 mt-2">
+                <span className="text-sm text-purple-200">Role:</span>
+                <span className={`px-2 py-1 text-xs font-medium text-white rounded-full ${getRoleColor(user?.role || 'viewer')}`}>
+                  {getRoleDisplayName(user?.role || 'viewer')}
+                </span>
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-3">
+              <RoleGuard
+                userRole={user?.role}
+                permissions={['create_tickets']}
+                renderFallback={false}
               >
-                + New Ticket
-              </Link>
-              <Link
-                to="/projects/create"
-                className="bg-white text-primary-600 px-4 py-2 rounded-lg border-2 border-primary-600 hover:bg-primary-50 transition font-medium"
+                <Link
+                  to="/tickets/new"
+                  className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>New Ticket</span>
+                </Link>
+              </RoleGuard>
+              
+              <RoleGuard
+                userRole={user?.role}
+                permissions={['manage_team']}
+                renderFallback={false}
               >
-                + New Project
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Quick Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-        <div className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600 mb-1">Total Tickets</p>
-              <p className="text-3xl font-bold text-gray-900">{totalTickets}</p>
-            </div>
-            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-              <span className="text-2xl">🎫</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600 mb-1">In Progress</p>
-              <p className="text-3xl font-bold text-yellow-600">{inProgressTickets}</p>
-            </div>
-            <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
-              <span className="text-2xl">⚡</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600 mb-1">Completed</p>
-              <p className="text-3xl font-bold text-green-600">{completedTickets}</p>
-            </div>
-            <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-              <span className="text-2xl">✅</span>
+                <Link
+                  to="/team"
+                  className="flex items-center space-x-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
+                >
+                  <Users className="w-4 h-4" />
+                  <span>Team</span>
+                </Link>
+              </RoleGuard>
+              
+              <RoleGuard
+                userRole={user?.role}
+                permissions={['view_reports']}
+                renderFallback={false}
+              >
+                <Link
+                  to="/reports"
+                  className="flex items-center space-x-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                >
+                  <BarChart3 className="w-4 h-4" />
+                  <span>Reports</span>
+                </Link>
+              </RoleGuard>
+              
+              <RoleGuard
+                userRole={user?.role}
+                permissions={['manage_settings']}
+                renderFallback={false}
+              >
+                <Link
+                  to="/settings"
+                  className="flex items-center space-x-2 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
+                >
+                  <Settings className="w-4 h-4" />
+                  <span>Settings</span>
+                </Link>
+              </RoleGuard>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600 mb-1">Assigned to Me</p>
-              <p className="text-3xl font-bold text-purple-600">{myTickets}</p>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="bg-slate-900/70 rounded-xl p-6 border border-slate-800">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-purple-100">Total Tickets</p>
+                <p className="text-3xl font-bold text-orange-400 mt-1">{totalTickets}</p>
+              </div>
+              <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                <div className="w-6 h-6 bg-blue-500 rounded"></div>
+              </div>
             </div>
-            <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-              <span className="text-2xl">👤</span>
+          </div>
+          <div className="bg-slate-900/70 rounded-xl p-6 border border-slate-800">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-purple-100">In Progress</p>
+                <p className="text-3xl font-bold text-yellow-400 mt-1">{inProgressTickets}</p>
+              </div>
+              <div className="w-12 h-12 bg-yellow-500/20 rounded-lg flex items-center justify-center">
+                <div className="w-6 h-6 bg-yellow-500 rounded"></div>
+              </div>
+            </div>
+          </div>
+          <div className="bg-slate-900/70 rounded-xl p-6 border border-slate-800">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-purple-100">Completed</p>
+                <p className="text-3xl font-bold text-green-400 mt-1">{completedTickets}</p>
+              </div>
+              <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
+                <div className="w-6 h-6 bg-green-500 rounded"></div>
+              </div>
+            </div>
+          </div>
+          <div className="bg-slate-900/70 rounded-xl p-6 border border-slate-800">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-purple-100">Assigned to Me</p>
+                <p className="text-3xl font-bold text-purple-400 mt-1">{myTickets}</p>
+              </div>
+              <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                <div className="w-6 h-6 bg-purple-500 rounded"></div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Two Column Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Recent Activity */}
-        <div className="lg:col-span-2">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Recent Activity</h2>
+        {/* Charts Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+          <div className="min-h-0">
+            <ModernCharts
+              data={statusData}
+              title="Tickets by Status"
+              subtitle="Distribution of tickets across different statuses"
+              height={400}
+              theme="dark"
+              showTooltip={true}
+              showLegend={true}
+            />
+          </div>
+          <div className="min-h-0">
+            <ModernCharts
+              data={priorityData}
+              title="Tickets by Priority"
+              subtitle="Priority breakdown of all tickets"
+              height={400}
+              theme="dark"
+              showTooltip={true}
+              showLegend={true}
+            />
+          </div>
+          <div className="min-h-0">
+            <ModernCharts
+              data={typeData}
+              title="Tickets by Type"
+              subtitle="Categorization by ticket type"
+              height={400}
+              theme="dark"
+              showTooltip={true}
+              showLegend={true}
+            />
+          </div>
+        </div>
+
+        {/* Recent Activity and Projects */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Recent Activity */}
+          <div className="bg-slate-900/85 rounded-2xl p-8 shadow-2xl border border-slate-800">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-white">Recent Activity</h2>
+              <Link to="/tickets/create" className="bg-gradient-to-r from-orange-500 to-purple-500 text-white px-4 py-2 rounded-lg font-medium shadow hover:from-orange-600 hover:to-purple-600 transition">+ New Ticket</Link>
+            </div>
             {recentTickets.length > 0 ? (
               <div className="space-y-3">
                 {recentTickets.map((ticket) => (
                   <Link
                     key={ticket._id}
                     to={`/tickets/${ticket._id}`}
-                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
+                    className="flex items-center justify-between p-4 bg-slate-800 rounded-lg hover:bg-slate-700 transition"
                   >
                     <div className="flex items-center space-x-3 flex-1 min-w-0">
                       <span className="text-2xl flex-shrink-0">
                         {ticket.type === 'Bug' ? '🐛' : ticket.type === 'Feature' ? '✨' : ticket.type === 'Improvement' ? '🔧' : '📋'}
                       </span>
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-gray-900 truncate">{ticket.title}</p>
-                        <p className="text-sm text-gray-500">{ticket.project?.name || 'Unknown Project'}</p>
+                        <p className="font-medium text-white truncate">{ticket.title}</p>
+                        <p className="text-sm text-slate-400">{ticket.project?.name || 'Unknown Project'}</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2 flex-shrink-0">
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        ticket.status === 'Open' ? 'bg-blue-100 text-blue-800' :
-                        ticket.status === 'In Progress' ? 'bg-yellow-100 text-yellow-800' :
-                        ticket.status === 'In Review' ? 'bg-purple-100 text-purple-800' :
-                        ticket.status === 'Resolved' ? 'bg-green-100 text-green-800' :
-                        'bg-gray-100 text-gray-800'
-                      }`}>
+                                ticket.status === 'Open' ? 'bg-blue-900 text-blue-100' :
+                                ticket.status === 'In Progress' ? 'bg-yellow-800 text-yellow-100' :
+                                ticket.status === 'In Review' ? 'bg-purple-800 text-purple-100' :
+                                ticket.status === 'Resolved' ? 'bg-green-800 text-green-100' :
+                                'bg-slate-700 text-white'
+                              }`}>
                         {ticket.status}
                       </span>
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        ticket.priority === 'Critical' ? 'bg-red-100 text-red-700' :
-                        ticket.priority === 'High' ? 'bg-orange-100 text-orange-700' :
-                        ticket.priority === 'Medium' ? 'bg-blue-100 text-blue-700' :
-                        'bg-gray-100 text-gray-700'
-                      }`}>
+                                ticket.priority === 'Critical' ? 'bg-red-800 text-red-100' :
+                                ticket.priority === 'High' ? 'bg-orange-800 text-orange-100' :
+                                ticket.priority === 'Medium' ? 'bg-blue-800 text-blue-100' :
+                                'bg-slate-700 text-white'
+                              }`}>
                         {ticket.priority}
                       </span>
                     </div>
@@ -148,64 +256,40 @@ const Dashboard = () => {
                 ))}
               </div>
             ) : (
-              <p className="text-gray-500 text-center py-8">No recent tickets</p>
+              <p className="text-slate-400 text-center py-8">No recent tickets</p>
             )}
           </div>
-        </div>
 
-        {/* Projects Overview */}
-        <div>
-          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Your Projects</h2>
+          {/* Projects Overview */}
+          <div className="bg-slate-900/85 rounded-2xl p-8 shadow-2xl border border-slate-800">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-white">Your Projects</h2>
+              <Link to="/projects/create" className="bg-gradient-to-r from-orange-500 to-purple-500 text-white px-4 py-2 rounded-lg font-medium shadow hover:from-orange-600 hover:to-purple-600 transition">+ New Project</Link>
+            </div>
             {projects.length > 0 ? (
               <div className="space-y-3">
                 {projects.slice(0, 5).map((project) => (
                   <Link
                     key={project._id}
                     to={`/projects/${project._id}`}
-                    className="block p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
+                    className="block p-3 bg-slate-800 rounded-lg hover:bg-slate-700 transition"
                   >
-                    <p className="font-medium text-gray-900 truncate">{project.name}</p>
-                    <p className="text-sm text-gray-500">{project.status}</p>
+                    <p className="font-medium text-white truncate">{project.name}</p>
+                    <p className="text-sm text-slate-400">{project.status}</p>
                   </Link>
                 ))}
                 {projects.length > 5 && (
                   <Link
                     to="/projects"
-                    className="block text-center text-sm text-primary-600 hover:text-primary-700 font-medium pt-2"
+                    className="block text-center text-sm text-amber-300 hover:text-amber-400 font-medium pt-2"
                   >
                     View all {projects.length} projects →
                   </Link>
                 )}
               </div>
             ) : (
-              <p className="text-gray-500 text-center py-4">No projects yet</p>
+              <p className="text-slate-400 text-center py-4">No projects yet</p>
             )}
-          </div>
-
-          {/* Quick Links */}
-          <div className="bg-gradient-to-br from-primary-500 to-primary-700 rounded-lg shadow-md p-6 text-white">
-            <h2 className="text-lg font-bold mb-4">🚀 Days 6-8 Complete!</h2>
-            <ul className="space-y-2 text-sm mb-4">
-              <li className="flex items-start">
-                <span className="mr-2">✓</span>
-                <span>Enhanced Dashboard UI</span>
-              </li>
-              <li className="flex items-start">
-                <span className="mr-2">✓</span>
-                <span>Sidebar & Navigation</span>
-              </li>
-              <li className="flex items-start">
-                <span className="mr-2">✓</span>
-                <span>Kanban Board View</span>
-              </li>
-            </ul>
-            <Link
-              to="/kanban"
-              className="block w-full bg-white text-primary-600 px-4 py-2 rounded-lg hover:bg-gray-100 transition font-medium text-center"
-            >
-              Try Kanban Board →
-            </Link>
           </div>
         </div>
       </div>

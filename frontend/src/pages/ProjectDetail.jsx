@@ -131,29 +131,29 @@ const ProjectDetail = () => {
 
   const getStatusColor = (status) => {
     const colors = {
-      'Planning': 'bg-gray-100 text-gray-800',
-      'In Progress': 'bg-blue-100 text-blue-800',
-      'On Hold': 'bg-yellow-100 text-yellow-800',
-      'Completed': 'bg-green-100 text-green-800',
-      'Cancelled': 'bg-red-100 text-red-800'
+      'Planning': 'bg-primary-900 text-primary-100',
+      'In Progress': 'bg-blue-900 text-blue-100',
+      'On Hold': 'bg-yellow-800 text-yellow-100',
+      'Completed': 'bg-green-800 text-green-100',
+      'Cancelled': 'bg-red-800 text-red-100'
     };
-    return colors[status] || 'bg-gray-100 text-gray-800';
+    return colors[status] || 'bg-[#122433] text-slate-100';
   };
 
   const getPriorityColor = (priority) => {
     const colors = {
-      'Low': 'bg-gray-100 text-gray-600',
-      'Medium': 'bg-blue-100 text-blue-600',
-      'High': 'bg-orange-100 text-orange-600',
-      'Critical': 'bg-red-100 text-red-600'
+      'Low': 'bg-[#122433] text-slate-100',
+      'Medium': 'bg-blue-800 text-blue-100',
+      'High': 'bg-orange-800 text-orange-100',
+      'Critical': 'bg-red-800 text-red-100'
     };
-    return colors[priority] || 'bg-gray-100 text-gray-600';
+    return colors[priority] || 'bg-[#122433] text-slate-100';
   };
 
   if (loading || !currentProject) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+      <div className="min-h-screen bg-[#0b1220] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
       </div>
     );
   }
@@ -161,20 +161,20 @@ const ProjectDetail = () => {
   const isOwner = currentProject.owner._id === user._id;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#0b1220]">
       {/* Header */}
-      <header className="bg-white shadow">
+      <header className="bg-[#0f1724] shadow">
         <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
           <div className="flex items-center space-x-4">
             <h1 className="text-2xl font-bold text-primary-600">🐛 Bug Tracker</h1>
             <nav className="hidden md:flex space-x-4">
-              <Link to="/dashboard" className="text-gray-600 hover:text-primary-600">Dashboard</Link>
+              <Link to="/dashboard" className="text-slate-500 dark:text-slate-400 hover:text-primary-600">Dashboard</Link>
               <Link to="/projects" className="text-primary-600 font-medium">Projects</Link>
-              <Link to="/tickets" className="text-gray-600 hover:text-primary-600">Tickets</Link>
+              <Link to="/tickets" className="text-slate-500 dark:text-slate-400 hover:text-primary-600">Tickets</Link>
             </nav>
           </div>
           <div className="flex items-center space-x-4">
-            <p className="font-medium text-gray-900">{user?.name}</p>
+            <p className="font-medium text-slate-900 dark:text-slate-100">{user?.name}</p>
             <button
               onClick={logout}
               className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
@@ -191,15 +191,15 @@ const ProjectDetail = () => {
           <Link to="/projects" className="text-primary-600 hover:text-primary-700">
             Projects
           </Link>
-          <span className="mx-2 text-gray-400">/</span>
-          <span className="text-gray-600">{currentProject.name}</span>
+          <span className="mx-2 text-slate-400 dark:text-slate-500">/</span>
+          <span className="text-slate-600 dark:text-slate-300">{currentProject.name}</span>
         </nav>
 
         {/* Project Header */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+        <div className="bg-[#0f1724] rounded-lg shadow-md p-6 mb-6">
           <div className="flex justify-between items-start mb-4">
             <div className="flex-1">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">{currentProject.name}</h2>
+              <h2 className="text-3xl font-bold text-slate-100 mb-2">{currentProject.name}</h2>
               <div className="flex space-x-3">
                 <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(currentProject.status)}`}>
                   {currentProject.status}
@@ -213,7 +213,7 @@ const ProjectDetail = () => {
               <div className="flex space-x-2">
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                  className="px-4 py-2 bg-amethyst-600 text-white rounded-lg hover:bg-amethyst-700 transition"
                 >
                   Edit Project
                 </button>
@@ -230,19 +230,19 @@ const ProjectDetail = () => {
           {/* Project Info */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 pt-6 border-t">
             <div>
-              <p className="text-sm text-gray-500">Owner</p>
-              <p className="text-gray-900 font-medium">{currentProject.owner.name}</p>
-              <p className="text-sm text-gray-500">{currentProject.owner.email}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Owner</p>
+              <p className="text-slate-900 dark:text-slate-100 font-medium">{currentProject.owner.name}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">{currentProject.owner.email}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Start Date</p>
-              <p className="text-gray-900 font-medium">
+              <p className="text-sm text-slate-500 dark:text-slate-400">Start Date</p>
+              <p className="text-slate-900 dark:text-slate-100 font-medium">
                 {new Date(currentProject.startDate).toLocaleDateString()}
               </p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">End Date</p>
-              <p className="text-gray-900 font-medium">
+              <p className="text-sm text-slate-500 dark:text-slate-400">End Date</p>
+              <p className="text-slate-900 dark:text-slate-100 font-medium">
                 {currentProject.endDate
                   ? new Date(currentProject.endDate).toLocaleDateString()
                   : 'Not set'}
@@ -253,11 +253,11 @@ const ProjectDetail = () => {
 
         {/* Edit Form or Description */}
         {isEditing && isOwner ? (
-          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Edit Project</h3>
+          <div className="bg-[#0f1724] rounded-xl shadow-sm p-6 sm:p-8 mb-6">
+            <h3 className="text-xl font-bold text-slate-100 mb-4">Edit Project</h3>
             <form onSubmit={handleUpdate} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-slate-400 mb-2">
                   Project Name *
                 </label>
                 <input
@@ -265,15 +265,15 @@ const ProjectDetail = () => {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none ${
-                    errors.name ? 'border-red-500' : 'border-gray-300'
+                  className={`w-full px-4 py-2 border rounded-lg bg-[#0f1724] text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none ${
+                    errors.name ? 'border-red-500' : 'border-slate-700'
                   }`}
                 />
                 {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-slate-400 mb-2">
                   Description *
                 </label>
                 <textarea
@@ -281,8 +281,8 @@ const ProjectDetail = () => {
                   value={formData.description}
                   onChange={handleChange}
                   rows="4"
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none ${
-                    errors.description ? 'border-red-500' : 'border-gray-300'
+                  className={`w-full px-4 py-2 border rounded-lg bg-[#0f1724] text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none ${
+                    errors.description ? 'border-red-500' : 'border-slate-700'
                   }`}
                 />
                 {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
@@ -290,12 +290,12 @@ const ProjectDetail = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                  <label className="block text-sm font-medium text-slate-400 mb-2">Status</label>
                   <select
                     name="status"
                     value={formData.status}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
+                      className="w-full px-4 py-2 border border-slate-700 rounded-lg bg-[#0f1724] text-slate-100 focus:ring-2 focus:ring-emerald-500 outline-none"
                   >
                     <option value="Planning">Planning</option>
                     <option value="In Progress">In Progress</option>
@@ -306,12 +306,12 @@ const ProjectDetail = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Priority</label>
+                  <label className="block text-sm font-medium text-slate-400 mb-2">Priority</label>
                   <select
                     name="priority"
                     value={formData.priority}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
+                      className="w-full px-4 py-2 border border-slate-700 rounded-lg bg-[#0f1724] text-slate-100 focus:ring-2 focus:ring-primary-500 outline-none"
                   >
                     <option value="Low">Low</option>
                     <option value="Medium">Medium</option>
@@ -323,26 +323,26 @@ const ProjectDetail = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+                  <label className="block text-sm font-medium text-slate-400 mb-2">Start Date</label>
                   <input
                     type="date"
                     name="startDate"
                     value={formData.startDate}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
+                    className="w-full px-4 py-2 border border-slate-700 bg-[#0f1724] text-slate-100 placeholder-slate-400 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">End Date</label>
+                  <label className="block text-sm font-medium text-slate-400 mb-2">End Date</label>
                   <input
                     type="date"
                     name="endDate"
                     value={formData.endDate}
                     onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none ${
-                      errors.endDate ? 'border-red-500' : 'border-gray-300'
-                    }`}
+                      className={`w-full px-4 py-2 border rounded-lg bg-[#0f1724] text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-emerald-500 outline-none ${
+                        errors.endDate ? 'border-red-500' : 'border-slate-700'
+                      }`}
                   />
                   {errors.endDate && <p className="text-red-500 text-sm mt-1">{errors.endDate}</p>}
                 </div>
@@ -355,7 +355,7 @@ const ProjectDetail = () => {
                     setIsEditing(false);
                     loadProject();
                   }}
-                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                  className="px-4 py-2 border border-slate-700 text-slate-100 rounded-lg hover:bg-[#122433]"
                 >
                   Cancel
                 </button>
@@ -370,27 +370,27 @@ const ProjectDetail = () => {
             </form>
           </div>
         ) : (
-          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-            <h3 className="text-xl font-bold text-gray-900 mb-3">Description</h3>
-            <p className="text-gray-700 whitespace-pre-wrap">{currentProject.description}</p>
+          <div className="bg-[#0f1724] rounded-xl shadow-sm p-6 sm:p-8 mb-6">
+            <h3 className="text-xl font-bold text-slate-100 mb-3">Description</h3>
+            <p className="text-slate-300 whitespace-pre-wrap">{currentProject.description}</p>
           </div>
         )}
 
         {/* Team Members */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h3 className="text-xl font-bold text-gray-900 mb-4">Team Members ({currentProject.members.length + 1})</h3>
+        <div className="bg-[#0f1724] rounded-xl shadow-sm p-6 sm:p-8 mb-6">
+          <h3 className="text-xl font-bold text-slate-100 mb-4">Team Members ({currentProject.members.length + 1})</h3>
 
           {/* Add Member (owner-only) */}
           {isOwner && (
             <div className="mb-4">
-              <label className="block text-sm text-gray-700 font-medium mb-2">Add Member</label>
+              <label className="block text-sm text-slate-600 dark:text-slate-300 font-medium mb-2">Add Member</label>
               <div className="flex space-x-2">
                 <input
                   type="text"
                   placeholder="Search by name or email"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg"
+                  className="flex-1 px-3 py-2 border border-surface-200 dark:border-surface-700 rounded-lg"
                 />
                 <button
                   onClick={handleSearchUsers}
@@ -403,11 +403,11 @@ const ProjectDetail = () => {
               {/* Search Results */}
               {searchResults.length > 0 && (
                 <div className="mt-3 space-y-2">
-                  {searchResults.map(u => (
-                    <div key={u._id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                    {searchResults.map(u => (
+                      <div key={u._id} className="flex items-center justify-between p-2 bg-[#0f1724] rounded">
                       <div>
                         <div className="font-medium">{u.name}</div>
-                        <div className="text-sm text-gray-500">{u.email}</div>
+                        <div className="text-sm text-slate-500 dark:text-slate-400">{u.email}</div>
                       </div>
                       <div>
                         <button
@@ -422,37 +422,37 @@ const ProjectDetail = () => {
             </div>
           )}
 
-          <div className="space-y-3">
+            <div className="space-y-3">
             {/* Owner */}
-            <div className="flex items-center justify-between p-3 bg-primary-50 rounded-lg">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-primary-600 rounded-full flex items-center justify-center text-white font-bold">
+            <div className="flex items-center justify-between p-3 bg-[#122433] rounded-lg">
+                <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold">
                   {currentProject.owner.name.charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">{currentProject.owner.name}</p>
-                  <p className="text-sm text-gray-500">{currentProject.owner.email}</p>
+                  <p className="font-medium text-slate-100">{currentProject.owner.name}</p>
+                  <p className="text-sm text-slate-300">{currentProject.owner.email}</p>
                 </div>
               </div>
-              <span className="px-3 py-1 bg-primary-600 text-white text-xs font-medium rounded-full">
+              <span className="px-3 py-1 bg-emerald-600 text-white text-xs font-medium rounded-full">
                 Owner
               </span>
             </div>
 
             {/* Members */}
             {currentProject.members.map((member) => (
-              <div key={member._id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <div key={member._id} className="flex items-center justify-between p-3 bg-[#0f1724] rounded-lg">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gray-400 rounded-full flex items-center justify-center text-white font-bold">
+                  <div className="w-10 h-10 bg-slate-400 rounded-full flex items-center justify-center text-white font-bold">
                     {member.name.charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900">{member.name}</p>
-                    <p className="text-sm text-gray-500">{member.email}</p>
-                  </div>
+                      <p className="font-medium text-slate-100">{member.name}</p>
+                      <p className="text-sm text-slate-300">{member.email}</p>
+                    </div>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <span className="px-3 py-1 bg-gray-200 text-gray-700 text-xs font-medium rounded-full">Member</span>
+                  <div className="flex items-center space-x-2">
+                    <span className="px-3 py-1 bg-[#122433] text-slate-100 text-xs font-medium rounded-full">Member</span>
                   {isOwner && (
                     <button
                       onClick={() => handleRemoveMember(member._id)}
@@ -464,35 +464,35 @@ const ProjectDetail = () => {
             ))}
 
             {currentProject.members.length === 0 && (
-              <p className="text-gray-500 text-center py-4">No team members added yet</p>
+              <p className="text-slate-500 dark:text-slate-400 text-center py-4">No team members added yet</p>
             )}
           </div>
         </div>
 
         {/* Activity / Stats */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-xl font-bold text-gray-900 mb-4">Project Activity</h3>
+        <div className="bg-[#0f1724] rounded-xl shadow-sm p-6 sm:p-8">
+          <h3 className="text-xl font-bold text-slate-100 mb-4">Project Activity</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="text-center p-4 bg-blue-50 rounded-lg">
-              <div className="text-3xl font-bold text-blue-600">{projectTickets.length}</div>
-              <div className="text-sm text-gray-600 mt-1">Total Tickets</div>
+            <div className="text-center p-4 bg-[#122433] rounded-lg">
+              <div className="text-3xl font-bold text-slate-100">{projectTickets.length}</div>
+              <div className="text-sm text-slate-400 mt-1">Total Tickets</div>
             </div>
-            <div className="text-center p-4 bg-green-50 rounded-lg">
-              <div className="text-3xl font-bold text-green-600">
+            <div className="text-center p-4 bg-[#122433] rounded-lg">
+              <div className="text-3xl font-bold text-green-400">
                 {projectTickets.filter(t => t.status === 'Resolved' || t.status === 'Closed').length}
               </div>
-              <div className="text-sm text-gray-600 mt-1">Resolved</div>
+              <div className="text-sm text-slate-400 mt-1">Resolved</div>
             </div>
-            <div className="text-center p-4 bg-red-50 rounded-lg">
-              <div className="text-3xl font-bold text-red-600">
+            <div className="text-center p-4 bg-[#122433] rounded-lg">
+              <div className="text-3xl font-bold text-red-400">
                 {projectTickets.filter(t => t.status === 'Open').length}
               </div>
-              <div className="text-sm text-gray-600 mt-1">Open</div>
+              <div className="text-sm text-slate-400 mt-1">Open</div>
             </div>
           </div>
           <Link 
             to={`/tickets?project=${id}`}
-            className="block text-center mt-4 text-indigo-600 hover:text-indigo-800 font-medium"
+            className="block text-center mt-4 text-indigo-300 hover:text-indigo-100 font-medium"
           >
             View All Project Tickets →
           </Link>

@@ -18,6 +18,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Static file serving for screenshots
+app.use('/uploads', express.static('uploads'));
+
 // Test route
 app.get('/', (req, res) => {
   res.json({ message: 'Bug Tracker API is running!' });
@@ -38,6 +41,7 @@ app.use('/api/projects', require('./routes/projects'));
 app.use('/api/tickets', require('./routes/tickets'));
 app.use('/api/comments', require('./routes/comments'));
 app.use('/api/analytics', require('./routes/analytics'));
+app.use('/api/screenshots', require('./routes/screenshots'));
 // Users: search endpoint (protected)
 app.use('/api/users', require('./routes/users'));
 

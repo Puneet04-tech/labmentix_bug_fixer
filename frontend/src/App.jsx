@@ -6,6 +6,7 @@ import { ProjectProvider } from './context/ProjectContext';
 import { TicketProvider } from './context/TicketContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
+import { useTheme } from './context/ThemeContext';
 
 // Pages
 import Login from './pages/Login';
@@ -19,20 +20,24 @@ import CreateTicket from './pages/CreateTicket';
 import TicketDetail from './pages/TicketDetail';
 import Analytics from './pages/Analytics';
 import Kanban from './pages/Kanban';
+import DemoPage from './pages/DemoPage';
 import NotFound from './pages/NotFound';
 
 function App() {
+  const { theme } = useTheme();
+
   return (
     <Router>
       <AuthProvider>
         <ProjectProvider>
           <TicketProvider>
-            <div className="min-h-screen bg-gray-50">
+            <div className={`min-h-screen bg-[#0b1220] text-slate-100`}>
               <Routes>
                 {/* Public Routes */}
                 <Route path="/" element={<Navigate to="/login" replace />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
+                <Route path="/signup" element={<Register />} />
                 
                 {/* Protected Routes with Layout */}
                 <Route
@@ -131,6 +136,16 @@ function App() {
                     <ProtectedRoute>
                       <Layout>
                         <Kanban />
+                      </Layout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/demo"
+                  element={
+                    <ProtectedRoute>
+                      <Layout>
+                        <DemoPage />
                       </Layout>
                     </ProtectedRoute>
                   }

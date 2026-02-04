@@ -21,6 +21,16 @@ export const ThemeProvider = ({ children }) => {
     try {
       localStorage.setItem('theme', theme);
     } catch (err) {}
+
+    // Apply class to root element so tailwind 'dark:' styles take effect globally
+    try {
+      const root = window.document.documentElement;
+      if (theme === 'dark') {
+        root.classList.add('dark');
+      } else {
+        root.classList.remove('dark');
+      }
+    } catch (err) {}
   }, [theme]);
 
   const toggleTheme = () => setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));

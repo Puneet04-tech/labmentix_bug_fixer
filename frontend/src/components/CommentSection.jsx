@@ -114,8 +114,8 @@ const CommentSection = ({ ticketId }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h3 className="text-xl font-bold text-gray-900 mb-4">
+    <div className="bg-[#0f1724] rounded-lg shadow-md p-6">
+      <h3 className="text-xl font-bold text-slate-100 mb-4">
         Comments ({comments.length})
       </h3>
 
@@ -134,10 +134,10 @@ const CommentSection = ({ ticketId }) => {
               placeholder="Write a comment..."
               rows={3}
               maxLength={1000}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
+              className="w-full px-4 py-2 border border-slate-700 rounded-lg bg-[#0f1724] text-slate-100 focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
             />
             <div className="flex justify-between items-center mt-2">
-              <span className="text-sm text-gray-500">{newComment.length}/1000</span>
+              <span className="text-sm text-slate-500">{newComment.length}/1000</span>
               <button
                 type="submit"
                 disabled={loading || !newComment.trim()}
@@ -153,25 +153,25 @@ const CommentSection = ({ ticketId }) => {
       {/* Comments List */}
       <div className="space-y-4">
         {comments.length === 0 ? (
-          <p className="text-gray-500 text-center py-8">
+          <p className="text-slate-400 text-center py-8">
             No comments yet. Be the first to comment!
           </p>
         ) : (
           comments.map((comment) => (
-            <div key={comment._id} className="flex items-start gap-3 border-b border-gray-100 pb-4 last:border-0">
+            <div key={comment._id} className="flex items-start gap-3 border-b border-slate-700 pb-4 last:border-0">
               <div className="flex-shrink-0">
-                <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-gray-700 font-semibold">
+                <div className="w-10 h-10 bg-[#122433] rounded-full flex items-center justify-center text-slate-100 font-semibold">
                   {comment.author.name.charAt(0).toUpperCase()}
                 </div>
               </div>
               <div className="flex-1">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="font-semibold text-gray-900">{comment.author.name}</p>
-                    <p className="text-xs text-gray-500">
+                    <p className="font-semibold text-slate-100">{comment.author.name}</p>
+                    <p className="text-xs text-slate-400">
                       {formatDate(comment.createdAt)}
                       {comment.isEdited && (
-                        <span className="ml-2 text-gray-400">(edited)</span>
+                        <span className="ml-2 text-slate-400">(edited)</span>
                       )}
                     </p>
                   </div>
@@ -198,31 +198,31 @@ const CommentSection = ({ ticketId }) => {
                 </div>
 
                 {editingId === comment._id ? (
-                  <div className="mt-2">
+                    <div className="mt-2">
                     <textarea
                       value={editContent}
                       onChange={(e) => setEditContent(e.target.value)}
                       rows={3}
                       maxLength={1000}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none text-sm"
+                      className="w-full px-3 py-2 border border-slate-700 bg-[#0f1724] text-slate-100 placeholder-slate-400 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none text-sm"
                     />
                     <div className="flex gap-2 mt-2">
-                      <button
-                        onClick={() => handleEdit(comment._id)}
-                        className="text-sm bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded"
-                      >
-                        Save
-                      </button>
-                      <button
-                        onClick={cancelEdit}
-                        className="text-sm bg-gray-200 hover:bg-gray-300 text-gray-800 px-3 py-1 rounded"
-                      >
-                        Cancel
-                      </button>
+                        <button
+                          onClick={() => handleEdit(comment._id)}
+                          className="text-sm bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded"
+                        >
+                          Save
+                        </button>
+                        <button
+                          onClick={cancelEdit}
+                          className="text-sm bg-[#122433] hover:bg-[#0f1724] text-slate-100 px-3 py-1 rounded"
+                        >
+                          Cancel
+                        </button> 
                     </div>
                   </div>
                 ) : (
-                  <p className="text-gray-700 mt-2 whitespace-pre-wrap">{comment.content}</p>
+                  <p className="text-slate-300 mt-2 whitespace-pre-wrap">{comment.content}</p>
                 )}
               </div>
             </div>

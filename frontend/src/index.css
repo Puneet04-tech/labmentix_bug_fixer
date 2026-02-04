@@ -1,6 +1,8 @@
+/* stylelint-disable at-rule-no-unknown */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* stylelint-enable at-rule-no-unknown */
 
 * {
   margin: 0;
@@ -14,9 +16,376 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  position: relative;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+/* Global dark form controls so native inputs/selects match the app theme */
+input,
+textarea,
+select {
+  background-color: #0f1724;
+  color: #e6eef6;
+  border-color: #1f2a36;
+}
+
+/* Attempt to style native dropdown options (browser support varies) */
+option {
+  background-color: #0f1724;
+  color: #e6eef6;
+}
+
+/* Disabled form elements */
+select:disabled,
+input:disabled,
+textarea:disabled {
+  background-color: #0b1220;
+  color: #94a3b8;
+}
+
+/* Neon / red glow utilities */
+:root {
+  --neon-red: 255, 56, 90; /* lighter pink-red for better visibility */
+  --neon-red-hex: #ff385a;
+}
+
+/* Global body-level subtle red overlay when `body.neon` is present */
+body.neon::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    radial-gradient( circle at 10% 10%, rgba(var(--neon-red), 0.12), transparent 12%),
+    radial-gradient( circle at 90% 80%, rgba(var(--neon-red), 0.08), transparent 18% );
+  mix-blend-mode: screen;
+}
+
+/* Ensure app root sits above the overlay so UI is visible */
+#root {
+  position: relative;
+  z-index: 1;
+}
+
+.neon-glow,
+button.neon-btn,
+.btn-neon {
+  box-shadow: 0 6px 22px rgba(var(--neon-red), 0.12), 0 0 36px rgba(var(--neon-red), 0.08);
+  transition: box-shadow 220ms ease, transform 160ms ease;
+}
+
+.neon-glow:hover,
+button.neon-btn:hover,
+.btn-neon:hover {
+  box-shadow: 0 12px 44px rgba(var(--neon-red), 0.20), 0 0 64px rgba(var(--neon-red), 0.12);
+  transform: translateY(-1px);
+}
+
+/* subtle neon text */
+.neon-text {
+  text-shadow: 0 2px 10px rgba(var(--neon-red), 0.12);
+}
+
+/* Focus ring for inputs/selects/textarea */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(var(--neon-red), 0.12), 0 0 18px rgba(var(--neon-red), 0.10);
+  border-color: rgba(var(--neon-red), 0.20);
+}
+
+/* Utility to apply a neon border for important elements */
+.neon-border {
+  border: 1px solid rgba(var(--neon-red), 0.06);
+}
+
+/* Make dropdown native options darker and slightly glowing on hover (browser dependent) */
+select option:hover {
+  background-color: rgba(var(--neon-red), 0.04);
+}
+
+/* --- Site-wide neon application when body.neon is enabled --- */
+/* Applies a subtle red glow and soft border to cards, buttons, and rounded elements */
+body.neon .rounded-lg,
+body.neon .rounded-xl,
+body.neon .card,
+body.neon .bg-\[\#0f1724\],
+body.neon .bg-\[\#122433\],
+body.neon .bg-\[\#0b1220\] {
+  box-shadow: 0 8px 40px rgba(var(--neon-red), 0.06), inset 0 1px 0 rgba(var(--neon-red), 0.02);
+  border: 1px solid rgba(var(--neon-red), 0.03);
+}
+
+body.neon button,
+body.neon .neon-btn,
+body.neon a[href],
+body.neon .flex.items-center > a,
+body.neon .px-6.py-2 {
+  box-shadow: 0 6px 30px rgba(var(--neon-red), 0.08), 0 0 28px rgba(var(--neon-red), 0.04);
+  transition: box-shadow 220ms ease, transform 160ms ease;
+}
+
+body.neon button:hover,
+body.neon .neon-btn:hover,
+body.neon a[href]:hover {
+  box-shadow: 0 12px 48px rgba(var(--neon-red), 0.16), 0 0 56px rgba(var(--neon-red), 0.08);
+  transform: translateY(-2px);
+}
+
+/* Apply subtle neon text glow to prominent headings */
+body.neon h1,
+body.neon h2,
+body.neon h3,
+body.neon .text-3xl,
+body.neon .text-2xl {
+  text-shadow: 0 4px 18px rgba(var(--neon-red), 0.06);
+}
+
+/* Slight overlay tint for panels to feel warmed by the neon */
+body.neon .bg-\[\#0f1724\]::after,
+body.neon .bg-\[\#122433\]::after,
+body.neon .bg-\[\#0b1220\]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(var(--neon-red), 0.01), transparent 40%);
+  border-radius: inherit;
+}
+
+/* Make sure focus rings remain neon-tinted */
+body.neon input:focus,
+body.neon textarea:focus,
+body.neon select:focus {
+  box-shadow: 0 0 0 6px rgba(var(--neon-red), 0.12), 0 0 24px rgba(var(--neon-red), 0.10);
+}
+
+/* Auth pages red linear gradient (dark, not pure black) */
+.auth-gradient {
+  position: relative;
+  background-image:
+    linear-gradient(135deg, #0b1220 0%, #0f1724 40%, #122433 80%),
+    radial-gradient(60% 40% at 85% 15%, rgba(var(--neon-red), 0.14), transparent 22%),
+    repeating-linear-gradient(135deg, rgba(var(--neon-red),0.012) 0 2px, transparent 2px 10px);
+  background-blend-mode: normal, screen, overlay;
+  overflow: hidden;
+}
+
+.auth-gradient::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(120deg, rgba(var(--neon-red), 0.18), rgba(var(--neon-red), 0.08) 40%, transparent 65%);
+  mix-blend-mode: screen;
+  z-index: 0;
+  filter: blur(6px);
+}
+
+/* Ensure the main inner container sits above the gradient overlay */
+.auth-gradient .container {
+  position: relative;
+  z-index: 1;
+}
+
+/* === Global animations & utilities === */
+@keyframes ft-fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ft-float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+  100% { transform: translateY(0); }
+}
+
+/* Enable subtle entrance animation site-wide when body.animated is present */
+body.animated .card,
+body.animated .panel,
+body.animated .rounded-lg,
+body.animated .rounded-xl,
+body.animated .rounded-2xl,
+body.animated .navbar,
+body.animated .sidebar,
+body.animated .list-item,
+body.animated .btn,
+body.animated button {
+  animation: ft-fade-up 520ms cubic-bezier(.2,.9,.3,1) both;
+  will-change: opacity, transform;
+}
+
+/* Stagger utility: add to a container to stagger its direct children */
+.stagger > *:nth-child(1) { animation-delay: 40ms; }
+.stagger > *:nth-child(2) { animation-delay: 80ms; }
+.stagger > *:nth-child(3) { animation-delay: 120ms; }
+.stagger > *:nth-child(4) { animation-delay: 160ms; }
+.stagger > *:nth-child(5) { animation-delay: 200ms; }
+.stagger > *:nth-child(6) { animation-delay: 240ms; }
+.stagger > *:nth-child(7) { animation-delay: 280ms; }
+.stagger > *:nth-child(8) { animation-delay: 320ms; }
+
+/* Float effect utility for logos and small attention items */
+body.animated .float-anim { animation: ft-float 3.4s ease-in-out infinite; }
+
+/* Hover elevation for interactive elements */
+body.animated .btn:hover,
+body.animated button:hover,
+body.animated .neon-btn:hover {
+  transform: translateY(-4px) scale(1.01);
+  transition: transform 220ms ease, box-shadow 220ms ease;
+}
+
+/* Ensure overlayed gradients don't capture pointer events and inner content sits above */
+body.animated .card::after,
+body.animated .panel::after {
+  pointer-events: none;
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .stagger > *,
+  body.animated .card,
+  body.animated .panel,
+  body.animated .btn,
+  body.animated button {
+    animation: none !important;
+    transition: none !important;
+  }
+  body.animated .float-anim { animation: none !important; }
+}
+
+
+/* Reusable utility: apply the red linear gradient overlay to any element */
+.site-gradient {
+  position: relative;
+  overflow: hidden;
+}
+
+.site-gradient::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(135deg, rgba(var(--neon-red), 0.10), rgba(var(--neon-red), 0.03) 40%, transparent 70%);
+  mix-blend-mode: screen;
+  z-index: 0;
+  border-radius: inherit;
+  filter: blur(4px);
+}
+
+/* Apply the gradient overlay to common panels/cards when neon mode is enabled */
+body.neon .card,
+body.neon .panel,
+body.neon .navbar,
+body.neon .sidebar,
+body.neon .rounded-lg,
+body.neon .rounded-xl,
+body.neon .rounded-2xl,
+body.neon [class*="bg-slate"],
+body.neon [class*="bg-[#"],
+body.neon [class*="bg-#"],
+body.neon [class*="bg-gradient-to"] {
+  position: relative;
+  overflow: hidden;
+}
+
+body.neon .card::after,
+body.neon .panel::after,
+body.neon .navbar::after,
+body.neon .sidebar::after,
+body.neon .rounded-lg::after,
+body.neon .rounded-xl::after,
+body.neon .rounded-2xl::after,
+body.neon [class*="bg-slate"]::after,
+body.neon [class*="bg-[\#"]::after,
+body.neon [class*="bg-#"]::after,
+body.neon [class*="bg-gradient-to"]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(135deg, rgba(var(--neon-red), 0.22), rgba(var(--neon-red), 0.08) 36%, transparent 62%);
+  mix-blend-mode: screen;
+  z-index: 0;
+  border-radius: inherit;
+  filter: blur(6px);
+}
+
+/* Ensure inner content sits above the overlay */
+body.neon .card > *,
+body.neon .panel > *,
+body.neon [class*="bg-slate"] > *,
+body.neon [class*="bg-[\#"] > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Chart tooltip fixes */
+.recharts-tooltip-wrapper {
+  z-index: 9999 !important;
+}
+
+.recharts-default-tooltip {
+  background-color: #1f2937 !important;
+  border: none !important;
+  border-radius: 8px !important;
+  color: #f3f4f6 !important;
+  font-size: 14px !important;
+  padding: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Chart.js tooltip fixes */
+canvas {
+  z-index: 1 !important;
+}
+
+/* Ensure charts are above overlays */
+.chart-container {
+  position: relative;
+  z-index: 10;
+}
+
+/* Button tooltip styling */
+[title] {
+  position: relative;
+}
+
+/* Custom tooltip styling for chart type buttons */
+button[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #1f2937;
+  color: #f3f4f6;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 10000;
+  margin-bottom: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+  opacity: 0;
+  animation: tooltipFadeIn 0.3s ease forwards;
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 }

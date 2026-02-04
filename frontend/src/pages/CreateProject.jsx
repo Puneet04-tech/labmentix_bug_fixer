@@ -58,26 +58,27 @@ const CreateProject = () => {
     }
 
     const result = await createProject(formData);
-    if (result.success) {
+    if (result && result.success) {
       navigate('/projects');
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#0b1220]">
       {/* Header */}
-      <header className="bg-white shadow">
+      <header className="bg-[#0f1724] shadow">
         <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
           <div className="flex items-center space-x-4">
             <h1 className="text-2xl font-bold text-primary-600">🐛 Bug Tracker</h1>
             <nav className="hidden md:flex space-x-4">
-              <Link to="/dashboard" className="text-gray-600 hover:text-primary-600">Dashboard</Link>
+              <Link to="/dashboard" className="text-slate-500 hover:text-primary-600">Dashboard</Link>
               <Link to="/projects" className="text-primary-600 font-medium">Projects</Link>
-              <Link to="/tickets" className="text-gray-600 hover:text-primary-600">Tickets</Link>
+              <Link to="/tickets" className="text-slate-500 hover:text-primary-600">Tickets</Link>
             </nav>
           </div>
+
           <div className="flex items-center space-x-4">
-            <p className="font-medium text-gray-900">{user?.name}</p>
+            <p className="font-medium text-slate-900">{user?.name}</p>
             <button
               onClick={logout}
               className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
@@ -94,18 +95,18 @@ const CreateProject = () => {
           <Link to="/projects" className="text-primary-600 hover:text-primary-700">
             Projects
           </Link>
-          <span className="mx-2 text-gray-400">/</span>
-          <span className="text-gray-600">Create New Project</span>
+          <span className="mx-2 text-slate-400">/</span>
+          <span className="text-slate-600">Create New Project</span>
         </nav>
 
         {/* Form Card */}
-        <div className="bg-white rounded-lg shadow-md p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Create New Project</h2>
+        <div className="bg-[#0f1724] rounded-lg shadow-md p-8">
+          <h2 className="text-2xl font-bold text-slate-100 mb-6">Create New Project</h2>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Project Name */}
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="name" className="block text-sm font-medium text-slate-400 mb-2">
                 Project Name *
               </label>
               <input
@@ -114,8 +115,8 @@ const CreateProject = () => {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition ${
-                  errors.name ? 'border-red-500' : 'border-gray-300'
+                className={`w-full px-4 py-2 border rounded-lg bg-[#0f1724] text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition ${
+                  errors.name ? 'border-red-500' : 'border-slate-700'
                 }`}
                 placeholder="Enter project name"
               />
@@ -124,7 +125,7 @@ const CreateProject = () => {
 
             {/* Description */}
             <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="description" className="block text-sm font-medium text-slate-400 mb-2">
                 Description *
               </label>
               <textarea
@@ -133,12 +134,12 @@ const CreateProject = () => {
                 value={formData.description}
                 onChange={handleChange}
                 rows="4"
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition ${
-                  errors.description ? 'border-red-500' : 'border-gray-300'
+                className={`w-full px-4 py-2 border rounded-lg bg-[#0f1724] text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition ${
+                  errors.description ? 'border-red-500' : 'border-slate-700'
                 }`}
                 placeholder="Describe your project..."
               />
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-slate-500 mt-1">
                 {formData.description.length}/500 characters
               </p>
               {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
@@ -147,7 +148,7 @@ const CreateProject = () => {
             {/* Status and Priority */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="status" className="block text-sm font-medium text-slate-400 mb-2">
                   Status
                 </label>
                 <select
@@ -155,7 +156,7 @@ const CreateProject = () => {
                   name="status"
                   value={formData.status}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                  className="w-full px-4 py-2 border border-slate-700 rounded-lg bg-[#0f1724] text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
                 >
                   <option value="Planning">Planning</option>
                   <option value="In Progress">In Progress</option>
@@ -166,7 +167,7 @@ const CreateProject = () => {
               </div>
 
               <div>
-                <label htmlFor="priority" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="priority" className="block text-sm font-medium text-slate-400 mb-2">
                   Priority
                 </label>
                 <select
@@ -174,7 +175,7 @@ const CreateProject = () => {
                   name="priority"
                   value={formData.priority}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                  className="w-full px-4 py-2 border border-slate-700 rounded-lg bg-[#0f1724] text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
                 >
                   <option value="Low">Low</option>
                   <option value="Medium">Medium</option>
@@ -187,7 +188,7 @@ const CreateProject = () => {
             {/* Start Date and End Date */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="startDate" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="startDate" className="block text-sm font-medium text-slate-400 mb-2">
                   Start Date
                 </label>
                 <input
@@ -196,12 +197,12 @@ const CreateProject = () => {
                   name="startDate"
                   value={formData.startDate}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                  className="w-full px-4 py-2 border border-slate-700 rounded-lg bg-[#0f1724] text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
                 />
               </div>
 
               <div>
-                <label htmlFor="endDate" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="endDate" className="block text-sm font-medium text-slate-400 mb-2">
                   End Date
                 </label>
                 <input
@@ -210,8 +211,8 @@ const CreateProject = () => {
                   name="endDate"
                   value={formData.endDate}
                   onChange={handleChange}
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none ${
-                    errors.endDate ? 'border-red-500' : 'border-gray-300'
+                  className={`w-full px-4 py-2 border rounded-lg bg-[#0f1724] text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none ${
+                    errors.endDate ? 'border-red-500' : 'border-slate-700'
                   }`}
                 />
                 {errors.endDate && <p className="text-red-500 text-sm mt-1">{errors.endDate}</p>}
@@ -222,14 +223,14 @@ const CreateProject = () => {
             <div className="flex justify-end space-x-4 pt-4">
               <Link
                 to="/projects"
-                className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+                className="px-6 py-2 border border-slate-700 text-slate-100 rounded-lg hover:bg-[#122433] transition neon-btn neon-glow"
               >
                 Cancel
               </Link>
               <button
                 type="submit"
                 disabled={loading}
-                className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition disabled:opacity-50 disabled:cursor-not-allowed neon-btn neon-glow"
               >
                 {loading ? 'Creating...' : 'Create Project'}
               </button>

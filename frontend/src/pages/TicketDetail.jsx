@@ -70,9 +70,9 @@ const TicketDetail = () => {
       'In Progress': 'bg-yellow-100 text-yellow-800',
       'In Review': 'bg-purple-100 text-purple-800',
       'Resolved': 'bg-green-100 text-green-800',
-      'Closed': 'bg-gray-100 text-gray-800'
+    'Closed': 'bg-surface-100 dark:bg-surface-700 text-slate-800 dark:text-slate-100'
     };
-    return colors[status] || 'bg-gray-100 text-gray-800';
+    return colors[status] || 'bg-surface-100 dark:bg-surface-700 text-slate-800 dark:text-slate-100';
   };
 
   const getPriorityColor = (priority) => {
@@ -82,7 +82,7 @@ const TicketDetail = () => {
       'High': 'bg-orange-100 text-orange-800',
       'Critical': 'bg-red-100 text-red-800'
     };
-    return colors[priority] || 'bg-gray-100 text-gray-800';
+    return colors[priority] || 'bg-surface-100 dark:bg-surface-700 text-slate-800 dark:text-slate-100';
   };
 
   const getTypeIcon = (type) => {
@@ -99,7 +99,7 @@ const TicketDetail = () => {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center py-12">
-          <p className="text-gray-500">Loading ticket...</p>
+          <p className="text-slate-500 dark:text-slate-400">Loading ticket...</p>
         </div>
       </div>
     );
@@ -143,7 +143,7 @@ const TicketDetail = () => {
           <div>
             <div className="flex items-center gap-3 mb-2">
               <span className="text-3xl">{getTypeIcon(currentTicket.type)}</span>
-              <h1 className="text-3xl font-bold text-gray-900">{currentTicket.title}</h1>
+              <h1 className="text-3xl font-bold text-slate-800 dark:text-slate-100">{currentTicket.title}</h1>
             </div>
             <div className="flex gap-2 mt-3">
               <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(currentTicket.status)}`}>
@@ -152,7 +152,7 @@ const TicketDetail = () => {
               <span className={`px-3 py-1 rounded-full text-sm font-medium ${getPriorityColor(currentTicket.priority)}`}>
                 {currentTicket.priority}
               </span>
-              <span className="px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-700">
+              <span className="px-3 py-1 rounded-full text-sm font-medium bg-surface-100 dark:bg-surface-700 text-slate-600 dark:text-slate-200">
                 {currentTicket.type}
               </span>
             </div>
@@ -187,9 +187,9 @@ const TicketDetail = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Content - Left Column */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">📝 Description</h2>
-            <p className="text-gray-700 whitespace-pre-wrap">{currentTicket.description}</p>
+          <div className="bg-[#0f1724] rounded-lg shadow-md p-6">
+            <h2 className="text-xl font-bold text-slate-100 mb-4">📝 Description</h2>
+            <p className="text-slate-300 whitespace-pre-wrap">{currentTicket.description}</p>
           </div>
 
           {/* Activity Timeline */}
@@ -199,11 +199,11 @@ const TicketDetail = () => {
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Details */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">📋 Details</h3>
+          <div className="bg-[#0f1724] rounded-xl shadow-sm p-6 sm:p-8">
+            <h3 className="text-lg font-bold text-slate-900 mb-4">📋 Details</h3>
             <div className="space-y-3">
               <div>
-                <p className="text-sm text-gray-500">Project</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Project</p>
                 <Link 
                   to={`/projects/${currentTicket.project._id}`}
                   className="text-primary-600 hover:text-primary-800 font-medium"
@@ -212,43 +212,43 @@ const TicketDetail = () => {
                 </Link>
               </div>
               <div>
-                <p className="text-sm text-gray-500">Reported By</p>
-                <p className="font-medium text-gray-900">{currentTicket.reportedBy.name}</p>
-                <p className="text-sm text-gray-500">{currentTicket.reportedBy.email}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Reported By</p>
+                <p className="font-medium text-slate-800 dark:text-slate-100">{currentTicket.reportedBy.name}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">{currentTicket.reportedBy.email}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-500">Created</p>
-                <p className="text-gray-700">{new Date(currentTicket.createdAt).toLocaleString()}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Created</p>
+                <p className="text-slate-700 dark:text-slate-300">{new Date(currentTicket.createdAt).toLocaleString()}</p>
               </div>
               {currentTicket.dueDate && (
                 <div>
-                  <p className="text-sm text-gray-500">Due Date</p>
-                  <p className="text-gray-700">{new Date(currentTicket.dueDate).toLocaleDateString()}</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Due Date</p>
+                  <p className="text-slate-700 dark:text-slate-300">{new Date(currentTicket.dueDate).toLocaleDateString()}</p>
                 </div>
               )}
             </div>
           </div>
 
           {/* Assignment */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">👤 Assignment</h3>
+          <div className="bg-[#0f1724] rounded-xl shadow-sm p-6 sm:p-8">
+            <h3 className="text-lg font-bold text-slate-100 mb-4">👤 Assignment</h3>
             {currentTicket.assignedTo ? (
               <div className="mb-4">
-                <p className="text-sm text-gray-500 mb-1">Assigned To</p>
-                <p className="font-medium text-gray-900">{currentTicket.assignedTo.name}</p>
-                <p className="text-sm text-gray-500">{currentTicket.assignedTo.email}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mb-1">Assigned To</p>
+                <p className="font-medium text-slate-900 dark:text-slate-100">{currentTicket.assignedTo.name}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">{currentTicket.assignedTo.email}</p>
               </div>
             ) : (
-              <p className="text-gray-500 mb-4 italic">Unassigned</p>
+              <p className="text-slate-500 dark:text-slate-400 mb-4 italic">Unassigned</p>
             )}
-            
+
             {canEdit && (
               <div>
-                <label className="block text-sm text-gray-700 font-medium mb-2">Change Assignment</label>
+                <label className="block text-sm text-slate-400 font-medium mb-2">Change Assignment</label>
                 <select
                   onChange={(e) => handleAssign(e.target.value || null)}
                   value={currentTicket.assignedTo?._id || ''}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-3 py-2 border border-slate-700 bg-[#0f1724] text-slate-100 rounded-lg focus:ring-2 focus:ring-emerald-500"
                 >
                   <option value="">Unassigned</option>
                   {allMembers.map(m => (
@@ -260,9 +260,9 @@ const TicketDetail = () => {
           </div>
 
           {/* Authorization Info */}
-          <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
-            <h4 className="text-sm font-semibold text-primary-900 mb-2">🔐 Permissions</h4>
-            <ul className="text-sm text-primary-800 space-y-1">
+          <div className="bg-[#122433] border border-slate-700 rounded-lg p-4">
+            <h4 className="text-sm font-semibold text-slate-100 mb-2">🔐 Permissions</h4>
+            <ul className="text-sm text-slate-300 space-y-1">
               {isReporter && <li>• You reported this ticket</li>}
               {isProjectOwner && <li>• You own this project</li>}
               {canEdit && <li>• You can edit this ticket</li>}

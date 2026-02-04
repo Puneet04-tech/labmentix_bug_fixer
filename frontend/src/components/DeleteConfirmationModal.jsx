@@ -11,9 +11,9 @@ const DeleteConfirmationModal = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+      <div className="bg-surface-card dark:bg-surface-cardDark rounded-lg shadow-xl max-w-md w-full">
         {/* Modal Header */}
-        <div className="p-6 border-b border-gray-200">
+        <div className="p-6 border-b border-surface-200">
           <div className="flex items-center space-x-3">
             <div className="flex-shrink-0 w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
               <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -21,17 +21,17 @@ const DeleteConfirmationModal = ({
               </svg>
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+              <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
             </div>
           </div>
         </div>
 
         {/* Modal Body */}
         <div className="p-6">
-          <p className="text-gray-600 mb-2">{message}</p>
+          <p className="text-slate-600 mb-2">{message}</p>
           {itemName && (
-            <div className="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="text-sm text-gray-700">
+            <div className="mt-4 p-3 bg-surface-50 rounded-lg border border-surface-200">
+              <p className="text-sm text-slate-700">
                 <span className="font-medium">Item:</span> {itemName}
               </p>
             </div>
@@ -49,12 +49,12 @@ const DeleteConfirmationModal = ({
         </div>
 
         {/* Modal Footer */}
-        <div className="flex items-center justify-end space-x-3 px-6 py-4 bg-gray-50 border-t border-gray-200 rounded-b-lg">
+        <div className="flex items-center justify-end space-x-3 px-6 py-4 bg-surface-50 border-t border-surface-200 rounded-b-lg">
           <button
             type="button"
             onClick={onClose}
             disabled={isDeleting}
-            className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-white transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-2 border border-surface-200 text-slate-700 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Cancel
           </button>

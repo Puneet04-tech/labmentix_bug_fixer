@@ -1,23 +1,23 @@
 const StatsCard = ({ title, value, icon, color = 'indigo', subtitle, trend }) => {
   const colorClasses = {
-    indigo: 'bg-indigo-50 text-indigo-600',
-    blue: 'bg-blue-50 text-blue-600',
-    green: 'bg-green-50 text-green-600',
-    yellow: 'bg-yellow-50 text-yellow-600',
-    red: 'bg-red-50 text-red-600',
-    purple: 'bg-purple-50 text-purple-600',
-    pink: 'bg-pink-50 text-pink-600',
-    orange: 'bg-orange-50 text-orange-600'
+    indigo: 'bg-indigo-900 text-indigo-100',
+    blue: 'bg-blue-900 text-blue-100',
+    green: 'bg-green-900 text-green-100',
+    yellow: 'bg-yellow-800 text-yellow-100',
+    red: 'bg-red-800 text-red-100',
+    purple: 'bg-purple-900 text-purple-100',
+    pink: 'bg-pink-800 text-pink-100',
+    orange: 'bg-orange-800 text-orange-100'
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+    <div className="bg-[#0f1724] rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
       <div className="flex items-start justify-between">
         <div className="flex-1">
-          <p className="text-sm font-medium text-gray-600 mb-1">{title}</p>
-          <p className="text-3xl font-bold text-gray-900">{value}</p>
+          <p className="text-sm font-medium text-slate-300 mb-1">{title}</p>
+          <p className="text-3xl font-bold text-slate-100">{value}</p>
           {subtitle && (
-            <p className="text-sm text-gray-500 mt-1">{subtitle}</p>
+            <p className="text-sm text-slate-400 mt-1">{subtitle}</p>
           )}
           {trend && (
             <div className={`flex items-center mt-2 text-sm ${trend.positive ? 'text-green-600' : 'text-red-600'}`}>

@@ -75,23 +75,23 @@ const Tickets = () => {
 
   const getStatusColor = (status) => {
     const colors = {
-      'Open': 'bg-blue-100 text-blue-800',
-      'In Progress': 'bg-yellow-100 text-yellow-800',
-      'In Review': 'bg-purple-100 text-purple-800',
-      'Resolved': 'bg-green-100 text-green-800',
-      'Closed': 'bg-gray-100 text-gray-800'
+      'Open': 'bg-blue-900 text-blue-100',
+      'In Progress': 'bg-yellow-800 text-yellow-100',
+      'In Review': 'bg-purple-800 text-purple-100',
+      'Resolved': 'bg-green-800 text-green-100',
+      'Closed': 'bg-[#122433] text-slate-100'
     };
-    return colors[status] || 'bg-gray-100 text-gray-800';
+    return colors[status] || 'bg-[#122433] text-slate-100';
   };
 
   const getPriorityColor = (priority) => {
     const colors = {
-      'Low': 'bg-green-100 text-green-800',
-      'Medium': 'bg-yellow-100 text-yellow-800',
-      'High': 'bg-orange-100 text-orange-800',
-      'Critical': 'bg-red-100 text-red-800'
+      'Low': 'bg-[#122433] text-slate-100',
+      'Medium': 'bg-yellow-800 text-yellow-100',
+      'High': 'bg-orange-800 text-orange-100',
+      'Critical': 'bg-red-800 text-red-100'
     };
-    return colors[priority] || 'bg-gray-100 text-gray-800';
+    return colors[priority] || 'bg-[#122433] text-slate-100';
   };
 
   const getTypeIcon = (type) => {
@@ -109,8 +109,8 @@ const Tickets = () => {
       <div className="mb-6">
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">🎫 Tickets</h1>
-            <p className="text-gray-600 mt-1">Manage and track your project tickets</p>
+            <h1 className="text-3xl font-bold text-slate-100">🎫 Tickets</h1>
+            <p className="text-slate-400 mt-1">Manage and track your project tickets</p>
           </div>
           <Link
             to="/tickets/create"
@@ -139,10 +139,10 @@ const Tickets = () => {
 
         {/* Tickets List */}
         {filteredTickets.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-md p-12 text-center">
+          <div className="bg-[#0f1724] rounded-xl shadow-sm p-12 text-center">
             <div className="text-6xl mb-4">📭</div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">No tickets found</h3>
-            <p className="text-gray-600 mb-6">
+            <h3 className="text-xl font-bold text-slate-100 mb-2">No tickets found</h3>
+            <p className="text-slate-400 mb-6">
               {tickets.length === 0 
                 ? 'Create your first ticket to get started!' 
                 : 'Try adjusting your filters or search criteria.'}
@@ -156,26 +156,26 @@ const Tickets = () => {
           </div>
         ) : (
           <div>
-            <div className="mb-4 text-sm text-gray-600">
-              Showing <span className="font-semibold text-gray-900">{filteredTickets.length}</span> of{' '}
-              <span className="font-semibold text-gray-900">{tickets.length}</span> tickets
+            <div className="mb-4 text-sm text-slate-400">
+              Showing <span className="font-semibold text-slate-100">{filteredTickets.length}</span> of{' '}
+              <span className="font-semibold text-slate-100">{tickets.length}</span> tickets
             </div>
             
             <div className="space-y-4">{filteredTickets.map(ticket => (
-              <div key={ticket._id} className="bg-white rounded-lg shadow-md hover:shadow-lg transition p-6">
+              <div key={ticket._id} className="bg-[#0f1724] rounded-lg shadow-md hover:shadow-lg transition p-6">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <span className="text-2xl">{getTypeIcon(ticket.type)}</span>
                       <Link
                         to={`/tickets/${ticket._id}`}
-                        className="text-xl font-semibold text-gray-900 hover:text-primary-600 transition"
+                        className="text-xl font-semibold text-slate-100 hover:text-primary-400 transition"
                       >
                         {ticket.title}
                       </Link>
                     </div>
                     
-                    <p className="text-gray-600 mb-4 line-clamp-2">{ticket.description}</p>
+                    <p className="text-slate-300 mb-4 line-clamp-2">{ticket.description}</p>
                     
                     <div className="flex flex-wrap gap-2 mb-3">
                       <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(ticket.status)}`}>
@@ -184,36 +184,36 @@ const Tickets = () => {
                       <span className={`px-3 py-1 rounded-full text-sm font-medium ${getPriorityColor(ticket.priority)}`}>
                         {ticket.priority}
                       </span>
-                      <span className="px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-700">
+                      <span className="px-3 py-1 rounded-full text-sm font-medium bg-[#122433] text-slate-100">
                         {ticket.type}
                       </span>
                     </div>
                     
-                    <div className="flex flex-wrap gap-4 text-sm text-gray-500">
-                      <span>Project: <span className="font-medium text-gray-700">{ticket.project.name}</span></span>
-                      <span>Reported by: <span className="font-medium text-gray-700">{ticket.reportedBy.name}</span></span>
+                    <div className="flex flex-wrap gap-4 text-sm text-slate-400">
+                      <span>Project: <span className="font-medium text-slate-100">{ticket.project.name}</span></span>
+                      <span>Reported by: <span className="font-medium text-slate-100">{ticket.reportedBy.name}</span></span>
                       {ticket.assignedTo && (
-                        <span>Assigned to: <span className="font-medium text-gray-700">{ticket.assignedTo.name}</span></span>
+                        <span>Assigned to: <span className="font-medium text-slate-100">{ticket.assignedTo.name}</span></span>
                       )}
                       {ticket.dueDate && (
-                        <span>Due: <span className="font-medium text-gray-700">
+                        <span>Due: <span className="font-medium text-slate-700 dark:text-slate-300">
                           {new Date(ticket.dueDate).toLocaleDateString()}
                         </span></span>
                       )}
                     </div>
                   </div>
                   
-                  <div className="flex gap-2 ml-4">
+                    <div className="flex gap-2 ml-4">
                     <Link
                       to={`/tickets/${ticket._id}`}
-                      className="text-primary-600 hover:text-primary-800 font-medium px-4 py-2 rounded-lg hover:bg-primary-50 transition"
+                        className="text-amber-300 hover:text-amber-200 font-medium px-4 py-2 rounded-lg hover:bg-[#122433] transition"
                     >
                       View
                     </Link>
                     {(ticket.reportedBy._id === user._id) && (
                       <button
                         onClick={() => handleDelete(ticket._id)}
-                        className="text-red-600 hover:text-red-800 font-medium px-4 py-2 rounded-lg hover:bg-red-50 transition"
+                        className="text-red-600 hover:text-red-800 font-medium px-4 py-2 rounded-lg transition"
                       >
                         Delete
                       </button>

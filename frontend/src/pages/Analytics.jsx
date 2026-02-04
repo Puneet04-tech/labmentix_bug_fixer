@@ -43,22 +43,22 @@ const Analytics = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <header className="bg-white shadow">
+      <div className="min-h-screen bg-[#0b1220]">
+        <header className="bg-[#0f1724] shadow-sm">
           <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
             <div className="flex items-center space-x-4">
               <h1 className="text-2xl font-bold text-primary-600">🐛 Bug Tracker</h1>
               <nav className="hidden md:flex space-x-4">
-                <Link to="/dashboard" className="text-gray-600 hover:text-primary-600">Dashboard</Link>
-                <Link to="/projects" className="text-gray-600 hover:text-primary-600">Projects</Link>
-                <Link to="/tickets" className="text-gray-600 hover:text-primary-600">Tickets</Link>
+                <Link to="/dashboard" className="text-slate-500 dark:text-slate-400 hover:text-primary-600">Dashboard</Link>
+                <Link to="/projects" className="text-slate-500 dark:text-slate-400 hover:text-primary-600">Projects</Link>
+                <Link to="/tickets" className="text-slate-500 dark:text-slate-400 hover:text-primary-600">Tickets</Link>
                 <Link to="/analytics" className="text-primary-600 font-medium">Analytics</Link>
               </nav>
             </div>
             <div className="flex items-center space-x-4">
               <div className="text-right">
-                <p className="text-sm text-gray-600">Welcome,</p>
-                <p className="font-medium text-gray-900">{user?.name}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Welcome,</p>
+                <p className="font-medium text-slate-900 dark:text-slate-100">{user?.name}</p>
               </div>
               <button
                 onClick={logout}
@@ -72,7 +72,7 @@ const Analytics = () => {
 
         <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
           <div className="text-center py-12">
-            <p className="text-gray-500">Loading analytics...</p>
+            <p className="text-slate-400">Loading analytics...</p>
           </div>
         </main>
       </div>
@@ -80,23 +80,23 @@ const Analytics = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#0b1220]">
       {/* Header */}
-      <header className="bg-white shadow">
+      <header className="bg-[#0f1724] shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
           <div className="flex items-center space-x-4">
             <h1 className="text-2xl font-bold text-primary-600">🐛 Bug Tracker</h1>
             <nav className="hidden md:flex space-x-4">
-              <Link to="/dashboard" className="text-gray-600 hover:text-primary-600">Dashboard</Link>
-              <Link to="/projects" className="text-gray-600 hover:text-primary-600">Projects</Link>
-              <Link to="/tickets" className="text-gray-600 hover:text-primary-600">Tickets</Link>
+              <Link to="/dashboard" className="text-slate-500 dark:text-slate-400 hover:text-primary-600">Dashboard</Link>
+              <Link to="/projects" className="text-slate-500 dark:text-slate-400 hover:text-primary-600">Projects</Link>
+              <Link to="/tickets" className="text-slate-500 dark:text-slate-400 hover:text-primary-600">Tickets</Link>
               <Link to="/analytics" className="text-primary-600 font-medium">Analytics</Link>
             </nav>
           </div>
           <div className="flex items-center space-x-4">
             <div className="text-right">
-              <p className="text-sm text-gray-600">Welcome,</p>
-              <p className="font-medium text-gray-900">{user?.name}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Welcome,</p>
+              <p className="font-medium text-slate-900 dark:text-slate-100">{user?.name}</p>
             </div>
             <button
               onClick={logout}
@@ -111,8 +111,8 @@ const Analytics = () => {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-900">Analytics Dashboard</h2>
-          <p className="text-gray-600 mt-2">Comprehensive insights into your projects and tickets</p>
+          <h2 className="text-3xl font-bold text-slate-100">Analytics Dashboard</h2>
+          <p className="text-slate-400 mt-2">Comprehensive insights into your projects and tickets</p>
         </div>
 
         {/* Overview Stats */}
@@ -170,7 +170,7 @@ const Analytics = () => {
         {/* User Activity */}
         {userActivity && (
           <div className="mb-8">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">Your Activity</h3>
+            <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-4">Your Activity</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
               <StatsCard
                 title="Projects Owned"
@@ -209,35 +209,35 @@ const Analytics = () => {
 
         {/* Project Performance */}
         {projectStats.length > 0 && (
-          <div className="mb-8">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">Project Performance</h3>
-            <div className="bg-white rounded-lg shadow-md overflow-hidden">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+            <div className="mb-8">
+            <h3 className="text-2xl font-bold text-slate-100 mb-4">Project Performance</h3>
+            <div className="bg-[#0f1724] rounded-xl shadow-sm overflow-hidden">
+              <table className="min-w-full divide-y divide-surface-700">
+                <thead className="bg-[#0f1724]">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                       Project
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                       Total Tickets
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                       Open
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                       Closed
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                       Completion
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-[#0f1724] divide-y divide-slate-700">
                   {projectStats.map((project) => (
-                    <tr key={project.id} className="hover:bg-gray-50">
+                    <tr key={project.id} className="hover:bg-[#122433]">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <Link
                           to={`/projects/${project.id}`}
@@ -247,28 +247,28 @@ const Analytics = () => {
                         </Link>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                          {project.status}
-                        </span>
+                        <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-900 text-blue-100">
+                            {project.status}
+                          </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-100">
                         {project.totalTickets}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-slate-100">
                         {project.openTickets}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-slate-100">
                         {project.closedTickets}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          <div className="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                          <div className="w-16 bg-[#122433] rounded-full h-2 mr-2">
                             <div
                               className="bg-green-600 h-2 rounded-full"
                               style={{ width: `${project.completionRate}%` }}
                             />
                           </div>
-                          <span className="text-sm text-gray-900">{project.completionRate}%</span>
+                            <span className="text-sm text-slate-100">{project.completionRate}%</span>
                         </div>
                       </td>
                     </tr>
@@ -282,55 +282,55 @@ const Analytics = () => {
         {/* Team Performance */}
         {teamPerformance.length > 0 && (
           <div className="mb-8">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">Team Performance</h3>
-            <div className="bg-white rounded-lg shadow-md overflow-hidden">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+            <h3 className="text-2xl font-bold text-slate-100 mb-4">Team Performance</h3>
+            <div className="bg-[#0f1724] rounded-xl shadow-sm overflow-hidden">
+              <table className="min-w-full divide-y divide-slate-700">
+                <thead className="bg-[#0f1724]">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                       Team Member
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                       Assigned
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                       Resolved
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                       Comments
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                       Resolution Rate
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-[#0f1724] divide-y divide-slate-700">
                   {teamPerformance.map((member) => (
-                    <tr key={member.id} className="hover:bg-gray-50">
+                    <tr key={member.id} className="hover:bg-[#122433]">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div>
-                          <div className="text-sm font-medium text-gray-900">{member.name}</div>
-                          <div className="text-sm text-gray-500">{member.email}</div>
+                          <div className="text-sm font-medium text-slate-100">{member.name}</div>
+                          <div className="text-sm text-slate-400">{member.email}</div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-100">
                         {member.assignedTickets}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-100">
                         {member.resolvedTickets}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-slate-100">
                         {member.commentsCount}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          <div className="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                          <div className="w-16 bg-surface-100 dark:bg-surface-700 rounded-full h-2 mr-2">
                             <div
-                              className="bg-indigo-600 h-2 rounded-full"
+                              className="bg-primary-600 dark:bg-primary-400 h-2 rounded-full"
                               style={{ width: `${member.resolutionRate}%` }}
                             />
                           </div>
-                          <span className="text-sm text-gray-900">{member.resolutionRate}%</span>
+                          <span className="text-sm text-slate-900 dark:text-slate-100">{member.resolutionRate}%</span>
                         </div>
                       </td>
                     </tr>
@@ -344,8 +344,8 @@ const Analytics = () => {
         {/* Trends Chart */}
         {trends.length > 0 && (
           <div className="mb-8">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">Ticket Trends (Last 30 Days)</h3>
-            <div className="bg-white rounded-lg shadow-md p-6">
+            <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-4">Ticket Trends (Last 30 Days)</h3>
+            <div className="bg-[#fbf9f7] rounded-xl shadow-sm p-6 sm:p-8">
               <div className="h-64 flex items-end justify-between gap-2">
                 {trends.slice(-14).map((day, index) => {
                   const maxValue = Math.max(...trends.map(d => Math.max(d.created, d.resolved)));
@@ -366,7 +366,7 @@ const Analytics = () => {
                           title={`Resolved: ${day.resolved}`}
                         />
                       </div>
-                      <span className="text-xs text-gray-500 transform rotate-45 origin-top-left mt-4">
+                      <span className="text-xs text-slate-500 dark:text-slate-400 transform rotate-45 origin-top-left mt-4">
                         {new Date(day.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                       </span>
                     </div>
@@ -376,11 +376,11 @@ const Analytics = () => {
               <div className="flex justify-center gap-6 mt-8">
                 <div className="flex items-center">
                   <div className="w-4 h-4 bg-blue-500 rounded mr-2" />
-                  <span className="text-sm text-gray-700">Created</span>
+                  <span className="text-sm text-slate-700">Created</span>
                 </div>
                 <div className="flex items-center">
                   <div className="w-4 h-4 bg-green-500 rounded mr-2" />
-                  <span className="text-sm text-gray-700">Resolved</span>
+                  <span className="text-sm text-slate-700">Resolved</span>
                 </div>
               </div>
             </div>

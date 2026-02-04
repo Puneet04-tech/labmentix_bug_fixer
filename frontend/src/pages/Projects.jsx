@@ -12,24 +12,24 @@ const Projects = () => {
 
   const getStatusColor = (status) => {
     const colors = {
-      'Planning': 'bg-gray-100 text-gray-800',
-      'In Progress': 'bg-blue-100 text-blue-800',
-      'On Hold': 'bg-yellow-100 text-yellow-800',
-      'Completed': 'bg-green-100 text-green-800',
-      'Cancelled': 'bg-red-100 text-red-800'
+      'Planning': 'bg-primary-100 text-primary-700',
+        'In Progress': 'bg-accent-100 text-accent-700',
+        'On Hold': 'bg-amethyst-100 text-amethyst-700',
+        'Completed': 'bg-green-100 text-green-800',
+        'Cancelled': 'bg-red-100 text-red-800'
     };
-    return colors[status] || 'bg-gray-100 text-gray-800';
-  };
+        return colors[status] || 'bg-[#122433] text-slate-100';
+  }; 
 
   const getPriorityColor = (priority) => {
     const colors = {
-      'Low': 'bg-gray-100 text-gray-600',
-      'Medium': 'bg-blue-100 text-blue-600',
-      'High': 'bg-orange-100 text-orange-600',
+      'Low': 'bg-[#122433] text-slate-100',
+      'Medium': 'bg-primary-100 text-primary-700',
+      'High': 'bg-accent-100 text-accent-700',
       'Critical': 'bg-red-100 text-red-600'
     };
-    return colors[priority] || 'bg-gray-100 text-gray-600';
-  };
+        return colors[priority] || 'bg-[#122433] text-slate-100';
+  }; 
 
   const handleDelete = async (id, projectName) => {
     if (window.confirm(`Are you sure you want to delete "${projectName}"?`)) {
@@ -49,20 +49,20 @@ const Projects = () => {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#0b1220]">
       {/* Header */}
-      <header className="bg-white shadow">
+      <header className="bg-[#0f1724] shadow">
         <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
           <div className="flex items-center space-x-4">
             <h1 className="text-2xl font-bold text-primary-600">🐛 Bug Tracker</h1>
             <nav className="hidden md:flex space-x-4">
-              <Link to="/dashboard" className="text-gray-600 hover:text-primary-600">Dashboard</Link>
+              <Link to="/dashboard" className="text-slate-500 hover:text-primary-600">Dashboard</Link>
               <Link to="/projects" className="text-primary-600 font-medium">Projects</Link>
-              <Link to="/tickets" className="text-gray-600 hover:text-primary-600">Tickets</Link>
+              <Link to="/tickets" className="text-slate-500 hover:text-primary-600">Tickets</Link>
             </nav>
           </div>
           <div className="flex items-center space-x-4">
-            <p className="font-medium text-gray-900">{user?.name}</p>
+            <p className="font-medium text-slate-100">{user?.name}</p>
             <button
               onClick={logout}
               className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
@@ -73,16 +73,15 @@ const Projects = () => {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
         {/* Page Header */}
         <div className="flex justify-between items-center mb-6">
-          <div>
-            <h2 className="text-3xl font-bold text-gray-900">Projects</h2>
-            <p className="text-gray-600 mt-1">Manage your bug tracking projects</p>
+            <div>
+          <h2 className="text-3xl font-bold text-slate-100">Projects</h2>
+          <p className="text-slate-400 mt-1">Manage your bug tracking projects</p>
           </div>
           <Link
             to="/projects/create"
-            className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition flex items-center"
+            className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition flex items-center neon-btn neon-glow"
           >
             <span className="text-xl mr-2">+</span>
             New Project
@@ -90,7 +89,7 @@ const Projects = () => {
         </div>
 
         {/* Filters and Search */}
-        <div className="bg-white rounded-lg shadow p-4 mb-6">
+        <div className="bg-[#0f1724] rounded-lg shadow p-4 mb-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
             {/* Filter Tabs */}
             <div className="flex space-x-2">
@@ -99,7 +98,7 @@ const Projects = () => {
                 className={`px-4 py-2 rounded-lg font-medium transition ${
                   filter === 'all'
                     ? 'bg-primary-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    : 'bg-[#122433] text-slate-100 hover:bg-[#122433]'
                 }`}
               >
                 All Projects ({projects.length})
@@ -109,7 +108,7 @@ const Projects = () => {
                 className={`px-4 py-2 rounded-lg font-medium transition ${
                   filter === 'owned'
                     ? 'bg-primary-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    : 'bg-[#122433] text-slate-100 hover:bg-[#122433]'
                 }`}
               >
                 Owned ({projects.filter(p => p.owner._id === user._id).length})
@@ -119,7 +118,7 @@ const Projects = () => {
                 className={`px-4 py-2 rounded-lg font-medium transition ${
                   filter === 'member'
                     ? 'bg-primary-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    : 'bg-[#0b1220] text-slate-400 hover:bg-[#122433]'
                 }`}
               >
                 Member ({projects.filter(p => p.owner._id !== user._id).length})
@@ -133,7 +132,7 @@ const Projects = () => {
                 placeholder="Search projects..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                className="w-full px-4 py-2 border border-slate-700 bg-[#0f1724] text-slate-100 placeholder-slate-400 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none"
               />
             </div>
           </div>
@@ -145,10 +144,10 @@ const Projects = () => {
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
           </div>
         ) : filteredProjects.length === 0 ? (
-          <div className="bg-white rounded-lg shadow p-12 text-center">
+          <div className="bg-[#0f1724] rounded-lg shadow p-12 text-center">
             <div className="text-6xl mb-4">📂</div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No Projects Found</h3>
-            <p className="text-gray-600 mb-6">
+            <h3 className="text-xl font-semibold text-slate-100 mb-2">No Projects Found</h3>
+            <p className="text-slate-400 mb-6">
               {searchTerm ? 'Try a different search term' : 'Create your first project to get started'}
             </p>
             {!searchTerm && (
@@ -165,12 +164,12 @@ const Projects = () => {
             {filteredProjects.map((project) => (
               <div
                 key={project._id}
-                className="bg-white rounded-lg shadow hover:shadow-lg transition cursor-pointer"
+                className="bg-[#0f1724] rounded-lg shadow hover:shadow-lg transition cursor-pointer"
               >
                 <div onClick={() => navigate(`/projects/${project._id}`)} className="p-6">
                   {/* Project Header */}
                   <div className="flex justify-between items-start mb-3">
-                    <h3 className="text-xl font-semibold text-gray-900 hover:text-primary-600">
+                      <h3 className="text-xl font-semibold text-slate-100 hover:text-primary-600">
                       {project.name}
                     </h3>
                     <div className="flex space-x-2">
@@ -181,7 +180,7 @@ const Projects = () => {
                   </div>
 
                   {/* Project Description */}
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                  <p className="text-slate-300 text-sm mb-4 line-clamp-2">
                     {project.description}
                   </p>
 
@@ -193,7 +192,7 @@ const Projects = () => {
                   </div>
 
                   {/* Project Stats */}
-                  <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+                  <div className="flex items-center justify-between text-sm text-slate-500 dark:text-slate-400 mb-4">
                     <div className="flex items-center">
                       <span className="mr-1">👤</span>
                       <span>{project.members.length + 1} members</span>
@@ -205,9 +204,9 @@ const Projects = () => {
                   </div>
 
                   {/* Owner Info */}
-                  <div className="text-xs text-gray-500 border-t pt-3">
+                  <div className="text-xs text-slate-300 border-t border-slate-700 pt-3">
                     <p>
-                      Owner: <span className="font-medium text-gray-700">{project.owner.name}</span>
+                      Owner: <span className="font-medium text-slate-100">{project.owner.name}</span>
                     </p>
                     <p className="mt-1">
                       Created: {new Date(project.createdAt).toLocaleDateString()}
@@ -217,7 +216,7 @@ const Projects = () => {
 
                 {/* Action Buttons */}
                 {project.owner._id === user._id && (
-                  <div className="px-6 py-3 bg-gray-50 border-t flex justify-end space-x-2">
+                  <div className="px-6 py-3 bg-[#0b1220] border-t border-slate-700 flex justify-end space-x-2">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -242,7 +241,6 @@ const Projects = () => {
             ))}
           </div>
         )}
-      </main>
     </div>
   );
 };

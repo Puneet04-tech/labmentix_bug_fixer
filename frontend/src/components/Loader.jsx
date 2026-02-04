@@ -10,7 +10,7 @@ const Loader = ({ size = 'medium', text = 'Loading...' }) => {
       <div
         className={`${sizeClasses[size]} border-blue-600 border-t-transparent rounded-full animate-spin`}
       ></div>
-      {text && <p className="mt-4 text-gray-600 text-sm">{text}</p>}
+      {text && <p className="mt-4 text-slate-600 text-sm">{text}</p>}
     </div>
   );
 };

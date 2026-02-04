@@ -14,7 +14,7 @@ const Layout = ({ children }) => {
   const { theme } = useTheme();
 
   return (
-    <div className={`flex h-screen ${theme === 'dark' ? 'dark' : ''} bg-surface-light dark:bg-surface-dark text-slate-800 dark:text-slate-100`}>
+    <div className={`flex h-screen bg-[#0b1220] text-slate-100`}>
       {/* Sidebar */}
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
 
