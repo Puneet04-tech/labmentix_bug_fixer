@@ -1,56 +1,42 @@
 // Role-based access control system
 export const ROLES = {
   ADMIN: 'admin',
-  MANAGER: 'manager', 
-  DEVELOPER: 'developer',
-  VIEWER: 'viewer'
+  CORE: 'core',
+  MEMBER: 'member'
 };
 
 // Permission levels (higher number = more permissions)
 export const PERMISSION_LEVELS = {
-  [ROLES.VIEWER]: 1,
-  [ROLES.DEVELOPER]: 2,
-  [ROLES.MANAGER]: 3,
-  [ROLES.ADMIN]: 4
+  [ROLES.MEMBER]: 1,
+  [ROLES.CORE]: 2,
+  [ROLES.ADMIN]: 3
 };
 
 // Permissions for each role
 export const ROLE_PERMISSIONS = {
-  [ROLES.VIEWER]: [
+  [ROLES.MEMBER]: [
     'view_tickets',
     'view_dashboard',
     'view_projects',
     'add_comments'
   ],
-  [ROLES.DEVELOPER]: [
+  [ROLES.CORE]: [
     'view_tickets',
-    'view_dashboard', 
+    'view_dashboard',
     'view_projects',
     'add_comments',
     'create_tickets',
     'edit_own_tickets',
     'upload_attachments',
-    'change_ticket_status'
-  ],
-  [ROLES.MANAGER]: [
-    'view_tickets',
-    'view_dashboard',
-    'view_projects', 
-    'add_comments',
-    'create_tickets',
-    'edit_all_tickets',
-    'upload_attachments',
     'change_ticket_status',
     'assign_tickets',
-    'delete_tickets',
-    'view_reports',
-    'manage_team'
+    'view_reports'
   ],
   [ROLES.ADMIN]: [
     'view_tickets',
     'view_dashboard',
     'view_projects',
-    'add_comments', 
+    'add_comments',
     'create_tickets',
     'edit_all_tickets',
     'upload_attachments',
@@ -93,9 +79,8 @@ export const canAccessRoute = (userRole, requiredPermissions) => {
 export const getRoleDisplayName = (role) => {
   const roleNames = {
     [ROLES.ADMIN]: 'Administrator',
-    [ROLES.MANAGER]: 'Manager',
-    [ROLES.DEVELOPER]: 'Developer', 
-    [ROLES.VIEWER]: 'Viewer'
+    [ROLES.CORE]: 'Core Member',
+    [ROLES.MEMBER]: 'Member'
   };
   return roleNames[role] || 'Unknown';
 };
@@ -104,9 +89,8 @@ export const getRoleDisplayName = (role) => {
 export const getRoleColor = (role) => {
   const roleColors = {
     [ROLES.ADMIN]: 'bg-red-500',
-    [ROLES.MANAGER]: 'bg-purple-500',
-    [ROLES.DEVELOPER]: 'bg-blue-500',
-    [ROLES.VIEWER]: 'bg-gray-500'
+    [ROLES.CORE]: 'bg-blue-500',
+    [ROLES.MEMBER]: 'bg-gray-500'
   };
   return roleColors[role] || 'bg-gray-500';
 };

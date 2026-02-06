@@ -5,7 +5,7 @@ import RoleGuard from './RoleGuard';
 import { hasPermission } from '../utils/roles';
 
 const EnhancedTicketForm = ({ 
-  userRole = 'viewer',
+  userRole = 'member',
   userId = null,
   initialData = {},
   onSubmit,

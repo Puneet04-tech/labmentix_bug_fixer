@@ -57,8 +57,8 @@ const Dashboard = () => {
               <p className="text-lg text-purple-100">Welcome back, {user?.name}! 👋 Here's what's happening with your projects today.</p>
               <div className="flex items-center space-x-2 mt-2">
                 <span className="text-sm text-purple-200">Role:</span>
-                <span className={`px-2 py-1 text-xs font-medium text-white rounded-full ${getRoleColor(user?.role || 'viewer')}`}>
-                  {getRoleDisplayName(user?.role || 'viewer')}
+                <span className={`px-2 py-1 text-xs font-medium text-white rounded-full ${getRoleColor(user?.role || 'member')}`}>
+                  {getRoleDisplayName(user?.role || 'member')}
                 </span>
               </div>
             </div>

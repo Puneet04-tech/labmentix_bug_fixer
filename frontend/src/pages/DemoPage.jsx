@@ -9,7 +9,7 @@ import { Shield, Upload, FileText, Eye, EyeOff, CheckCircle, XCircle } from 'luc
 
 const DemoPage = () => {
   const { user } = useAuth();
-  const [currentRole, setCurrentRole] = useState(user?.role || ROLES.VIEWER);
+  const [currentRole, setCurrentRole] = useState(user?.role || ROLES.MEMBER);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [showDemoAttachments, setShowDemoAttachments] = useState(true);
 
@@ -69,10 +69,9 @@ const DemoPage = () => {
   };
 
   const roles = [
-    { id: ROLES.VIEWER, name: 'Viewer', description: 'Can view tickets and add comments' },
-    { id: ROLES.DEVELOPER, name: 'Developer', description: 'Can create tickets and upload attachments' },
-    { id: ROLES.MANAGER, name: 'Manager', description: 'Can manage team and delete tickets' },
-    { id: ROLES.ADMIN, name: 'Admin', description: 'Full system access' }
+    { id: ROLES.MEMBER, name: 'Member', description: 'Can view tickets and add comments' },
+    { id: ROLES.CORE, name: 'Core Member', description: 'Can create tickets and upload attachments' },
+    { id: ROLES.ADMIN, name: 'Administrator', description: 'Full system access' }
   ];
 
   return (
