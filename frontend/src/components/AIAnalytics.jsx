@@ -33,6 +33,27 @@ const AIAnalytics = () => {
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Map string icon names from backend to actual components
+  const iconMap = {
+    bug: Bug,
+    timer: Timer,
+    users: Users,
+    target: Target,
+    zap: Zap,
+    code: Code,
+    eye: Eye,
+    award: Award,
+    sparkles: Sparkles,
+    trendingup: TrendingUp,
+    alerttriangle: AlertTriangle
+  };
+
+  const getIconByName = (name) => {
+    if (!name) return Bug;
+    const key = name.toString().toLowerCase();
+    return iconMap[key] || Bug;
+  };
+
   useEffect(() => {
     generateAIInsights();
   }, []);
@@ -184,11 +205,11 @@ const AIAnalytics = () => {
             {prediction.items && (
               <div className="grid grid-cols-2 gap-4">
                 {prediction.items.map((item, itemIndex) => {
-                  const Icon = item.icon;
+                  const Icon = typeof item.icon === 'string' ? getIconByName(item.icon) : (item.icon || Bug);
                   return (
                     <div key={itemIndex} className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
-                        <Icon className={`w-5 h-5 ${item.color}`} />
+                        <Icon className={`w-5 h-5 ${item.color || ''}`} />
                       </div>
                       <div>
                         <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
@@ -243,7 +264,7 @@ const AIAnalytics = () => {
         
         <div className="space-y-4">
           {recommendations.map((rec, index) => {
-            const Icon = rec.icon;
+            const Icon = typeof rec.icon === 'string' ? getIconByName(rec.icon) : (rec.icon || Zap);
             return (
               <div key={index} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                 <div className="flex items-start gap-4">

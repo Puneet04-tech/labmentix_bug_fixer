@@ -48,6 +48,26 @@ const AIAssistant = () => {
     }
   }, []);
 
+  // Icon map shared with AIAnalytics
+  const iconMap = {
+    bug: Bug,
+    timer: Timer,
+    users: Users,
+    target: Target,
+    zap: Zap,
+    code: Code,
+    eye: Eye,
+    award: Award,
+    trendingup: TrendingUp,
+    alerttriangle: AlertTriangle
+  };
+
+  const getIconByName = (name) => {
+    if (!name) return Bot;
+    const key = name.toString().toLowerCase();
+    return iconMap[key] || Bot;
+  };
+
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
@@ -127,7 +147,7 @@ const AIAssistant = () => {
             {message.insights && message.insights.length > 0 && (
               <div className="space-y-2 mt-3">
                 {message.insights.map((insight, index) => {
-                  const Icon = insight.icon;
+                  const Icon = typeof insight.icon === 'string' ? getIconByName(insight.icon) : (insight.icon || Bot);
                   return (
                     <div
                       key={index}
@@ -135,7 +155,7 @@ const AIAssistant = () => {
                         isUser ? 'bg-blue-600' : 'bg-gray-50 dark:bg-gray-700'
                       }`}
                     >
-                      <Icon className={`w-4 h-4 ${insight.color}`} />
+                      <Icon className={`w-4 h-4 ${insight.color || ''}`} />
                       <span className="text-xs">{insight.text}</span>
                     </div>
                   );
