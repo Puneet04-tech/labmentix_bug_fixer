@@ -32,20 +32,27 @@ exports.register = async (req, res) => {
     if (role === 'admin') {
       // Check for admin setup key or registration key
       const key = adminKey || req.headers['x-admin-key'];
-      if (!process.env.ADMIN_REGISTRATION_KEY) {
+
+      // Allow a developer fallback when NODE_ENV !== 'production'
+      const serverKey = process.env.ADMIN_REGISTRATION_KEY || (process.env.NODE_ENV !== 'production' ? 'admin-secret-key-123' : null);
+
+      if (!serverKey) {
         return res.status(500).json({ message: 'Server misconfiguration: ADMIN_REGISTRATION_KEY is not set. Contact the administrator or set this environment variable.' });
       }
-      if (key !== process.env.ADMIN_REGISTRATION_KEY) {
+      if (key !== serverKey) {
         return res.status(403).json({ message: 'Invalid admin setup key' });
       }
       userRole = 'admin';
     } else if (role === 'core') {
       // Core role also requires admin key
       const key = adminKey || req.headers['x-admin-key'];
-      if (!process.env.ADMIN_REGISTRATION_KEY) {
+
+      const serverKey = process.env.ADMIN_REGISTRATION_KEY || (process.env.NODE_ENV !== 'production' ? 'admin-secret-key-123' : null);
+
+      if (!serverKey) {
         return res.status(500).json({ message: 'Server misconfiguration: ADMIN_REGISTRATION_KEY is not set. Contact the administrator or set this environment variable.' });
       }
-      if (key !== process.env.ADMIN_REGISTRATION_KEY) {
+      if (key !== serverKey) {
         return res.status(403).json({ message: 'Invalid admin setup key for core role' });
       }
       userRole = 'core';

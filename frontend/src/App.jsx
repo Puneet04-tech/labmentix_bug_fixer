@@ -171,7 +171,7 @@ function App() {
                 {/* 404 Not Found - Must be last */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
-              <ToastContainer position="top-right" autoClose={3000} />
+              <ToastContainer position="top-right" autoClose={3000} draggable={false} />
               {/* AI Assistant - Global */}
               <AIAssistant />
             </div>
