@@ -238,7 +238,7 @@ const TeamMemberManager = ({
       {/* Members List */}
       <div className="space-y-3">
         {/* Project Owner */}
-        <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+        <div className="flex items-center justify-between p-3 solid-card rounded-lg border border-blue-200 dark:border-blue-800">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold">
               {project.owner.name.charAt(0).toUpperCase()}
@@ -250,7 +250,7 @@ const TeamMemberManager = ({
                 </p>
                 <BadgeCheck className="w-4 h-4 text-blue-600 dark:text-blue-400" />
               </div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm muted">
                 {project.owner.email}
               </p>
             </div>
@@ -268,7 +268,7 @@ const TeamMemberManager = ({
           return (
             <div
               key={memberInfo._id}
-              className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
+              className="flex items-center justify-between p-3 solid-card rounded-lg border border-gray-200 dark:border-gray-700"
             >
               <div className="flex items-center space-x-3">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
@@ -289,7 +289,7 @@ const TeamMemberManager = ({
                       <User className="w-4 h-4 text-gray-500" />
                     )}
                   </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-sm muted">
                     {memberInfo.email}
                   </p>
                 </div>

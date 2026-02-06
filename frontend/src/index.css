@@ -354,6 +354,30 @@ body.neon [class*="bg-[\#"] > * {
   z-index: 1;
 }
 
+/* Solid card helper to disable translucent overlays for important UI regions */
+.solid-card {
+  position: relative;
+  z-index: 5; /* above neon overlay */
+  background-color: rgba(255,255,255,0.98);
+  box-shadow: 0 6px 18px rgba(2,6,23,0.28);
+}
+
+.dark .solid-card,
+body.dark .solid-card,
+body .dark .solid-card {
+  background-color: rgba(11,17,32,0.98);
+  box-shadow: 0 6px 18px rgba(2,6,23,0.28);
+}
+
+.solid-card .muted {
+  color: rgba(34,34,34,0.6);
+}
+
+.dark .solid-card .muted,
+body.dark .solid-card .muted {
+  color: rgba(226,238,246,0.65);
+}
+
 /* Chart tooltip fixes */
 .recharts-tooltip-wrapper {
   z-index: 9999 !important;
