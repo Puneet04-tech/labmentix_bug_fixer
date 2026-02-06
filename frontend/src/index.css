@@ -268,6 +268,33 @@ body.animated .panel::after {
   overflow: hidden;
 }
 
+/* High-contrast hero header to improve readability over busy backgrounds */
+.hero-header {
+  background-color: rgba(2,6,23,0.48); /* semi-opaque dark */
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 6px 18px rgba(2,6,23,0.45);
+  transition: background-color 160ms ease, box-shadow 160ms ease;
+}
+
+.hero-title {
+  color: #ffffff; /* full white for maximum contrast */
+  text-shadow: 0 2px 14px rgba(0,0,0,0.6);
+}
+
+.hero-sub {
+  color: rgba(226,238,246,0.85);
+}
+
+/* Breadcrumbs and small header contrast helper */
+.breadcrumb-contrast {
+  background-color: rgba(2,6,23,0.35);
+  padding: 0.25rem 0.625rem;
+  border-radius: 0.375rem;
+}
+
 .site-gradient::after {
   content: '';
   position: absolute;

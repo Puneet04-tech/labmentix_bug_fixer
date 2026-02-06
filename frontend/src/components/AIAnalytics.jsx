@@ -140,13 +140,13 @@ const AIAnalytics = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="hero-header flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-            <Brain className="w-6 h-6 text-purple-600" />
+          <h2 className="hero-title text-2xl font-bold flex items-center gap-2">
+            <Brain className="w-6 h-6 text-purple-400" />
             AI Analytics Dashboard
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
+          <p className="hero-sub mt-1 text-sm">
             Intelligent insights powered by machine learning
           </p>
         </div>
