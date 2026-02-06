@@ -47,7 +47,8 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       const message = error.response?.data?.message || 'Registration failed';
       toast.error(message);
-      return { success: false, message };
+      // Rethrow so callers (e.g., AdminSetup) can handle the failure explicitly
+      throw new Error(message);
     }
   };
 

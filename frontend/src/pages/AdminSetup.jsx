@@ -120,15 +120,19 @@ const AdminSetup = () => {
       return;
     }
 
+    if (loading) return; // prevent double submit
     setLoading(true);
     setError('');
 
     try {
-      const { confirmPassword, ...registerData } = {
-        ...formData,
-        role: 'admin'
+      // Send the setup key as `adminKey` to match backend
+      const { confirmPassword, setupKey, ...rest } = formData;
+      const registerData = {
+        ...rest,
+        role: 'admin',
+        adminKey: setupKey
       };
-      
+
       await register(registerData);
       setSuccess(true);
     } catch (error) {
