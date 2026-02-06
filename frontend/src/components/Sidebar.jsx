@@ -9,7 +9,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     { name: 'Projects', icon: '📁', path: '/projects' },
     { name: 'Tickets', icon: '🎫', path: '/tickets' },
     { name: 'Kanban Board', icon: '📋', path: '/kanban' },
-    { name: 'Analytics', icon: '📈', path: '/analytics' },
+    { name: 'AI Analytics', icon: '🤖', path: '/analytics' },
   ];
 
   const isActive = (path) => {

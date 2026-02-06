@@ -42,6 +42,7 @@ app.use('/api/tickets', require('./routes/tickets'));
 app.use('/api/comments', require('./routes/comments'));
 app.use('/api/analytics', require('./routes/analytics'));
 app.use('/api/screenshots', require('./routes/screenshots'));
+app.use('/api/ai', require('./routes/ai'));
 // Users: search endpoint (protected)
 app.use('/api/users', require('./routes/users'));
 

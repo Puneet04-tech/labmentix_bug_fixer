@@ -25,6 +25,10 @@ import Kanban from './pages/Kanban';
 import DemoPage from './pages/DemoPage';
 import NotFound from './pages/NotFound';
 
+// Components
+import AIAssistant from './components/AIAssistant';
+import AIAnalytics from './components/AIAnalytics';
+
 function App() {
   const { theme } = useTheme();
 
@@ -138,7 +142,7 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <Layout>
-                        <Analytics />
+                        <AIAnalytics />
                       </Layout>
                     </ProtectedRoute>
                   }
@@ -168,6 +172,8 @@ function App() {
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <ToastContainer position="top-right" autoClose={3000} />
+              {/* AI Assistant - Global */}
+              <AIAssistant />
             </div>
           </TicketProvider>
         </ProjectProvider>

@@ -44,6 +44,9 @@ const ticketSchema = new mongoose.Schema({
   dueDate: {
     type: Date
   },
+  resolvedAt: {
+    type: Date
+  },
   createdAt: {
     type: Date,
     default: Date.now
@@ -57,6 +60,17 @@ const ticketSchema = new mongoose.Schema({
 // Update the updatedAt field before saving
 ticketSchema.pre('save', function(next) {
   this.updatedAt = Date.now();
+  
+  // Set resolvedAt when status changes to Resolved
+  if (this.isModified('status') && this.status === 'Resolved' && !this.resolvedAt) {
+    this.resolvedAt = Date.now();
+  }
+  
+  // Clear resolvedAt if status changes from Resolved
+  if (this.isModified('status') && this.status !== 'Resolved' && this.resolvedAt) {
+    this.resolvedAt = undefined;
+  }
+  
   next();
 });
 
