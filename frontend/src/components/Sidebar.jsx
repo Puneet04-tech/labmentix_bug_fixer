@@ -95,13 +95,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             </div>
           </nav>
 
-          {/* Footer */}
-          <div className="p-4 border-t border-slate-700">
-            <div className="bg-[#122433] rounded-lg p-3 text-center">
-              <p className="text-xs text-slate-100 font-medium">Day 6-8 Complete!</p>
-              <p className="text-xs text-slate-400 mt-1">UI Enhanced + Kanban</p>
-            </div>
-          </div>
         </div>
       </aside>
     </>
