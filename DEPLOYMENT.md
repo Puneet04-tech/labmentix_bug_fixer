@@ -7,7 +7,7 @@ This guide will walk you through deploying your Bug Tracker application to produ
 Before you begin, ensure you have:
 - [ ] A GitHub account (for code hosting)
 - [ ] A Render account (for backend deployment)
-- [ ] A Vercel account (for frontend deployment)
+- [ ] A Netlify account (for frontend deployment)
 - [ ] MongoDB Atlas cluster (already configured)
 - [ ] Git installed on your machine
 
@@ -36,7 +36,7 @@ git commit -m "Initial commit - Bug Tracker MERN App"
 1. Go to [GitHub](https://github.com)
 2. Click **"New repository"**
 3. Name it: `bug-tracker-mern`
-4. Keep it **Public** (required for free Vercel/Render)
+4. Keep it **Public** (required for free Netlify/Render)
 5. **DO NOT** initialize with README
 6. Click **"Create repository"**
 
@@ -126,7 +126,7 @@ Click **"Advanced"** → **"Add Environment Variable"** and add:
 
 ---
 
-## 🌐 Step 4: Deploy Frontend to Vercel
+## 🌐 Step 4: Deploy Frontend to Netlify
 
 ### 4.1 Update Frontend Environment Variables
 
@@ -144,29 +144,28 @@ Before deploying, update the frontend to use your deployed backend URL.
    git push
    ```
 
-### 4.2 Create Vercel Account
+### 4.2 Create Netlify Account
 
-1. Go to [Vercel.com](https://vercel.com)
+1. Go to [Netlify.com](https://netlify.com)
 2. Sign up with **GitHub**
-3. Authorize Vercel to access your repositories
+3. Authorize Netlify to access your repositories
 
 ### 4.3 Import Project
 
-1. From Vercel Dashboard, click **"Add New..."** → **"Project"**
-2. Select `bug-tracker-mern` repository
-3. Configure project settings:
+1. From Netlify Dashboard, click **"Add new site"** → **"Import an existing project"**
+2. Select **"Deploy with GitHub"**
+3. Choose `bug-tracker-mern` repository
+4. Configure build settings:
 
 ```yaml
-Framework Preset: Vite
-Root Directory: frontend
-Build Command: npm run build
-Output Directory: dist
-Install Command: npm install
+Base directory: frontend
+Build command: npm run build
+Publish directory: dist
 ```
 
 ### 4.4 Add Environment Variables
 
-Under **"Environment Variables"**, add:
+Under **"Site settings"** → **"Environment variables"**, add:
 
 | Key | Value |
 |-----|-------|
@@ -176,10 +175,10 @@ Example: `https://bug-tracker-backend.onrender.com/api`
 
 ### 4.5 Deploy Frontend
 
-1. Click **"Deploy"**
+1. Click **"Deploy site"**
 2. Wait 2-3 minutes for build and deployment
 3. Once complete, you'll get a live URL:
-   - Example: `https://bug-tracker-mern.vercel.app`
+   - Example: `https://bug-tracker-mern.netlify.app`
 
 ---
 
@@ -201,7 +200,7 @@ Test these endpoints in your browser or Postman:
 
 ### 5.2 Frontend Testing
 
-Visit your Vercel URL and test:
+Visit your Netlify URL and test:
 
 1. **Registration**: Create a new account
 2. **Login**: Log in with credentials
@@ -231,7 +230,7 @@ Open Developer Tools (F12) and verify:
 app.use(cors({
   origin: [
     'http://localhost:3000',
-    'https://YOUR-FRONTEND.vercel.app'
+    'https://YOUR-FRONTEND.netlify.app'
   ],
   credentials: true
 }));
@@ -247,15 +246,15 @@ app.use(cors({
 ### Issue: "API endpoint not found"
 
 **Solution**:
-1. Verify `VITE_API_URL` in Vercel environment variables
+1. Verify `VITE_API_URL` in Netlify environment variables
 2. Ensure it includes `/api` at the end
 3. Check frontend is using `import.meta.env.VITE_API_URL`
 
 ### Issue: Frontend shows blank page
 
 **Solution**:
-1. Check Vercel build logs for errors
-2. Verify Root Directory is set to `frontend`
+1. Check Netlify build logs for errors
+2. Verify Base directory is set to `frontend`
 3. Check browser console for errors
 4. Ensure all dependencies are in `package.json`
 
@@ -297,7 +296,7 @@ git add .
 git commit -m "Update frontend"
 git push
 
-# Vercel will auto-deploy in ~1 minute
+# Netlify will auto-deploy in ~1 minute
 ```
 
 ---
@@ -311,12 +310,12 @@ git push
 - Check deployment history
 - View environment variables
 
-### Vercel Dashboard
+### Netlify Dashboard
 
 - View deployment status
 - Check build logs
 - Monitor analytics
-- View function invocations
+- View site performance
 
 ### MongoDB Atlas
 
@@ -332,7 +331,7 @@ git push
 Before going live with real users:
 
 - [ ] Backend deployed to Render
-- [ ] Frontend deployed to Vercel
+- [ ] Frontend deployed to Netlify
 - [ ] MongoDB Atlas configured with proper network access
 - [ ] All environment variables set correctly
 - [ ] Health check endpoint working
@@ -371,7 +370,7 @@ Before going live with real users:
 - ✅ Rate limiting on auth endpoints
 - ✅ Input validation on all endpoints
 - ✅ Helmet.js for security headers
-- ✅ HTTPS only (Render/Vercel handle this)
+- ✅ HTTPS only (Render/Netlify handle this)
 
 ---
 
@@ -384,19 +383,19 @@ Before going live with real users:
 - 💾 512 MB RAM
 - 🔄 Automatic SSL certificates
 
-### Vercel Free Tier Limits
+### Netlify Free Tier Limits
 
 - 🚀 100 GB bandwidth/month
-- ⚡ Unlimited deployments
+- ⚡ 300 build minutes/month
 - 🔄 Automatic SSL certificates
 - 📊 Web analytics included
 
 ### Cost Optimization
 
 1. **Backend**: Consider Render's hobby tier ($7/mo) to keep service always on
-2. **Frontend**: Vercel free tier is usually sufficient
+2. **Frontend**: Netlify free tier is usually sufficient
 3. **Database**: MongoDB Atlas M0 (free tier) is fine for small apps
-4. **CDN**: Vercel handles this automatically
+4. **CDN**: Netlify handles this automatically
 
 ---
 
@@ -405,13 +404,13 @@ Before going live with real users:
 ### Official Documentation
 
 - [Render Docs](https://render.com/docs)
-- [Vercel Docs](https://vercel.com/docs)
+- [Netlify Docs](https://docs.netlify.com)
 - [MongoDB Atlas Docs](https://docs.atlas.mongodb.com)
 
 ### Community
 
 - [Render Community](https://community.render.com)
-- [Vercel Discussions](https://github.com/vercel/vercel/discussions)
+- [Netlify Forums](https://answers.netlify.com)
 - [MongoDB Forums](https://www.mongodb.com/community/forums)
 
 ---
@@ -420,11 +419,11 @@ Before going live with real users:
 
 Your Bug Tracker application is now live! Share your deployment URLs:
 
-- **Frontend**: `https://YOUR-APP.vercel.app`
+- **Frontend**: `https://YOUR-APP.netlify.app`
 - **Backend**: `https://YOUR-BACKEND.onrender.com`
 
 Add these URLs to your GitHub README for easy access.
 
 ---
 
-**Last Updated**: Day 12 - Deployment Configuration
+**Last Updated**: February 6, 2026 - Netlify Deployment
