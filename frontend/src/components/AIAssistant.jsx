@@ -17,7 +17,12 @@ import {
   MessageSquare,
   X,
   Minimize2,
-  Maximize2
+  Maximize2,
+  Bug,
+  Timer,
+  Code,
+  Eye,
+  Award
 } from 'lucide-react';
 
 const AIAssistant = () => {
