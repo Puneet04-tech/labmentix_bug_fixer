@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import API from '../utils/api';
+import { toast } from 'react-toastify';
 import { 
   Brain, 
   TrendingUp, 
@@ -37,93 +39,33 @@ const AIAnalytics = () => {
 
   const generateAIInsights = async () => {
     setLoading(true);
-    
-    // Simulate AI processing
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    setInsights([
-      {
-        title: 'Bug Resolution Trend',
-        value: '+23%',
-        change: 'positive',
-        icon: TrendingUp,
-        description: 'Faster resolution times this month',
-        detail: 'Average time reduced from 4.2 days to 3.2 days'
-      },
-      {
-        title: 'Code Quality Score',
-        value: '8.5/10',
-        change: 'positive',
-        icon: Award,
-        description: 'Improved code quality metrics',
-        detail: 'Based on code reviews and test coverage'
-      },
-      {
-        title: 'Team Velocity',
-        value: '+15%',
-        change: 'positive',
-        icon: Zap,
-        description: 'Increased development velocity',
-        detail: 'More story points completed per sprint'
-      },
-      {
-        title: 'Critical Bugs',
-        value: '-8%',
-        change: 'negative',
-        icon: AlertTriangle,
-        description: 'Reduction in critical issues',
-        detail: 'Better prevention strategies working'
-      }
-    ]);
+    try {
+      const response = await API.get('/ai/analytics');
+      const { insights: serverInsights = [], predictions: serverPredictions = [], recommendations: serverRecs = [], modelInfo = {} } = response.data || {};
 
-    setPredictions([
-      {
-        title: 'Next Week Forecast',
-        items: [
-          { label: 'Expected Tickets', value: '12-15', icon: Bug, color: 'text-blue-500' },
-          { label: 'Resolution Time', value: '2.3 days', icon: Timer, color: 'text-green-500' },
-          { label: 'Team Workload', value: '78%', icon: Users, color: 'text-orange-500' },
-          { label: 'Success Rate', value: '92%', icon: Target, color: 'text-purple-500' }
-        ]
-      },
-      {
-        title: 'Risk Assessment',
-        risks: [
-          { level: 'high', issue: 'Database performance degradation', probability: '65%' },
-          { level: 'medium', issue: 'Frontend component complexity', probability: '45%' },
-          { level: 'low', issue: 'API rate limiting', probability: '20%' }
-        ]
-      }
-    ]);
+      // Map server insights to the shape expected by the component when necessary
+      setInsights(serverInsights.map(item => ({
+        title: item.title,
+        value: item.value,
+        change: item.change,
+        icon: item.icon ? TrendingUp : TrendingUp, // backend doesn't send icon component; default to TrendingUp
+        description: item.description,
+        detail: item.detail
+      })));
 
-    setRecommendations([
-      {
-        priority: 'high',
-        title: 'Optimize Database Queries',
-        description: 'AI detected slow queries affecting performance',
-        impact: '40% faster response times',
-        effort: 'Medium',
-        icon: Zap
-      },
-      {
-        priority: 'medium',
-        title: 'Implement Automated Testing',
-        description: 'Add unit tests for critical business logic',
-        impact: '60% fewer bugs in production',
-        effort: 'High',
-        icon: Code
-      },
-      {
-        priority: 'low',
-        title: 'Update Documentation',
-        description: 'Improve API documentation for better onboarding',
-        impact: '30% faster developer onboarding',
-        effort: 'Low',
-        icon: Eye
-      }
-    ]);
+      setPredictions(serverPredictions.map(pred => pred));
+      setRecommendations(serverRecs.map(rec => ({
+        ...rec,
+        icon: rec.icon ? Zap : Zap
+      })));
 
-    setLoading(false);
+      // Optionally set model info (not currently displayed by state hooks but part of API)
+      // setModelInfo(modelInfo)
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to load AI analytics');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const getChangeIcon = (change) => {

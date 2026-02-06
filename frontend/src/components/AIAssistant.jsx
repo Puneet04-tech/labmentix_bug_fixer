@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import API from '../utils/api';
+import { toast } from 'react-toastify';
 import { 
   Bot, 
   Send, 
@@ -55,67 +57,18 @@ const AIAssistant = () => {
   };
 
   const generateAIResponse = async (userInput) => {
-    // Simulate AI processing
     setIsTyping(true);
-    
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
-    const responses = {
-      'analyze': {
-        content: '📊 Based on your project data, I found some interesting patterns:',
-        insights: [
-          { type: 'trend', icon: TrendingUp, text: 'Bug resolution time improved by 23% this month', color: 'text-green-500' },
-          { type: 'warning', icon: AlertTriangle, text: 'High priority tickets increased by 15%', color: 'text-yellow-500' },
-          { type: 'success', icon: CheckCircle, text: 'Team velocity increased by 8%', color: 'text-blue-500' }
-        ]
-      },
-      'predict': {
-        content: '🔮 Predictive Analysis for Next Week:',
-        insights: [
-          { type: 'prediction', icon: Target, text: 'Expected 12 new high-priority bugs', color: 'text-purple-500' },
-          { type: 'prediction', icon: Clock, text: 'Average resolution time: 2.3 days', color: 'text-orange-500' },
-          { type: 'prediction', icon: Users, text: 'Team workload: 78% capacity', color: 'text-cyan-500' }
-        ]
-      },
-      'improve': {
-        content: '💡 AI-Powered Improvement Suggestions:',
-        insights: [
-          { type: 'suggestion', icon: Lightbulb, text: 'Consider automated testing for login module', color: 'text-yellow-400' },
-          { type: 'suggestion', icon: Zap, text: 'Optimize database queries to reduce load time', color: 'text-blue-400' },
-          { type: 'suggestion', icon: Brain, text: 'Implement code review checklist to prevent bugs', color: 'text-green-400' }
-        ]
-      },
-      'team': {
-        content: '👥 Team Performance Insights:',
-        insights: [
-          { type: 'team', icon: Users, text: 'John Doe resolved 45% of critical bugs', color: 'text-indigo-500' },
-          { type: 'team', icon: Target, text: 'Frontend team has 92% on-time delivery', color: 'text-pink-500' },
-          { type: 'team', icon: CheckCircle, text: 'Code quality score improved to 8.5/10', color: 'text-emerald-500' }
-        ]
-      }
-    };
-
-    // Find matching response
-    const lowerInput = userInput.toLowerCase();
-    let response = null;
-    
-    for (const [key, value] of Object.entries(responses)) {
-      if (lowerInput.includes(key)) {
-        response = value;
-        break;
-      }
+    try {
+      const response = await API.post('/ai/chat', { message: userInput });
+      // Expect response.data to be { content, insights }
+      const data = response.data || { content: 'No response', insights: [] };
+      setIsTyping(false);
+      return data;
+    } catch (error) {
+      setIsTyping(false);
+      toast.error(error.response?.data?.message || 'AI assistant failed to respond');
+      return { content: 'Sorry, I could not get a response from the AI.', insights: [] };
     }
-
-    // Default response
-    if (!response) {
-      response = {
-        content: '🤖 I can help you with project analysis, predictions, improvements, and team insights. Try asking me to "analyze", "predict", "improve", or check "team" performance.',
-        insights: []
-      };
-    }
-
-    setIsTyping(false);
-    return response;
   };
 
   const handleSend = async () => {
