@@ -23,6 +23,9 @@ import TicketDetail from './pages/TicketDetail';
 import Analytics from './pages/Analytics';
 import Kanban from './pages/Kanban';
 import DemoPage from './pages/DemoPage';
+import Team from './pages/Team';
+import Reports from './pages/Reports';
+import Settings from './pages/Settings';
 import NotFound from './pages/NotFound';
 
 // Components
@@ -143,6 +146,36 @@ function App() {
                     <ProtectedRoute>
                       <Layout>
                         <AIAnalytics />
+                      </Layout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/team"
+                  element={
+                    <ProtectedRoute>
+                      <Layout>
+                        <Team />
+                      </Layout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/reports"
+                  element={
+                    <ProtectedRoute>
+                      <Layout>
+                        <Reports />
+                      </Layout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/settings"
+                  element={
+                    <ProtectedRoute>
+                      <Layout>
+                        <Settings />
                       </Layout>
                     </ProtectedRoute>
                   }
