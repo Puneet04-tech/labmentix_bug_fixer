@@ -97,14 +97,16 @@ const Register = () => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-black/15 backdrop-blur-[1px]"></div>
       </div>
 
-      {/* Flowing Ribbon Elements */}
+      {/* Special Flowing Ribbon Elements for Register */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        {/* Warm Contrasting Ribbons */}
-        <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-orange-500/20 via-pink-500/15 to-purple-500/20 transform -rotate-6 translate-y-8 blur-sm"></div>
-        <div className="absolute top-1/4 right-0 w-full h-24 bg-gradient-to-l from-red-500/18 via-orange-400/12 to-yellow-500/15 transform rotate-3 translate-y-6 blur-sm"></div>
-        <div className="absolute bottom-1/3 left-0 w-full h-28 bg-gradient-to-r from-purple-500/16 via-pink-400/14 to-red-500/18 transform -rotate-2 translate-y-4 blur-sm"></div>
-        <div className="absolute bottom-0 right-0 w-full h-36 bg-gradient-to-l from-yellow-500/20 via-orange-500/15 to-red-400/18 transform rotate-5 translate-y-10 blur-sm"></div>
-        <div className="absolute top-1/2 left-1/4 w-3/4 h-20 bg-gradient-to-r from-pink-500/14 via-purple-500/12 to-orange-500/16 transform rotate-1 translate-y-2 blur-sm"></div>
+        {/* Premium Authentication Ribbons */}
+        <div className="absolute top-0 left-0 w-full h-40 bg-gradient-to-r from-rose-500/25 via-pink-500/20 to-fuchsia-500/25 transform -rotate-12 translate-y-6 blur-md"></div>
+        <div className="absolute top-1/6 right-0 w-full h-32 bg-gradient-to-l from-violet-500/22 via-purple-500/18 to-indigo-500/20 transform rotate-8 translate-y-4 blur-md"></div>
+        <div className="absolute bottom-1/4 left-0 w-full h-36 bg-gradient-to-r from-emerald-400/20 via-teal-400/16 to-cyan-400/18 transform -rotate-4 translate-y-2 blur-md"></div>
+        <div className="absolute bottom-0 right-0 w-full h-44 bg-gradient-to-l from-amber-500/24 via-orange-500/20 to-red-500/22 transform rotate-10 translate-y-8 blur-md"></div>
+        <div className="absolute top-1/3 left-1/5 w-4/5 h-28 bg-gradient-to-r from-blue-500/18 via-cyan-400/14 to-teal-400/16 transform rotate-2 translate-y-1 blur-md"></div>
+        <div className="absolute top-2/3 right-1/4 w-3/5 h-24 bg-gradient-to-l from-yellow-500/20 via-amber-400/16 to-orange-500/18 transform -rotate-3 translate-y-3 blur-md"></div>
+        <div className="absolute top-1/2 left-1/3 w-2/3 h-20 bg-gradient-to-r from-purple-500/16 via-violet-500/12 to-fuchsia-500/14 transform rotate-6 translate-y-2 blur-md"></div>
       </div>
 
       {/* Grain Texture Overlay */}
