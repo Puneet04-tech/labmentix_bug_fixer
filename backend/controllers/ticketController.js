@@ -100,7 +100,7 @@ exports.getTicket = async (req, res) => {
 // @access  Private
 exports.createTicket = async (req, res) => {
   try {
-    const { title, description, type, status, priority, project, assignedTo, dueDate } = req.body;
+    const { title, description, type, status, priority, project, assignedTo, dueDate, attachments } = req.body;
 
     // Validation
     if (!title || !description || !project) {
@@ -144,7 +144,8 @@ exports.createTicket = async (req, res) => {
       project,
       assignedTo,
       reportedBy: req.user.id,
-      dueDate
+      dueDate,
+      attachments: attachments || []
     });
 
     const populatedTicket = await Ticket.findById(ticket._id)
