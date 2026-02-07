@@ -158,7 +158,33 @@ const ProjectDetail = () => {
   const isOwner = currentProject.owner._id === user._id;
 
   return (
-    <div className="min-h-screen bg-[#0b1220]">
+    <div className="min-h-screen relative">
+      {/* Mossy Background Effects */}
+      <div className="fixed inset-0 opacity-40 pointer-events-none">
+        {/* Green Mossy Rings */}
+        <div className="absolute top-10 left-10 w-96 h-96 bg-gradient-radial from-emerald-400/30 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute top-1/4 right-20 w-80 h-80 bg-gradient-radial from-green-500/25 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 left-1/4 w-72 h-72 bg-gradient-radial from-lime-400/20 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-gradient-radial from-teal-400/25 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 right-1/3 w-56 h-56 bg-gradient-radial from-emerald-500/20 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute top-3/4 left-20 w-48 h-48 bg-gradient-radial from-green-400/30 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute bottom-10 right-10 w-40 h-40 bg-gradient-radial from-lime-500/25 to-transparent rounded-full blur-3xl"></div>
+
+        {/* Blue Mossy Rings */}
+        <div className="absolute top-20 right-1/4 w-88 h-88 bg-gradient-radial from-blue-400/30 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/3 left-10 w-76 h-76 bg-gradient-radial from-cyan-500/25 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute top-1/3 left-1/3 w-68 h-68 bg-gradient-radial from-sky-400/20 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/2 right-20 w-60 h-60 bg-gradient-radial from-blue-500/25 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute top-2/3 right-1/2 w-52 h-52 bg-gradient-radial from-cyan-400/20 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 left-2/3 w-44 h-44 bg-gradient-radial from-sky-500/30 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute top-10 left-3/4 w-36 h-36 bg-gradient-radial from-blue-400/25 to-transparent rounded-full blur-3xl"></div>
+      </div>
+
+      {/* Foggy Background Overlay */}
+      <div className="fixed inset-0 bg-gradient-to-br from-slate-900/10 via-slate-800/5 to-slate-900/10 backdrop-blur-[1px] pointer-events-none"></div>
+
+      {/* Content */}
+      <div className="relative z-10 min-h-screen">
       {/* Header */}
       <header className="bg-[#0f1724] shadow">
         <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
@@ -196,7 +222,7 @@ const ProjectDetail = () => {
         <div className="bg-[#0f1724] rounded-lg shadow-md p-6 mb-6">
           <div className="flex justify-between items-start mb-4">
             <div className="flex-1">
-              <h2 className="text-3xl font-bold text-slate-100 mb-2">{currentProject.name}</h2>
+              <h2 className="text-3xl font-bold text-slate-100 mb-2 text-center">{currentProject.name}</h2>
               <div className="flex space-x-3">
                 <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(currentProject.status)}`}>
                   {currentProject.status}
@@ -251,7 +277,7 @@ const ProjectDetail = () => {
         {/* Edit Form or Description */}
         {isEditing && isOwner ? (
           <div className="bg-[#0f1724] rounded-xl shadow-sm p-6 sm:p-8 mb-6">
-            <h3 className="text-xl font-bold text-slate-100 mb-4">Edit Project</h3>
+            <h3 className="text-xl font-bold text-slate-100 mb-4 text-center">Edit Project</h3>
             <form onSubmit={handleUpdate} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-400 mb-2">
@@ -368,7 +394,7 @@ const ProjectDetail = () => {
           </div>
         ) : (
           <div className="bg-[#0f1724] rounded-xl shadow-sm p-6 sm:p-8 mb-6">
-            <h3 className="text-xl font-bold text-slate-100 mb-3">Description</h3>
+            <h3 className="text-xl font-bold text-slate-100 mb-3 text-center">Description</h3>
             <p className="text-slate-300 whitespace-pre-wrap">{currentProject.description}</p>
           </div>
         )}
@@ -391,7 +417,7 @@ const ProjectDetail = () => {
 
         {/* Activity / Stats */}
         <div className="bg-[#0f1724] rounded-xl shadow-sm p-6 sm:p-8">
-          <h3 className="text-xl font-bold text-slate-100 mb-4">Project Activity</h3>
+          <h3 className="text-xl font-bold text-slate-100 mb-4 text-center">Project Activity</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="text-center p-4 bg-[#122433] rounded-lg">
               <div className="text-3xl font-bold text-slate-100">{projectTickets.length}</div>
@@ -418,6 +444,7 @@ const ProjectDetail = () => {
           </Link>
         </div>
       </main>
+    </div>
     </div>
   );
 };

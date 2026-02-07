@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
 /* stylelint-disable at-rule-no-unknown */
 @tailwind base;
 @tailwind components;
@@ -10,94 +12,317 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+  min-height: 100vh;
   position: relative;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    /* Blue Mossy Rings */
+    radial-gradient(circle at 15% 25%, rgba(59, 130, 246, 0.15) 0%, transparent 45%),
+    radial-gradient(circle at 85% 15%, rgba(6, 182, 212, 0.12) 0%, transparent 40%),
+    radial-gradient(circle at 35% 75%, rgba(14, 165, 233, 0.18) 0%, transparent 50%),
+    radial-gradient(circle at 75% 65%, rgba(20, 184, 166, 0.10) 0%, transparent 35%),
+    radial-gradient(circle at 50% 40%, rgba(56, 189, 248, 0.08) 0%, transparent 55%),
+    radial-gradient(circle at 20% 85%, rgba(2, 132, 199, 0.14) 0%, transparent 45%),
+    radial-gradient(circle at 90% 35%, rgba(45, 212, 191, 0.11) 0%, transparent 40%),
+    /* Green Mossy Rings */
+    radial-gradient(circle at 10% 50%, rgba(16, 185, 129, 0.15) 0%, transparent 45%),
+    radial-gradient(circle at 80% 80%, rgba(34, 197, 94, 0.12) 0%, transparent 40%),
+    radial-gradient(circle at 60% 20%, rgba(132, 204, 22, 0.18) 0%, transparent 50%),
+    radial-gradient(circle at 25% 70%, rgba(5, 150, 105, 0.10) 0%, transparent 35%),
+    radial-gradient(circle at 70% 45%, rgba(20, 184, 166, 0.08) 0%, transparent 55%),
+    radial-gradient(circle at 45% 85%, rgba(13, 148, 136, 0.14) 0%, transparent 45%),
+    radial-gradient(circle at 95% 60%, rgba(6, 182, 212, 0.11) 0%, transparent 40%);
+  filter: blur(2px);
+  pointer-events: none;
+  z-index: -1;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: 'JetBrains Mono', 'Fira Code', source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
 
-/* Global dark form controls so native inputs/selects match the app theme */
+/* Enhanced form controls */
 input,
 textarea,
 select {
-  background-color: #0f1724;
-  color: #e6eef6;
-  border-color: #1f2a36;
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  color: #e2e8f0;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 14px;
+  transition: all 0.2s ease;
 }
 
-/* Attempt to style native dropdown options (browser support varies) */
-option {
-  background-color: #0f1724;
-  color: #e6eef6;
-}
-
-/* Disabled form elements */
-select:disabled,
-input:disabled,
-textarea:disabled {
-  background-color: #0b1220;
-  color: #94a3b8;
-}
-
-/* Neon / red glow utilities */
-:root {
-  --neon-red: 255, 56, 90; /* lighter pink-red for better visibility */
-  --neon-red-hex: #ff385a;
-}
-
-/* Global body-level subtle red overlay when `body.neon` is present */
-body.neon::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background-image:
-    radial-gradient( circle at 10% 10%, rgba(var(--neon-red), 0.12), transparent 12%),
-    radial-gradient( circle at 90% 80%, rgba(var(--neon-red), 0.08), transparent 18% );
-  mix-blend-mode: screen;
-}
-
-/* Ensure app root sits above the overlay so UI is visible */
-#root {
-  position: relative;
-  z-index: 1;
-}
-
-.neon-glow,
-button.neon-btn,
-.btn-neon {
-  box-shadow: 0 6px 22px rgba(var(--neon-red), 0.12), 0 0 36px rgba(var(--neon-red), 0.08);
-  transition: box-shadow 220ms ease, transform 160ms ease;
-}
-
-.neon-glow:hover,
-button.neon-btn:hover,
-.btn-neon:hover {
-  box-shadow: 0 12px 44px rgba(var(--neon-red), 0.20), 0 0 64px rgba(var(--neon-red), 0.12);
-  transform: translateY(-1px);
-}
-
-/* subtle neon text */
-.neon-text {
-  text-shadow: 0 2px 10px rgba(var(--neon-red), 0.12);
-}
-
-/* Focus ring for inputs/selects/textarea */
 input:focus,
 textarea:focus,
 select:focus {
   outline: none;
-  box-shadow: 0 0 0 4px rgba(var(--neon-red), 0.12), 0 0 18px rgba(var(--neon-red), 0.10);
-  border-color: rgba(var(--neon-red), 0.20);
+  border-color: rgba(99, 102, 241, 0.5);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1), 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: rgba(15, 23, 42, 0.9);
+}
+
+input:hover,
+textarea:hover,
+select:hover {
+  border-color: rgba(148, 163, 184, 0.3);
+}
+
+/* Enhanced buttons */
+.btn-primary {
+  @apply bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700
+         text-white font-medium px-6 py-3 rounded-xl transition-all duration-200
+         shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 active:translate-y-0;
+}
+
+.btn-secondary {
+  @apply bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-600 hover:to-slate-700
+         text-slate-200 font-medium px-6 py-3 rounded-xl transition-all duration-200
+         border border-slate-600 hover:border-slate-500;
+}
+
+.btn-success {
+  @apply bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700
+         text-white font-medium px-6 py-3 rounded-xl transition-all duration-200
+         shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
+}
+
+.btn-danger {
+  @apply bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700
+         text-white font-medium px-6 py-3 rounded-xl transition-all duration-200
+         shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
+}
+
+.btn-ghost {
+  @apply bg-transparent hover:bg-slate-800/50 text-slate-300 hover:text-white
+         font-medium px-4 py-2 rounded-lg transition-all duration-200
+         border border-transparent hover:border-slate-600;
+}
+
+/* Card components */
+.card {
+  @apply bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 rounded-2xl
+         shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden;
+}
+
+.card-header {
+  @apply px-6 py-4 border-b border-slate-700/50 bg-slate-900/30;
+}
+
+.card-body {
+  @apply p-6;
+}
+
+.card-footer {
+  @apply px-6 py-4 border-t border-slate-700/50 bg-slate-900/20;
+}
+
+/* Status badges */
+.badge {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
+}
+
+.badge-success {
+  @apply bg-emerald-500/20 text-emerald-400 border border-emerald-500/30;
+}
+
+.badge-warning {
+  @apply bg-yellow-500/20 text-yellow-400 border border-yellow-500/30;
+}
+
+.badge-error {
+  @apply bg-red-500/20 text-red-400 border border-red-500/30;
+}
+
+.badge-info {
+  @apply bg-blue-500/20 text-blue-400 border border-blue-500/30;
+}
+
+.badge-neutral {
+  @apply bg-slate-500/20 text-slate-400 border border-slate-500/30;
+}
+
+/* Priority indicators */
+.priority-low {
+  @apply bg-green-500/20 text-green-400 border border-green-500/30;
+}
+
+.priority-medium {
+  @apply bg-yellow-500/20 text-yellow-400 border border-yellow-500/30;
+}
+
+.priority-high {
+  @apply bg-orange-500/20 text-orange-400 border border-orange-500/30;
+}
+
+.priority-critical {
+  @apply bg-red-500/20 text-red-400 border border-red-500/30;
+}
+
+/* Status indicators */
+.status-open {
+  @apply bg-blue-500/20 text-blue-400 border border-blue-500/30;
+}
+
+.status-in-progress {
+  @apply bg-purple-500/20 text-purple-400 border border-purple-500/30;
+}
+
+.status-in-review {
+  @apply bg-yellow-500/20 text-yellow-400 border border-yellow-500/30;
+}
+
+.status-resolved {
+  @apply bg-green-500/20 text-green-400 border border-green-500/30;
+}
+
+.status-closed {
+  @apply bg-slate-500/20 text-slate-400 border border-slate-500/30;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+.animate-pulse-slow {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.5);
+}
+
+/* Focus styles for accessibility */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-900;
+}
+
+/* Loading states */
+.loading-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Glass morphism effect */
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Hover effects */
+.hover-lift {
+  @apply transition-transform duration-200 hover:-translate-y-1;
+}
+
+.hover-glow {
+  @apply transition-shadow duration-200 hover:shadow-lg hover:shadow-blue-500/25;
+}
+
+/* Responsive utilities */
+@media (max-width: 640px) {
+  .mobile-stack {
+    @apply flex-col space-y-4 space-x-0;
+  }
+
+  .mobile-hide {
+    @apply hidden;
+  }
+
+  .mobile-full {
+    @apply w-full;
+  }
+}
+
+/* Print styles */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
 }
 
 /* Utility to apply a neon border for important elements */

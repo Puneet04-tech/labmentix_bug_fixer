@@ -130,7 +130,34 @@ const TicketDetail = () => {
   const allMembers = [ownerObj, ...projectMembers];
 
   return (
-    <div>
+    <div className="min-h-screen relative">
+      {/* Mossy Background Effects */}
+      <div className="fixed inset-0 opacity-40 pointer-events-none">
+        {/* Green Mossy Rings */}
+        <div className="absolute top-10 left-10 w-96 h-96 bg-gradient-radial from-emerald-400/30 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute top-1/4 right-20 w-80 h-80 bg-gradient-radial from-green-500/25 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 left-1/4 w-72 h-72 bg-gradient-radial from-lime-400/20 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-gradient-radial from-teal-400/25 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 right-1/3 w-56 h-56 bg-gradient-radial from-emerald-500/20 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute top-3/4 left-20 w-48 h-48 bg-gradient-radial from-green-400/30 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute bottom-10 right-10 w-40 h-40 bg-gradient-radial from-lime-500/25 to-transparent rounded-full blur-3xl"></div>
+
+        {/* Blue Mossy Rings */}
+        <div className="absolute top-20 right-1/4 w-88 h-88 bg-gradient-radial from-blue-400/30 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/3 left-10 w-76 h-76 bg-gradient-radial from-cyan-500/25 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute top-1/3 left-1/3 w-68 h-68 bg-gradient-radial from-sky-400/20 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/2 right-20 w-60 h-60 bg-gradient-radial from-blue-500/25 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute top-2/3 right-1/2 w-52 h-52 bg-gradient-radial from-cyan-400/20 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 left-2/3 w-44 h-44 bg-gradient-radial from-sky-500/30 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute top-10 left-3/4 w-36 h-36 bg-gradient-radial from-blue-400/25 to-transparent rounded-full blur-3xl"></div>
+      </div>
+
+      {/* Foggy Background Overlay */}
+      <div className="fixed inset-0 bg-gradient-to-br from-slate-900/10 via-slate-800/5 to-slate-900/10 backdrop-blur-[1px] pointer-events-none"></div>
+
+      {/* Content */}
+      <div className="relative z-10">
+        <div className="container mx-auto px-4 py-8">
       {/* Header */}
       <div className="mb-6">
         <Link to="/tickets" className="text-primary-600 hover:text-primary-800 mb-4 inline-flex items-center space-x-2">
@@ -143,7 +170,7 @@ const TicketDetail = () => {
           <div>
             <div className="flex items-center gap-3 mb-2">
               <span className="text-3xl">{getTypeIcon(currentTicket.type)}</span>
-              <h1 className="text-3xl font-bold text-slate-800 dark:text-slate-100">{currentTicket.title}</h1>
+              <h1 className="text-3xl font-bold text-slate-800 dark:text-slate-100 text-center">{currentTicket.title}</h1>
             </div>
             <div className="flex gap-2 mt-3">
               <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(currentTicket.status)}`}>
@@ -188,14 +215,14 @@ const TicketDetail = () => {
         {/* Main Content - Left Column */}
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-[#0f1724] rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-bold text-slate-100 mb-4">📝 Description</h2>
+            <h2 className="text-xl font-bold text-slate-100 mb-4 text-center">📝 Description</h2>
             <p className="text-slate-300 whitespace-pre-wrap">{currentTicket.description}</p>
           </div>
 
           {/* Attachments */}
           {currentTicket.attachments && currentTicket.attachments.length > 0 && (
             <div className="bg-[#0f1724] rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-bold text-slate-100 mb-4">📎 Attachments</h2>
+              <h2 className="text-xl font-bold text-slate-100 mb-4 text-center">📎 Attachments</h2>
               <div className="space-y-3">
                 {currentTicket.attachments.map((attachment, index) => (
                   <div key={index} className="flex items-center justify-between p-3 bg-slate-800 rounded-lg border border-slate-700">
@@ -336,6 +363,8 @@ const TicketDetail = () => {
         itemName={currentTicket.title}
         isDeleting={isDeleting}
       />
+        </div>
+      </div>
     </div>
   );
 };

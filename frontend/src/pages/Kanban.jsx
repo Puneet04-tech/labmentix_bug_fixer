@@ -67,7 +67,31 @@ const Kanban = () => {
   ];
 
   return (
-    <div>
+    <div className="min-h-screen bg-[#0b1220] relative overflow-hidden">
+      {/* Mossy Background Effects */}
+      <div className="fixed inset-0 opacity-40">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-950/30 via-slate-900/20 to-slate-950/30"></div>
+        <div className="absolute inset-0" style={{
+          backgroundImage: `radial-gradient(circle at 15% 25%, rgba(59, 130, 246, 0.12) 0%, transparent 45%),
+                           radial-gradient(circle at 85% 15%, rgba(6, 182, 212, 0.10) 0%, transparent 40%),
+                           radial-gradient(circle at 35% 75%, rgba(14, 165, 233, 0.14) 0%, transparent 50%),
+                           radial-gradient(circle at 75% 65%, rgba(20, 184, 166, 0.08) 0%, transparent 35%),
+                           radial-gradient(circle at 50% 40%, rgba(56, 189, 248, 0.06) 0%, transparent 55%),
+                           radial-gradient(circle at 20% 85%, rgba(2, 132, 199, 0.11) 0%, transparent 45%),
+                           radial-gradient(circle at 90% 35%, rgba(45, 212, 191, 0.09) 0%, transparent 40%),
+                           radial-gradient(circle at 10% 50%, rgba(16, 185, 129, 0.12) 0%, transparent 45%),
+                           radial-gradient(circle at 80% 80%, rgba(34, 197, 94, 0.10) 0%, transparent 40%),
+                           radial-gradient(circle at 60% 20%, rgba(132, 204, 22, 0.14) 0%, transparent 50%),
+                           radial-gradient(circle at 25% 70%, rgba(5, 150, 105, 0.08) 0%, transparent 35%),
+                           radial-gradient(circle at 70% 45%, rgba(20, 184, 166, 0.06) 0%, transparent 55%),
+                           radial-gradient(circle at 45% 85%, rgba(13, 148, 136, 0.11) 0%, transparent 45%),
+                           radial-gradient(circle at 95% 60%, rgba(6, 182, 212, 0.09) 0%, transparent 40%)`
+        }}></div>
+        {/* Foggy overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-black/8 backdrop-blur-[0.5px]"></div>
+      </div>
+
+      <div className="relative z-10">
       {/* Header */}
       <div className="bg-[#0f1724] rounded-lg shadow-md p-6 mb-6">
         <div className="flex items-center justify-between flex-wrap gap-4">
@@ -173,6 +197,7 @@ const Kanban = () => {
           <li>• <strong>Color Codes:</strong> Left border indicates priority (Gray=Low, Blue=Medium, Orange=High, Red=Critical)</li>
         </ul>
       </div>
+    </div>
     </div>
   );
 };

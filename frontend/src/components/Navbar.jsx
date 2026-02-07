@@ -1,10 +1,22 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { motion } from 'framer-motion';
+import {
+  Sun,
+  Moon,
+  Settings,
+  Shield,
+  LogOut,
+  User,
+  ChevronDown
+} from 'lucide-react';
+import { useState } from 'react';
 
 const Navbar = ({ toggleSidebar }) => {
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const getInitials = (name) => {
     return name
@@ -17,119 +29,123 @@ const Navbar = ({ toggleSidebar }) => {
 
   const getAvatarColor = (name) => {
     const colors = [
-      'bg-primary-500',
-      'bg-accent-500',
-      'bg-amethyst-500',
-      'bg-accent-300',
-      'bg-primary-600'
+      'from-blue-500 to-blue-600',
+      'from-purple-500 to-purple-600',
+      'from-green-500 to-green-600',
+      'from-orange-500 to-orange-600',
+      'from-pink-500 to-pink-600',
+      'from-indigo-500 to-indigo-600'
     ];
     const index = (name && name.charCodeAt(0)) ? name.charCodeAt(0) % colors.length : 0;
     return colors[index];
   };
 
   return (
-    <nav className="bg-[#0f1724] border-b border-slate-700 sticky top-0 z-10 neon-glow">
-      <div className="px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Left: Hamburger Menu */}
-          <div className="flex items-center">
-            <button
-              onClick={toggleSidebar}
-              className="lg:hidden text-slate-600 hover:text-primary-600 focus:outline-none"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
+    <div className="flex items-center space-x-2">
+      {/* Theme Toggle */}
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={toggleTheme}
+        className="p-2.5 text-slate-400 hover:text-amber-400 hover:bg-blue-800/70 rounded-xl transition-all duration-300 shadow-lg hover:shadow-amber-500/15"
+        title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+      >
+        {theme === 'dark' ? (
+          <Sun className="w-5 h-5" />
+        ) : (
+          <Moon className="w-5 h-5" />
+        )}
+      </motion.button>
 
-            {/* Search Bar (Desktop) */}
-            <div className="hidden md:block ml-4">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search tickets, projects..."
-                  className="w-80 px-4 py-2 pl-10 border border-slate-700 rounded-lg bg-[#0f1724] text-slate-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
-                />
-                <svg
-                  className="w-5 h-5 text-gray-400 absolute left-3 top-2.5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </div>
-            </div>
+      {/* Admin Panel */}
+      {user?.role === 'admin' && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3 }}
+        >
+          <Link
+            to="/admin"
+            className="flex items-center space-x-2 px-4 py-2.5 bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-500 hover:to-cyan-600 text-white rounded-xl transition-all duration-300 shadow-xl hover:shadow-cyan-500/30 font-medium"
+          >
+            <Shield className="w-4 h-4" />
+            <span className="font-medium hidden xl:block">Admin</span>
+          </Link>
+        </motion.div>
+      )}
+
+      {/* Profile Menu */}
+      <div className="relative">
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={() => setShowProfileMenu(!showProfileMenu)}
+          className="flex items-center space-x-3 p-2.5 hover:bg-blue-800/70 rounded-xl transition-all duration-300 shadow-lg hover:shadow-blue-900/30"
+        >
+          <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${getAvatarColor(user?.name || 'User')} text-white flex items-center justify-center font-bold text-sm shadow-lg`}>
+            {getInitials(user?.name || 'User')}
           </div>
+          <div className="hidden xl:block text-left">
+            <p className="text-sm font-medium text-white">{user?.name}</p>
+            <p className="text-xs text-slate-400">{user?.email}</p>
+          </div>
+          <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${showProfileMenu ? 'rotate-180' : ''}`} />
+        </motion.button>
 
-          {/* Right: Notifications & Profile */}
-          <div className="flex items-center space-x-4">
-            {/* Theme toggle */}
-            <button
-              onClick={toggleTheme}
-              aria-label="Toggle theme"
-              className="p-2 rounded-lg hover:bg-[#122433] transition"
-              title={`Switch theme`}
+        {/* Profile Dropdown */}
+        {showProfileMenu && (
+          <>
+            {/* Backdrop */}
+            <div
+              className="fixed inset-0 z-10"
+              onClick={() => setShowProfileMenu(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, y: 10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 10, scale: 0.95 }}
+              className="absolute right-0 mt-2 w-64 bg-blue-800/95 backdrop-blur-2xl border border-blue-700/70 rounded-2xl shadow-2xl py-3 z-20"
             >
-              {theme === 'dark' ? (
-                <svg className="w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M10 2a.75.75 0 01.75.75V4a.75.75 0 01-1.5 0V2.75A.75.75 0 0110 2zM14.95 4.05a.75.75 0 011.06 1.06l-1 1a.75.75 0 11-1.06-1.06l1-1zM18 10a.75.75 0 01-.75.75H16a.75.75 0 010-1.5h1.25A.75.75 0 0118 10zM14.95 15.95a.75.75 0 00-1.06 1.06l1 1a.75.75 0 101.06-1.06l-1-1zM10 16a.75.75 0 01.75.75V18a.75.75 0 01-1.5 0v-1.25A.75.75 0 0110 16zM5.05 15.95a.75.75 0 011.06 1.06l-1 1a.75.75 0 11-1.06-1.06l1-1zM4 10a.75.75 0 01-.75.75H2.5a.75.75 0 010-1.5H3.25A.75.75 0 014 10zM5.05 4.05a.75.75 0 00-1.06 1.06l1 1a.75.75 0 001.06-1.06l-1-1z" />
-                </svg>
-              ) : (
-                <svg className="w-6 h-6 text-slate-100" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M17.293 13.293a8 8 0 11-10.586-10.586 8.001 8.001 0 0010.586 10.586z" />
-                </svg>
-              )}
-            </button>
+              <div className="px-4 py-3 border-b border-blue-700/70">
+                <p className="text-sm font-medium text-white">{user?.name}</p>
+                <p className="text-xs text-slate-400">{user?.email}</p>
+              </div>
 
-            {/* Notifications */}
-            <button className="relative p-2 text-gray-300 hover:text-primary-300 hover:bg-[#122433] rounded-lg transition">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-              </svg>
-              {/* Notification Badge */}
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-            </button>
-
-            {/* Admin Panel - Only for admin users */}
-            {user?.role === 'admin' && (
               <Link
-                to="/admin"
-                className="flex items-center space-x-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition"
+                to="/profile"
+                className="flex items-center space-x-3 px-4 py-3 text-slate-300 hover:bg-blue-700/70 hover:text-slate-100 transition-all duration-300 rounded-lg mx-2"
+                onClick={() => setShowProfileMenu(false)}
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                <span className="font-medium">Admin</span>
+                <User className="w-4 h-4" />
+                <span>Profile Settings</span>
               </Link>
-            )}
 
-            {/* User Profile Dropdown */}
-            <div className="flex items-center space-x-3">
-              <div className="hidden sm:block text-right">
-                  <p className="text-sm font-medium text-slate-100 neon-text">{user?.name}</p>
-                  <p className="text-xs text-slate-400">{user?.email}</p>
-                </div>
-              <div className={`w-10 h-10 rounded-full ${getAvatarColor(user?.name || 'User')} text-white flex items-center justify-center font-bold text-sm cursor-pointer hover:opacity-80 transition`}>
-                {getInitials(user?.name || 'User')}
+              <Link
+                to="/settings"
+                className="flex items-center space-x-3 px-4 py-3 text-slate-300 hover:bg-blue-700/70 hover:text-slate-100 transition-all duration-300 rounded-lg mx-2"
+                onClick={() => setShowProfileMenu(false)}
+              >
+                <Settings className="w-4 h-4" />
+                <span>Preferences</span>
+              </Link>
+
+              <div className="border-t border-blue-700/70 mt-2 pt-2">
+                <button
+                  onClick={() => {
+                    setShowProfileMenu(false);
+                    logout();
+                  }}
+                  className="flex items-center space-x-3 px-4 py-3 text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-200 w-full text-left"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Sign Out</span>
+                </button>
               </div>
-            </div>
-
-            {/* Logout Button */}
-            <button
-              onClick={logout}
-              className="hidden sm:flex items-center space-x-2 px-4 py-2 text-red-600 hover:bg-[#122433] rounded-lg transition"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-              <span className="font-medium">Logout</span>
-            </button>
-          </div>
-        </div>
+            </motion.div>
+          </>
+        )}
       </div>
-    </nav>
+    </div>
   );
 };
 

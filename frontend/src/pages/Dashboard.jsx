@@ -47,13 +47,37 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen px-4 bg-[#0b1220]">
-      <div className="container mx-auto px-6 py-8">
+    <div className="min-h-screen px-4 bg-[#0b1220] relative overflow-hidden">
+      {/* Mossy Background Effects */}
+      <div className="fixed inset-0 opacity-40">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-950/30 via-slate-900/20 to-slate-950/30"></div>
+        <div className="absolute inset-0" style={{
+          backgroundImage: `radial-gradient(circle at 15% 25%, rgba(59, 130, 246, 0.12) 0%, transparent 45%),
+                           radial-gradient(circle at 85% 15%, rgba(6, 182, 212, 0.10) 0%, transparent 40%),
+                           radial-gradient(circle at 35% 75%, rgba(14, 165, 233, 0.14) 0%, transparent 50%),
+                           radial-gradient(circle at 75% 65%, rgba(20, 184, 166, 0.08) 0%, transparent 35%),
+                           radial-gradient(circle at 50% 40%, rgba(56, 189, 248, 0.06) 0%, transparent 55%),
+                           radial-gradient(circle at 20% 85%, rgba(2, 132, 199, 0.11) 0%, transparent 45%),
+                           radial-gradient(circle at 90% 35%, rgba(45, 212, 191, 0.09) 0%, transparent 40%),
+                           radial-gradient(circle at 10% 50%, rgba(16, 185, 129, 0.12) 0%, transparent 45%),
+                           radial-gradient(circle at 80% 80%, rgba(34, 197, 94, 0.10) 0%, transparent 40%),
+                           radial-gradient(circle at 60% 20%, rgba(132, 204, 22, 0.14) 0%, transparent 50%),
+                           radial-gradient(circle at 25% 70%, rgba(5, 150, 105, 0.08) 0%, transparent 35%),
+                           radial-gradient(circle at 70% 45%, rgba(20, 184, 166, 0.06) 0%, transparent 55%),
+                           radial-gradient(circle at 45% 85%, rgba(13, 148, 136, 0.11) 0%, transparent 45%),
+                           radial-gradient(circle at 95% 60%, rgba(6, 182, 212, 0.09) 0%, transparent 40%)`
+        }}></div>
+        {/* Foggy overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-black/8 backdrop-blur-[0.5px]"></div>
+      </div>
+
+      <div className="relative z-10">
+        <div className="container mx-auto px-6 py-8">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-4xl font-bold text-orange-400 mb-2">Dashboard</h1>
+              <h1 className="text-4xl font-bold text-lime-400 mb-2 text-center drop-shadow-lg">Dashboard</h1>
               <p className="text-lg text-purple-100">Welcome back, {user?.name}! 👋 Here's what's happening with your projects today.</p>
               <div className="flex items-center space-x-2 mt-2">
                 <span className="text-sm text-purple-200">Role:</span>
@@ -210,7 +234,7 @@ const Dashboard = () => {
           {/* Recent Activity */}
           <div className="bg-slate-900/85 rounded-2xl p-8 shadow-2xl border border-slate-800">
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-white">Recent Activity</h2>
+              <h2 className="text-2xl font-bold text-emerald-400 text-center mb-6 drop-shadow-md">Recent Activity</h2>
               <Link to="/tickets/create" className="bg-gradient-to-r from-orange-500 to-purple-500 text-white px-4 py-2 rounded-lg font-medium shadow hover:from-orange-600 hover:to-purple-600 transition">+ New Ticket</Link>
             </div>
             {recentTickets.length > 0 ? (
@@ -260,7 +284,7 @@ const Dashboard = () => {
           {/* Projects Overview */}
           <div className="bg-slate-900/85 rounded-2xl p-8 shadow-2xl border border-slate-800">
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-white">Your Projects</h2>
+              <h2 className="text-2xl font-bold text-teal-400 text-center mb-6 drop-shadow-md">Your Projects</h2>
               <Link to="/projects/create" className="bg-gradient-to-r from-orange-500 to-purple-500 text-white px-4 py-2 rounded-lg font-medium shadow hover:from-orange-600 hover:to-purple-600 transition">+ New Project</Link>
             </div>
             {projects.length > 0 ? (
@@ -289,6 +313,7 @@ const Dashboard = () => {
             )}
           </div>
         </div>
+      </div>
       </div>
     </div>
   );
