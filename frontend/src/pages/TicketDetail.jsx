@@ -192,6 +192,48 @@ const TicketDetail = () => {
             <p className="text-slate-300 whitespace-pre-wrap">{currentTicket.description}</p>
           </div>
 
+          {/* Attachments */}
+          {currentTicket.attachments && currentTicket.attachments.length > 0 && (
+            <div className="bg-[#0f1724] rounded-lg shadow-md p-6">
+              <h2 className="text-xl font-bold text-slate-100 mb-4">📎 Attachments</h2>
+              <div className="space-y-3">
+                {currentTicket.attachments.map((attachment, index) => (
+                  <div key={index} className="flex items-center justify-between p-3 bg-slate-800 rounded-lg border border-slate-700">
+                    <div className="flex items-center space-x-3 flex-1 min-w-0">
+                      <div className="flex-shrink-0 text-slate-400">
+                        {attachment.type && attachment.type.startsWith('image/') ? (
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                        ) : (
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-slate-100 truncate">
+                          {attachment.name}
+                        </p>
+                        <p className="text-xs text-slate-400">
+                          {(attachment.size / 1024).toFixed(1)} KB • {attachment.type}
+                        </p>
+                      </div>
+                    </div>
+                    <a
+                      href={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${attachment.url}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-shrink-0 text-blue-400 hover:text-blue-300 text-sm font-medium"
+                    >
+                      View
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Activity Timeline */}
           <ActivityTimeline ticketId={id} />
         </div>

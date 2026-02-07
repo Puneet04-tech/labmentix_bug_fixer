@@ -83,11 +83,10 @@ const CreateTicket = () => {
       dueDate: formData.dueDate || undefined,
       attachments: screenshots.map(screenshot => ({
         name: screenshot.name,
+        filename: screenshot.filename,
+        url: screenshot.uploadedUrl,
         size: screenshot.size,
-        type: screenshot.type,
-        url: screenshot.uploadedUrl || null,
-        filename: screenshot.filename || null,
-        status: screenshot.uploadedUrl ? 'uploaded' : 'pending'
+        type: screenshot.type
       }))
     };
 
