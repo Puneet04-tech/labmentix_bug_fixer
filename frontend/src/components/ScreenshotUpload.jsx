@@ -20,7 +20,8 @@ const ScreenshotUpload = ({
     
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/screenshots/upload', {
+      const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const response = await fetch(`${baseURL}/api/screenshots/upload`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -34,7 +35,10 @@ const ScreenshotUpload = ({
 
       const data = await response.json();
       return {
-        ...file,
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        lastModified: file.lastModified,
         uploadedUrl: data.screenshotUrl,
         filename: data.filename
       };
@@ -148,7 +152,7 @@ const ScreenshotUpload = ({
   };
 
   const getFileIcon = (file) => {
-    if (file.type.startsWith('image/')) {
+    if (file.type && file.type.startsWith('image/')) {
       return <Image className="w-4 h-4" />;
     }
     return <File className="w-4 h-4" />;
@@ -255,10 +259,10 @@ const ScreenshotUpload = ({
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-                      {file.name}
+                      {file.name || file.filename || 'Unknown file'}
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {formatFileSize(file.size)}
+                      {formatFileSize(file.size || 0)}
                       {file.uploadedUrl && (
                         <span className="ml-2 text-green-600 dark:text-green-400">
                           ✓ Uploaded

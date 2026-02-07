@@ -30,17 +30,37 @@ const CreateTicket = () => {
   }, []);
 
   useEffect(() => {
-    // Get members of selected project
-    if (formData.project) {
-      const selectedProject = projects.find(p => p._id === formData.project);
-      if (selectedProject) {
-        const members = [
-          { _id: selectedProject.owner._id, name: selectedProject.owner.name, email: selectedProject.owner.email },
-          ...selectedProject.members
-        ];
-        setProjectMembers(members);
+    try {
+      // Get members of selected project
+      if (formData.project && projects.length > 0) {
+        const selectedProject = projects.find(p => p._id === formData.project);
+        if (selectedProject && selectedProject.owner) {
+          const members = [
+            // Add owner if they exist
+            selectedProject.owner._id ? {
+              _id: selectedProject.owner._id,
+              name: selectedProject.owner.name || 'Unknown Owner',
+              email: selectedProject.owner.email || ''
+            } : null,
+            // Add members with proper filtering
+            ...(selectedProject.members || [])
+              .filter(member => member && member.user && member.user._id)
+              .map(member => ({
+                _id: member.user._id,
+                name: member.user.name || 'Unknown User',
+                email: member.user.email || ''
+              }))
+          ].filter(Boolean); // Remove any null entries
+
+          setProjectMembers(members);
+        } else {
+          setProjectMembers([]);
+        }
+      } else {
+        setProjectMembers([]);
       }
-    } else {
+    } catch (error) {
+      console.error('Error loading project members:', error);
       setProjectMembers([]);
     }
   }, [formData.project, projects]);
@@ -73,6 +93,18 @@ const CreateTicket = () => {
 
     const newTicket = await createTicket(ticketData);
     if (newTicket) {
+      // Reset form after successful creation
+      setFormData({
+        title: '',
+        description: '',
+        type: 'Bug',
+        status: 'Open',
+        priority: 'Medium',
+        project: '',
+        assignedTo: '',
+        dueDate: ''
+      });
+      setScreenshots([]);
       navigate('/tickets');
     }
   };
@@ -136,11 +168,13 @@ const CreateTicket = () => {
             className="w-full px-4 py-2 border border-slate-700 bg-[#0f1724] text-slate-100 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
           >
             <option value="">Select a project</option>
-            {projects.map(project => (
-              <option key={project._id} value={project._id}>
-                {project.name}
-              </option>
-            ))}
+            {projects
+              .filter(project => project && project._id && project.name)
+              .map(project => (
+                <option key={project._id} value={project._id}>
+                  {project.name}
+                </option>
+              ))}
           </select>
         </div>
 
@@ -207,11 +241,13 @@ const CreateTicket = () => {
                 className="w-full px-4 py-2 border border-slate-700 bg-[#0f1724] text-slate-100 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:bg-[#0b1220]"
             >
               <option value="">Unassigned</option>
-              {projectMembers.map(member => (
-                <option key={member._id} value={member._id}>
-                  {member.name} ({member.email})
-                </option>
-              ))}
+              {projectMembers
+                .filter(member => member && member._id && member.name)
+                .map(member => (
+                  <option key={member._id} value={member._id}>
+                    {member.name} ({member.email || 'No email'})
+                  </option>
+                ))}
             </select>
           </div>
         </div>

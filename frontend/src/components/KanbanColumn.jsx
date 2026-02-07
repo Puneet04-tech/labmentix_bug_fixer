@@ -103,12 +103,17 @@ const KanbanColumn = ({ title, tickets, color, onDrop }) => {
                   
                   <div className="flex items-center justify-between text-xs text-slate-500">
                     <span className="truncate">{ticket.project?.name}</span>
-                    {ticket.assignedTo && (
+                    {ticket.assignedTo && ticket.assignedTo.name ? (
                       <span className="ml-2 flex-shrink-0 flex items-center space-x-1">
                         <span>👤</span>
                         <span className="truncate max-w-[100px]">{ticket.assignedTo.name}</span>
                       </span>
-                    )}
+                    ) : ticket.assignedTo ? (
+                      <span className="ml-2 flex-shrink-0 flex items-center space-x-1">
+                        <span>👤</span>
+                        <span className="truncate max-w-[100px] text-slate-400">Unassigned</span>
+                      </span>
+                    ) : null}
                   </div>
                 </Link>
               </div>

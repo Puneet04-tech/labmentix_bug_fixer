@@ -191,9 +191,11 @@ const Tickets = () => {
                     
                     <div className="flex flex-wrap gap-4 text-sm text-slate-400">
                       <span>Project: <span className="font-medium text-slate-100">{ticket.project.name}</span></span>
-                      <span>Reported by: <span className="font-medium text-slate-100">{ticket.reportedBy.name}</span></span>
-                      {ticket.assignedTo && (
+                      <span>Reported by: <span className="font-medium text-slate-100">{ticket.reportedBy?.name || 'Unknown'}</span></span>
+                      {ticket.assignedTo && ticket.assignedTo.name ? (
                         <span>Assigned to: <span className="font-medium text-slate-100">{ticket.assignedTo.name}</span></span>
+                      ) : (
+                        <span>Assigned to: <span className="font-medium text-slate-400">Unassigned</span></span>
                       )}
                       {ticket.dueDate && (
                         <span>Due: <span className="font-medium text-slate-700 dark:text-slate-300">
