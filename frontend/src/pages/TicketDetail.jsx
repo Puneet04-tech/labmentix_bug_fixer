@@ -132,31 +132,31 @@ const TicketDetail = () => {
   return (
     <div className="min-h-screen relative">
       {/* Mossy Background Effects */}
-      <div className="fixed inset-0 opacity-40 pointer-events-none">
+      <div className="fixed inset-0 opacity-70">
         {/* Green Mossy Rings */}
-        <div className="absolute top-10 left-10 w-96 h-96 bg-gradient-radial from-emerald-400/30 to-transparent rounded-full blur-3xl"></div>
-        <div className="absolute top-1/4 right-20 w-80 h-80 bg-gradient-radial from-green-500/25 to-transparent rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 left-1/4 w-72 h-72 bg-gradient-radial from-lime-400/20 to-transparent rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-gradient-radial from-teal-400/25 to-transparent rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/4 right-1/3 w-56 h-56 bg-gradient-radial from-emerald-500/20 to-transparent rounded-full blur-3xl"></div>
-        <div className="absolute top-3/4 left-20 w-48 h-48 bg-gradient-radial from-green-400/30 to-transparent rounded-full blur-3xl"></div>
-        <div className="absolute bottom-10 right-10 w-40 h-40 bg-gradient-radial from-lime-500/25 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute top-10 left-10 w-96 h-96 bg-gradient-radial from-emerald-400/45 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute top-1/4 right-20 w-80 h-80 bg-gradient-radial from-green-500/37 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 left-1/4 w-72 h-72 bg-gradient-radial from-lime-400/30 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-gradient-radial from-teal-400/37 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 right-1/3 w-56 h-56 bg-gradient-radial from-emerald-500/30 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute top-3/4 left-20 w-48 h-48 bg-gradient-radial from-green-400/45 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute bottom-10 right-10 w-40 h-40 bg-gradient-radial from-lime-500/37 to-transparent rounded-full blur-3xl"></div>
 
         {/* Blue Mossy Rings */}
-        <div className="absolute top-20 right-1/4 w-88 h-88 bg-gradient-radial from-blue-400/30 to-transparent rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/3 left-10 w-76 h-76 bg-gradient-radial from-cyan-500/25 to-transparent rounded-full blur-3xl"></div>
-        <div className="absolute top-1/3 left-1/3 w-68 h-68 bg-gradient-radial from-sky-400/20 to-transparent rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/2 right-20 w-60 h-60 bg-gradient-radial from-blue-500/25 to-transparent rounded-full blur-3xl"></div>
-        <div className="absolute top-2/3 right-1/2 w-52 h-52 bg-gradient-radial from-cyan-400/20 to-transparent rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 left-2/3 w-44 h-44 bg-gradient-radial from-sky-500/30 to-transparent rounded-full blur-3xl"></div>
-        <div className="absolute top-10 left-3/4 w-36 h-36 bg-gradient-radial from-blue-400/25 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute top-20 right-1/4 w-88 h-88 bg-gradient-radial from-blue-400/45 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/3 left-10 w-76 h-76 bg-gradient-radial from-cyan-500/37 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute top-1/3 left-1/3 w-68 h-68 bg-gradient-radial from-sky-400/30 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/2 right-20 w-60 h-60 bg-gradient-radial from-blue-500/37 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute top-2/3 right-1/2 w-52 h-52 bg-gradient-radial from-cyan-400/30 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 left-2/3 w-44 h-44 bg-gradient-radial from-sky-500/45 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute top-10 left-3/4 w-36 h-36 bg-gradient-radial from-blue-400/37 to-transparent rounded-full blur-3xl"></div>
       </div>
 
       {/* Foggy Background Overlay */}
-      <div className="fixed inset-0 bg-gradient-to-br from-slate-900/10 via-slate-800/5 to-slate-900/10 backdrop-blur-[1px] pointer-events-none"></div>
+      <div className="fixed inset-0 bg-gradient-to-br from-slate-900/15 via-slate-800/10 to-slate-900/15 backdrop-blur-[1px]"></div>
 
       {/* Grain Texture Overlay */}
-      <div className="fixed inset-0 opacity-15 pointer-events-none"
+      <div className="fixed inset-0 opacity-20"
            style={{
              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
              backgroundSize: '128px 128px'

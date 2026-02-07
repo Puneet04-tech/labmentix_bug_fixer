@@ -69,19 +69,19 @@ const Layout = ({ children }) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-950 via-green-900 to-teal-900 text-slate-50 relative overflow-hidden">
       {/* Background Effects */}
-      <div className="fixed inset-0 opacity-60">
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-950/30 via-green-900/20 to-teal-900/30"></div>
+      <div className="fixed inset-0 opacity-80">
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-950/50 via-green-900/40 to-teal-900/50"></div>
         <div className="absolute inset-0" style={{
-          backgroundImage: `radial-gradient(circle at 20% 20%, rgba(16, 185, 129, 0.12) 0%, transparent 50%),
-                           radial-gradient(circle at 80% 80%, rgba(34, 197, 94, 0.12) 0%, transparent 50%),
-                           radial-gradient(circle at 40% 60%, rgba(132, 204, 22, 0.08) 0%, transparent 50%)`
+          backgroundImage: `radial-gradient(circle at 20% 20%, rgba(16, 185, 129, 0.18) 0%, transparent 50%),
+                           radial-gradient(circle at 80% 80%, rgba(34, 197, 94, 0.18) 0%, transparent 50%),
+                           radial-gradient(circle at 40% 60%, rgba(132, 204, 22, 0.12) 0%, transparent 50%)`
         }}></div>
         {/* Foggy overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/10 backdrop-blur-[1px]"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/15 backdrop-blur-[1px]"></div>
       </div>
 
       {/* Grain Texture Overlay */}
-      <div className="fixed inset-0 opacity-10 pointer-events-none"
+      <div className="fixed inset-0 opacity-15"
            style={{
              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
              backgroundSize: '128px 128px'
