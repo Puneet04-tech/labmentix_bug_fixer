@@ -1,62 +1,115 @@
-# Backend Routes: comments.js - Line by Line Explanation
+# backend-route-comments.md
 
-**Location**: `backend/routes/comments.js` | **Lines**: 28
+## Overview
+The `comments.js` file defines routes for comment CRUD operations and ticket-specific queries.
 
-## 📋 Overview
-
-Comment routes with CRUD and ticket-specific queries. **All routes protected**.
-
-**Routes:**
-- `POST /api/comments` - Create comment
-- `GET /api/comments/ticket/:ticketId` - Get comments for ticket
-- `GET /api/comments/ticket/:ticketId/count` - Get comment count
-- `PUT /api/comments/:id` - Update comment
-- `DELETE /api/comments/:id` - Delete comment
-
----
-
-## 🔍 Code Analysis
-
-**Global Auth (Line 14):**
-```javascript
-router.use(auth);
+## File Location
+```
+backend/routes/comments.js
 ```
 
-**Create Comment (Line 17):**
-```javascript
-router.post('/', createComment);
-```
-Author is `req.user.id` from auth middleware.
+## Dependencies - Detailed Import Analysis
 
-**Ticket-Specific (Lines 20-21):**
+```javascript
+const express = require('express');
+const {
+  getCommentsByTicket,
+  createComment,
+  updateComment,
+  deleteComment,
+  getCommentCount
+} = require('../controllers/commentController');
+const auth = require('../middleware/auth');
+```
+
+### Import Statement Breakdown:
+- **express**: Framework for creating router instance
+- **commentController**: Controller functions for comment operations
+- **auth**: Middleware for JWT token verification
+
+## Ticket-Scoped Routes
+
 ```javascript
 router.get('/ticket/:ticketId', getCommentsByTicket);
 router.get('/ticket/:ticketId/count', getCommentCount);
 ```
-Must come before `/:id` routes.
 
-**Update/Delete (Lines 24-26):**
+**Syntax Pattern**: Routes for accessing comments by parent ticket relationship.
+
+## Route Chaining for CRUD
+
 ```javascript
 router.route('/:id')
   .put(updateComment)
   .delete(deleteComment);
 ```
-Controller checks authorization:
-- **Update**: Only author can edit
-- **Delete**: Author OR project owner can delete
 
----
+**Syntax Pattern**: Grouping update and delete operations for same resource.
 
-## 🔗 Related Files
-- [commentController.js](backend-controller-comment.md) - Authorization matrix
- - [commentController.js](backend-controller-comment.md) - Authorization matrix
+## Router Export
 
----
+```javascript
+module.exports = router;
+```
 
-## 📚 Technical Terms Glossary
-- `router.use(auth)`: Ensures `req.user` is available for route handlers.
-- `router.get('/ticket/:ticketId', ...)`: Ticket-scoped routes should be defined before `/:id` routes.
+**Syntax Pattern**: Exporting configured router for application mounting.
 
-## 🧑‍💻 Important Import & Syntax Explanations
-- Use `req.params.ticketId` for ticket-specific queries and `req.params.id` for comment-specific operations.
-- Controller-level checks ensure only authors or project owners can delete comments.
+## Critical Code Patterns
+
+### 1. Controller Function Destructuring
+```javascript
+const {
+  getCommentsByTicket,
+  createComment,
+  updateComment,
+  deleteComment,
+  getCommentCount
+} = require('../controllers/commentController');
+```
+**Pattern**: Importing multiple controller functions.
+
+### 2. Global Authentication Protection
+```javascript
+router.use(auth);
+```
+**Pattern**: Protecting all routes with authentication middleware.
+
+### 3. Hierarchical Route Structure
+```javascript
+router.get('/ticket/:ticketId', getCommentsByTicket);
+router.get('/ticket/:ticketId/count', getCommentCount);
+```
+**Pattern**: Routes organized by parent-child relationships.
+
+### 4. Route Order for Specificity
+```javascript
+router.get('/ticket/:ticketId', ...);  // More specific first
+router.route('/:id').put(...);         // Generic parameter last
+```
+**Pattern**: Defining specific routes before parameterized ones.
+
+### 5. Single Route for Creation
+```javascript
+router.post('/', createComment);
+```
+**Pattern**: POST to root path for resource creation.
+
+### 6. Chained CRUD Operations
+```javascript
+router.route('/:id')
+  .put(updateComment)
+  .delete(deleteComment);
+```
+**Pattern**: Grouping multiple operations on same resource path.
+
+### 7. Count Endpoint Pattern
+```javascript
+router.get('/ticket/:ticketId/count', getCommentCount);
+```
+**Pattern**: Separate endpoint for aggregate data queries.
+
+### 8. Router Module Export
+```javascript
+module.exports = router;
+```
+**Pattern**: Exporting router for mounting in main application.

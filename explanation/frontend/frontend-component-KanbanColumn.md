@@ -1,52 +1,154 @@
-# KanbanColumn.jsx - Frontend Component Line-by-Line Explanation
+# frontend-component-KanbanColumn.md
 
 ## Overview
-Drag-and-drop kanban column component that handles ticket dragging, drop zones, status-based visual styling, and priority border indicators.
+The `KanbanColumn.jsx` component provides drag-and-drop kanban columns with status-based styling and visual feedback.
 
-## Key Features
-- Drag-and-drop using HTML5 Drag and Drop API
-- Status-specific styling (colors, counts)
-- Priority-based left border colors
-- Drop zone visual feedback (blue border on drag over)
-- Prevents default browser drag behavior
-- Ticket count badge in column header
-
-## Line-by-Line Analysis
-
-### Lines 1-8: Component Props
-```jsx
-const KanbanColumn = ({ status, tickets, onDrop }) => {
-  const [isDragOver, setIsDragOver] = useState(false);
+## File Location
+```
+frontend/src/components/KanbanColumn.jsx
 ```
 
-**Props**:
-| Prop | Type | Required | Purpose |
-|------|------|----------|---------|
-| status | string | Yes | Column status ('Open', 'In Progress', etc.) |
-| tickets | array | Yes | Filtered tickets for this status |
-| onDrop | function | Yes | Callback when ticket dropped (handles status update) |
+## Dependencies - Detailed Import Analysis
 
-**State**:
-- **isDragOver**: Boolean to show drop zone indicator
+```jsx
+import { useState } from 'react';
+```
 
-### Technical Terms Glossary
-- **HTML5 Drag and Drop API**: Browser API used here (`dragstart`, `dragover`, `drop`, `dataTransfer`) for moving elements between columns without external libraries.
-- **dataTransfer**: An object on the drag event storing transferable data (`setData`/`getData`) used to pass the `ticketId` and `currentStatus` between drag start and drop.
-- **Drop effect vs effectAllowed**: `effectAllowed` set on drag start hints the allowed operation ('move'); `dropEffect` during drag over communicates the intended effect to the browser/UI.
-- **Guarding with status check**: Comparing `currentStatus !== status` avoids unnecessary updates when a ticket is dropped into the same column.
-- **Visual affordances**: `ring-2 ring-blue-500` and left border color indicate drop targets and ticket priority; consistent visual cues reduce user error during drag-and-drop.
+### Import Statement Breakdown:
+- **React Hooks**: `useState` - Local state for drag-over visual feedback
 
-### Important Import & Syntax Explanations
-- `const KanbanColumn = ({ status, tickets, onDrop }) => { ... }`: Destructuring props inline — `status` determines column behavior and `onDrop` is the upward callback to change ticket status.
-- `e.dataTransfer.setData('ticketId', ticket._id)`: Stores a simple string in the drag payload. Avoid large objects; serialize IDs and minimal metadata.
-- `e.preventDefault()` in `handleDragOver` and `handleDrop`: Required to allow dropping (browser default prevents drops). Always call `preventDefault()` in `onDragOver` to enable `onDrop`.
-- `setIsDragOver(true/false)`: Local state used for conditional class toggles; prefer minimal state and avoid re-rendering heavy subtrees during drag operations.
-- `tickets.map(ticket => ( <div key={ticket._id} ...` : Use `key` prop with stable IDs to help React diffing during reorder and re-renders.
-- `onDrop(ticketId, status)`: Keep `onDrop` lightweight — typically update server-side status via parent handler and optimistically update UI if desired.
-- Accessibility note: Native drag-and-drop isn't keyboard-accessible. Provide alternative controls (move buttons or keyboard drag handles) for accessibility.
+## Props Destructuring
 
+```jsx
+const KanbanColumn = ({ status, tickets, onDrop }) => {
+```
 
-### Lines 10-18: Status Configuration
+**Syntax Pattern**: Arrow function component with destructured props.
+
+## Local State for Drag Feedback
+
+```jsx
+const [isDragOver, setIsDragOver] = useState(false);
+```
+
+**Syntax Pattern**: Boolean state for visual drag-over indication.
+
+## Status Configuration Object
+
+```jsx
+const statusConfig = {
+  'Open': { bg: 'bg-gray-50', border: 'border-gray-200', text: 'text-gray-700' },
+  'In Progress': { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-700' },
+  'In Review': { bg: 'bg-yellow-50', border: 'border-yellow-200', text: 'text-yellow-700' },
+  'Resolved': { bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-700' },
+  'Closed': { bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-700' }
+};
+```
+
+**Syntax Pattern**: Object literal mapping status to visual styling classes.
+
+## Drag Event Handlers
+
+```jsx
+const handleDragStart = (e, ticket) => {
+  e.dataTransfer.setData('text/plain', JSON.stringify({
+    ticketId: ticket._id,
+    currentStatus: ticket.status
+  }));
+};
+```
+
+**Syntax Pattern**: HTML5 Drag and Drop API usage with dataTransfer for passing ticket data.
+
+## Drag Over Prevention
+
+```jsx
+const handleDragOver = (e) => {
+  e.preventDefault();
+  setIsDragOver(true);
+};
+```
+
+**Syntax Pattern**: preventDefault to allow dropping and state update for visual feedback.
+
+## Drop Handler with Status Check
+
+```jsx
+const handleDrop = (e) => {
+  e.preventDefault();
+  setIsDragOver(false);
+  
+  const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+  if (data.currentStatus !== status) {
+    onDrop(data.ticketId, status);
+  }
+};
+```
+
+**Syntax Pattern**: JSON parsing from dataTransfer and conditional status update.
+
+## Conditional Class Application
+
+```jsx
+className={`kanban-column ${isDragOver ? 'ring-2 ring-blue-500' : ''} ${statusConfig[status].bg}`}
+```
+
+**Syntax Pattern**: Template literals combining static classes with conditional drag-over styling.
+
+## Priority-Based Border Colors
+
+```jsx
+const getPriorityBorder = (priority) => {
+  const borders = {
+    'Low': 'border-l-green-500',
+    'Medium': 'border-l-yellow-500',
+    'High': 'border-l-orange-500',
+    'Critical': 'border-l-red-500'
+  };
+  return borders[priority] || 'border-l-gray-300';
+};
+```
+
+**Syntax Pattern**: Object mapping for priority-based visual indicators.
+
+## Critical Code Patterns
+
+### 1. HTML5 Drag and Drop API
+```jsx
+const handleDragStart = (e, ticket) => {
+  e.dataTransfer.setData('text/plain', JSON.stringify(data));
+};
+```
+**Pattern**: Using dataTransfer to pass data between drag start and drop events.
+
+### 2. preventDefault for Drop Zones
+```jsx
+const handleDragOver = (e) => {
+  e.preventDefault();
+  setIsDragOver(true);
+};
+```
+**Pattern**: Required preventDefault to enable drop functionality.
+
+### 3. JSON Data Transfer
+```jsx
+const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+```
+**Pattern**: Serializing complex data as JSON strings for drag operations.
+
+### 4. Status Validation on Drop
+```jsx
+if (data.currentStatus !== status) {
+  onDrop(data.ticketId, status);
+}
+```
+**Pattern**: Preventing unnecessary updates when dropping in same column.
+
+### 5. Visual State Management
+```jsx
+const [isDragOver, setIsDragOver] = useState(false);
+```
+**Pattern**: Local state for drag-over visual feedback.
 ```jsx
   const statusConfig = {
     'Open': { bg: 'bg-blue-50', text: 'text-blue-600', border: 'border-blue-200' },

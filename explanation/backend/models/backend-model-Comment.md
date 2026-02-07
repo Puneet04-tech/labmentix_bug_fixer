@@ -1,42 +1,56 @@
-# Backend Model: Comment.js - Line by Line Explanation
+# backend-model-Comment.md
 
-**Location**: `backend/models/Comment.js` | **Lines**: 44
+## Overview
+The `Comment.js` file defines the Mongoose schema for ticket comments with edit tracking.
 
-## 📋 Overview
+## File Location
+```
+backend/models/Comment.js
+```
 
-Mongoose schema for ticket comments with edit tracking and timestamps.
+## Dependencies - Detailed Import Analysis
 
-**Key Features:**
-- Ticket and author references
-- Auto-tracking of edits (`isEdited`, `editedAt`)
-- Timestamps option (`createdAt`, `updatedAt`)
-- Indexes for query performance
-
----
-
-## 🔍 Code Analysis
-
-**Schema Fields:**
-- `content`: Required, max 1000 chars
-- `ticket`: ObjectId ref (required)
-- `author`: ObjectId ref (required)
-- `isEdited`: Boolean (default false)
-- `editedAt`: Date (set when edited)
-
-**Timestamps Option (Line 25):**
 ```javascript
+const mongoose = require('mongoose');
+```
+
+### Import Statement Breakdown:
+- **mongoose**: ODM library for schema definition and model creation
+
+## Schema with Timestamps Option
+
+```javascript
+const commentSchema = new mongoose.Schema({
+  content: { type: String, required: true, maxlength: 1000 },
+  ticket: { type: mongoose.Schema.Types.ObjectId, ref: 'Ticket', required: true },
+  author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  isEdited: { type: Boolean, default: false },
+  editedAt: { type: Date }
 }, {
-  timestamps: true  // Auto-creates createdAt and updatedAt
+  timestamps: true
 });
 ```
 
-**Indexes (Lines 30-31):**
+**Syntax Pattern**: Defining schema with automatic timestamp fields.
+
+## Compound Index for Query Optimization
+
 ```javascript
-commentSchema.index({ ticket: 1, createdAt: -1 });  // Get comments for ticket, newest first
-commentSchema.index({ author: 1 });  // Get all comments by user
+commentSchema.index({ ticket: 1, createdAt: -1 });
 ```
 
-**Pre-save Edit Tracking (Lines 34-40):**
+**Syntax Pattern**: Creating index for efficient comment retrieval by ticket and date.
+
+## Single Field Index
+
+```javascript
+commentSchema.index({ author: 1 });
+```
+
+**Syntax Pattern**: Creating index for author-based comment queries.
+
+## Pre-save Hook for Edit Tracking
+
 ```javascript
 commentSchema.pre('save', function(next) {
   if (this.isModified('content') && !this.isNew) {
@@ -46,21 +60,72 @@ commentSchema.pre('save', function(next) {
   next();
 });
 ```
-Automatically sets `isEdited=true` and `editedAt` when content is updated (but not on create).
 
----
+**Syntax Pattern**: Tracking content modifications for edit history.
 
-## 🔗 Related Files
-- [commentController.js](backend-controller-comment.md) - CRUD operations
+## Model Export
 
----
+```javascript
+module.exports = mongoose.model('Comment', commentSchema);
+```
 
-## 📚 Technical Terms Glossary
-- `timestamps`: Mongoose schema option that adds `createdAt` and `updatedAt` fields automatically.
-- `isModified('content')`: Mongoose document method to check if a field was changed before saving.
-- `index`: Database index to speed up queries on fields like `ticket` and `createdAt`.
+**Syntax Pattern**: Creating and exporting Mongoose model from schema.
 
-## 🧑‍💻 Important Import & Syntax Explanations
-- Use `commentSchema.pre('save', ...)` to detect edits and set `isEdited`/`editedAt` fields.
-- `commentSchema.index({ ticket: 1, createdAt: -1 })` optimizes fetching latest comments for a ticket.
-- Use `.populate('author', 'name email')` when returning comments so front-end can show author details.
+## Critical Code Patterns
+
+### 1. Schema with Options Object
+```javascript
+const schema = new mongoose.Schema({
+  // fields
+}, {
+  timestamps: true
+});
+```
+**Pattern**: Using schema options for automatic timestamp fields.
+
+### 2. Edit Tracking Fields
+```javascript
+isEdited: { type: Boolean, default: false },
+editedAt: { type: Date }
+```
+**Pattern**: Manual tracking of content modifications.
+
+### 3. Compound Index with Sort Order
+```javascript
+schema.index({ ticket: 1, createdAt: -1 });
+```
+**Pattern**: Indexing multiple fields with descending sort for latest-first queries.
+
+### 4. Single Field Index
+```javascript
+schema.index({ author: 1 });
+```
+**Pattern**: Simple index for single-field queries.
+
+### 5. Conditional Pre-save Logic
+```javascript
+if (this.isModified('content') && !this.isNew) {
+  this.isEdited = true;
+  this.editedAt = new Date();
+}
+```
+**Pattern**: Executing logic only on updates, not on document creation.
+
+### 6. Content Length Validation
+```javascript
+content: { type: String, required: true, maxlength: 1000 }
+```
+**Pattern**: Setting maximum length constraints on comment content.
+
+### 7. Boolean Default Values
+```javascript
+isEdited: { type: Boolean, default: false }
+```
+**Pattern**: Default values for boolean tracking fields.
+
+### 8. Reference Fields for Relationships
+```javascript
+ticket: { type: mongoose.Schema.Types.ObjectId, ref: 'Ticket', required: true },
+author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
+```
+**Pattern**: Defining required relationships to other models.

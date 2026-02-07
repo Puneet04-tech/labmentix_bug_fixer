@@ -83,7 +83,7 @@ exports.getTicket = async (req, res) => {
     const project = ticket.project;
     const ownerId = refToId(project.owner);
     const isOwner = ownerId === req.user.id;
-    const isMember = project.members.some(member => refToId(member) === req.user.id);
+    const isMember = project.members.some(member => refToId(member.user) === req.user.id);
 
     if (!isOwner && !isMember) {
       return res.status(403).json({ message: 'Not authorized to access this ticket' });
@@ -115,7 +115,7 @@ exports.createTicket = async (req, res) => {
 
     const ownerId = refToId(projectDoc.owner);
     const isOwner = ownerId === req.user.id;
-    const isMember = projectDoc.members.some(member => refToId(member) === req.user.id);
+    const isMember = projectDoc.members.some(member => refToId(member.user) === req.user.id);
 
     if (!isOwner && !isMember) {
       return res.status(403).json({ message: 'Not authorized to create tickets in this project' });
@@ -124,7 +124,7 @@ exports.createTicket = async (req, res) => {
     // If assignedTo is provided, validate they're part of the project and exist
     if (assignedTo) {
       const isAssigneeValid = refToId(projectDoc.owner) === assignedTo ||
-                             projectDoc.members.some(member => refToId(member) === assignedTo);
+                             projectDoc.members.some(member => refToId(member.user) === assignedTo);
       if (!isAssigneeValid) {
         return res.status(400).json({ message: 'Assigned user is not part of the project' });
       }
@@ -173,7 +173,7 @@ exports.updateTicket = async (req, res) => {
     const project = ticket.project;
     const ownerId = refToId(project.owner);
     const isOwner = ownerId === req.user.id;
-    const isMember = project.members.some(member => refToId(member) === req.user.id);
+    const isMember = project.members.some(member => refToId(member.user) === req.user.id);
 
     if (!isOwner && !isMember) {
       return res.status(403).json({ message: 'Not authorized to update this ticket' });
@@ -182,7 +182,7 @@ exports.updateTicket = async (req, res) => {
     // If assignedTo is being changed, validate
     if (req.body.assignedTo) {
       const isAssigneeValid = refToId(project.owner) === req.body.assignedTo ||
-                             project.members.some(member => refToId(member) === req.body.assignedTo);
+                             project.members.some(member => refToId(member.user) === req.body.assignedTo);
       if (!isAssigneeValid) {
         return res.status(400).json({ message: 'Assigned user is not part of the project' });
       }
@@ -247,7 +247,7 @@ exports.getTicketsByProject = async (req, res) => {
     }
 
     const isOwner = refToId(project.owner) === req.user.id;
-    const isMember = project.members.some(member => refToId(member) === req.user.id);
+    const isMember = project.members.some(member => refToId(member.user) === req.user.id);
 
     if (!isOwner && !isMember) {
       return res.status(403).json({ message: 'Not authorized to access this project' });
@@ -279,7 +279,7 @@ exports.assignTicket = async (req, res) => {
     // Check if user has access to the project
     const project = ticket.project;
     const isOwner = refToId(project.owner) === req.user.id;
-    const isMember = project.members.some(member => refToId(member) === req.user.id);
+    const isMember = project.members.some(member => refToId(member.user) === req.user.id);
 
     if (!isOwner && !isMember) {
       return res.status(403).json({ message: 'Not authorized to assign this ticket' });
@@ -288,7 +288,7 @@ exports.assignTicket = async (req, res) => {
     // Validate assignee is part of project and exists
     if (userId) {
       const isAssigneeValid = refToId(project.owner) === userId ||
-                             project.members.some(member => refToId(member) === userId);
+                             project.members.some(member => refToId(member.user) === userId);
       if (!isAssigneeValid) {
         return res.status(400).json({ message: 'User is not part of the project' });
       }

@@ -1,44 +1,26 @@
-# Backend Model: User.js - Line by Line Explanation
+# backend-model-User.md
 
-**Location**: `backend/models/User.js` | **Lines**: 48
+## Overview
+The `User.js` file defines the Mongoose schema for user authentication with password hashing.
 
-## 📋 Overview
+## File Location
+```
+backend/models/User.js
+```
 
-Mongoose schema for user authentication with bcrypt password hashing and validation.
+## Dependencies - Detailed Import Analysis
 
-**Key Features:**
-- Email validation with regex
-- Password hashing with bcrypt (10 salt rounds)
-- Password comparison method
-- Password excluded from queries by default (`select: false`)
-- **Role** field with values `admin`, `core`, or `member` (defaults to `member`)
-
----
-
-## 📚 Technical Terms Glossary
-
-- **Mongoose**: ODM (Object Data Modeling) library for MongoDB. Adds schemas, validation, and model methods.
-- **Schema**: Blueprint for MongoDB documents (defines fields, types, validation).
-- **Model**: Mongoose class for interacting with a MongoDB collection.
-- **Bcrypt**: Library for hashing passwords securely.
-- **Pre-save Hook**: Mongoose middleware that runs before saving a document.
-- **Validation**: Ensures data meets requirements before saving.
-- **Unique**: Ensures no two documents have the same value for a field.
-- **select: false**: Field is excluded from query results by default (e.g., password).
-
----
-
-## 🔍 Code Analysis
-
-### Import Statements
 ```javascript
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 ```
-- `mongoose`: Main ODM library for MongoDB. Handles schemas, models, and database connection.
-- `bcrypt`: Library for hashing and comparing passwords securely.
 
-### Schema Definition
+### Import Statement Breakdown:
+- **mongoose**: ODM library for MongoDB schema definition and model creation
+- **bcrypt**: Library for secure password hashing and comparison
+
+## Mongoose Schema Definition
+
 ```javascript
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true, trim: true, maxlength: 50 },
@@ -48,15 +30,11 @@ const userSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 ```
-- `mongoose.Schema({...})`: Defines the structure and validation for user documents.
-- `required: true`: Field must be present.
-- `unique: true`: No duplicate emails allowed.
-- `trim: true`: Removes whitespace from start/end.
-- `lowercase: true`: Converts email to lowercase.
-- `match: /.+@.+\..+/`: Regex for email validation.
-- `select: false`: Password is not returned in queries by default.
 
-### Pre-save Hook
+**Syntax Pattern**: Defining schema fields with validation rules and constraints.
+
+## Pre-save Middleware Hook
+
 ```javascript
 userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
@@ -64,21 +42,84 @@ userSchema.pre('save', async function(next) {
   this.password = await bcrypt.hash(this.password, salt);
 });
 ```
-- `pre('save', ...)`: Runs before saving a user.
-- `this.isModified('password')`: Only hash if password changed.
-- `bcrypt.genSalt(10)`: Generates salt for hashing (10 rounds).
-- `bcrypt.hash(...)`: Hashes the password.
 
-### Password Comparison Method
+**Syntax Pattern**: Mongoose pre-save hook for automatic password hashing.
+
+## Schema Methods Definition
+
 ```javascript
 userSchema.methods.comparePassword = async function(enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 ```
-- `comparePassword`: Custom method to check if entered password matches hashed password.
-- `bcrypt.compare(...)`: Compares plain and hashed passwords.
 
----
+**Syntax Pattern**: Adding instance methods to schema for password comparison.
 
-## 🔗 Related Files
-- [authController.js](backend-controller-auth.md) - Uses User model
+## Model Export
+
+```javascript
+module.exports = mongoose.model('User', userSchema);
+```
+
+**Syntax Pattern**: Creating and exporting Mongoose model from schema.
+
+## Critical Code Patterns
+
+### 1. Schema Field Validation
+```javascript
+field: {
+  type: String,
+  required: true,
+  unique: true,
+  lowercase: true,
+  match: regex
+}
+```
+**Pattern**: Defining field types with multiple validation constraints.
+
+### 2. Selective Field Exclusion
+```javascript
+password: { type: String, select: false }
+```
+**Pattern**: Excluding sensitive fields from default query results.
+
+### 3. Enum Field Definition
+```javascript
+role: { type: String, enum: ['admin', 'core', 'member'], default: 'member' }
+```
+**Pattern**: Restricting field values to predefined options.
+
+### 4. Pre-save Hook for Hashing
+```javascript
+userSchema.pre('save', async function(next) {
+  if (!this.isModified('password')) return next();
+  // hash password
+});
+```
+**Pattern**: Conditional middleware execution based on field modification.
+
+### 5. Salt Generation
+```javascript
+const salt = await bcrypt.genSalt(10);
+```
+**Pattern**: Generating salt rounds for password hashing.
+
+### 6. Password Hashing
+```javascript
+this.password = await bcrypt.hash(this.password, salt);
+```
+**Pattern**: Hashing plain text password with generated salt.
+
+### 7. Instance Method Definition
+```javascript
+userSchema.methods.methodName = async function(param) {
+  // method implementation
+};
+```
+**Pattern**: Adding custom methods to model instances.
+
+### 8. Password Comparison
+```javascript
+await bcrypt.compare(enteredPassword, this.password)
+```
+**Pattern**: Secure comparison of plain text with hashed password.

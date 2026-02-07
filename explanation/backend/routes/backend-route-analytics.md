@@ -1,28 +1,34 @@
-# Backend Routes: analytics.js - Line by Line Explanation
+# backend-route-analytics.md
 
-**Location**: `backend/routes/analytics.js` | **Lines**: 21
+## Overview
+The `analytics.js` file defines routes for analytics and statistics endpoints.
 
-## 📋 Overview
-
-Analytics routes for statistics and insights. **All routes protected**.
-
-**Routes:**
-- `GET /api/analytics/overview` - Global stats
-- `GET /api/analytics/projects` - Per-project completion rates
-- `GET /api/analytics/trends` - 30-day ticket trends
-- `GET /api/analytics/user-activity` - User-specific stats
-- `GET /api/analytics/team` - Team performance (owner only)
-
----
-
-## 🔍 Code Analysis
-
-**Global Auth (Line 12):**
-```javascript
-router.use(auth);
+## File Location
+```
+backend/routes/analytics.js
 ```
 
-**Analytics Endpoints (Lines 15-19):**
+## Dependencies - Detailed Import Analysis
+
+```javascript
+const express = require('express');
+const {
+  getOverview,
+  getProjectStats,
+  getTicketTrends,
+  getUserActivity,
+  getTeamPerformance
+} = require('../controllers/analyticsController');
+const auth = require('../middleware/auth');
+```
+
+### Import Statement Breakdown:
+- **express**: Framework for creating router instance
+- **analyticsController**: Controller functions for analytics operations
+- **auth**: Middleware for JWT token verification
+
+## Multiple Analytics Endpoints
+
 ```javascript
 router.get('/overview', getOverview);
 router.get('/projects', getProjectStats);
@@ -31,26 +37,73 @@ router.get('/user-activity', getUserActivity);
 router.get('/team', getTeamPerformance);
 ```
 
-All routes use MongoDB aggregation pipelines for efficient data processing.
+**Syntax Pattern**: Defining multiple GET endpoints for different analytics views.
 
-**Authorization:**
-- Most routes: Filter by user's projects
-- `/team`: Only project owners see team stats
+## Router Export
 
----
+```javascript
+module.exports = router;
+```
 
-## 🔗 Related Files
-- [analyticsController.js](backend-controller-analytics.md) - Aggregation pipelines
-- [Analytics.jsx](frontend-page-Analytics.md) - Uses `Promise.all` to fetch all endpoints
- - [analyticsController.js](backend-controller-analytics.md) - Aggregation pipelines
- - [Analytics.jsx](frontend-page-Analytics.md) - Uses `Promise.all` to fetch all endpoints
+**Syntax Pattern**: Exporting configured router for application mounting.
 
----
+## Critical Code Patterns
 
-## 📚 Technical Terms Glossary
-- `router.use(auth)`: Protect analytics endpoints so queries respect the current user's projects.
-- `aggregation pipeline`: A sequence of MongoDB stages (`$match`, `$group`, `$project`, etc.) for server-side data processing.
+### 1. Controller Function Destructuring
+```javascript
+const {
+  getOverview,
+  getProjectStats,
+  getTicketTrends,
+  getUserActivity,
+  getTeamPerformance
+} = require('../controllers/analyticsController');
+```
+**Pattern**: Importing multiple analytics controller functions.
 
-## 🧑‍💻 Important Import & Syntax Explanations
-- Use aggregation (`Model.aggregate`) for heavy analytics to reduce data transfer and processing on the application server.
-- When returning analytics results, normalize formats (e.g., `{ Open: 5, Closed: 3 }`) for easier frontend consumption.
+### 2. Global Route Protection
+```javascript
+router.use(auth);
+```
+**Pattern**: Protecting all analytics routes with authentication.
+
+### 3. RESTful Analytics Endpoints
+```javascript
+router.get('/overview', getOverview);
+router.get('/projects', getProjectStats);
+router.get('/trends', getTicketTrends);
+```
+**Pattern**: Using descriptive paths for different analytics views.
+
+### 4. User-Specific Analytics
+```javascript
+router.get('/user-activity', getUserActivity);
+```
+**Pattern**: Endpoint for personalized user statistics.
+
+### 5. Team Analytics with Restrictions
+```javascript
+router.get('/team', getTeamPerformance);
+```
+**Pattern**: Restricted endpoint for team-level performance data.
+
+### 6. Consistent Route Structure
+```javascript
+router.get('/path', controllerFunction);
+```
+**Pattern**: Standard GET route pattern for read-only analytics.
+
+### 7. Router Creation and Export
+```javascript
+const router = express.Router();
+// ... route definitions
+module.exports = router;
+```
+**Pattern**: Standard Express router setup and export.
+
+### 8. Middleware-First Architecture
+```javascript
+router.use(auth);  // Applied globally
+router.get('/overview', getOverview);  // Then routes
+```
+**Pattern**: Authentication middleware applied before route handlers.

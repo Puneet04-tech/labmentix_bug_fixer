@@ -1,53 +1,94 @@
-# Loader.jsx - Frontend Component Line-by-Line Explanation
+# frontend-component-Loader.md
 
 ## Overview
-Reusable loading spinner component with 3 size variations and optional text, used throughout the app for async operations.
+The `Loader.jsx` component provides a spinning loading indicator with size variations.
 
-## Key Features
-- 3 sizes: small (5×5), medium (10×10), large (16×16)
-- Spinning animation using CSS
-- Optional loading text below spinner
-- Centered layout with padding
-- Blue color scheme matching app theme
+## File Location
+```
+frontend/src/components/Loader.jsx
+```
 
-## Line-by-Line Analysis
+## Dependencies - Detailed Import Analysis
 
-### Lines 1-6: Component Props & Size Config
+```jsx
+// No external imports - pure React component
+```
+
+**Note**: This component uses only React and Tailwind CSS, no external libraries.
+
+## Props Destructuring with Defaults
+
 ```jsx
 const Loader = ({ size = 'medium', text = 'Loading...' }) => {
-  const sizeClasses = {
-    small: 'h-5 w-5 border-2',
-    medium: 'h-10 w-10 border-3',
-    large: 'h-16 w-16 border-4',
-  };
 ```
 
-**Props**:
-- **size**: 'small' | 'medium' | 'large' (default: 'medium')
-- **text**: Loading message (default: 'Loading...')
-  - Set to `null`, `false`, or `''` to hide text
+**Syntax Pattern**: Arrow function component with destructured props and default parameters.
 
-**sizeClasses Object**:
-| Size | Dimensions | Border Width | Use Case |
-|------|------------|--------------|----------|
-| small | 20×20px (h-5 w-5) | 2px | Inline elements, buttons |
-| medium | 40×40px (h-10 w-10) | 3px | Default, modal loading |
-| large | 64×64px (h-16 w-16) | 4px | Full-page loading |
+## Object Literal for Size Mapping
 
-**Tailwind Size Reference**:
-- **h-5** = `height: 1.25rem` (20px)
-- **h-10** = `height: 2.5rem` (40px)
-- **h-16** = `height: 4rem` (64px)
-
-### Lines 8-15: JSX Render
 ```jsx
-  return (
-    <div className="flex flex-col items-center justify-center p-8">
+const sizeClasses = {
+  small: 'h-5 w-5 border-2',
+  medium: 'h-10 w-10 border-3',
+  large: 'h-16 w-16 border-4',
+};
 ```
-- **flex flex-col**: Vertical layout (spinner above text)
-- **items-center**: Horizontal centering
-- **justify-center**: Vertical centering
-- **p-8**: Padding 32px on all sides
+
+**Syntax Pattern**: Object literal mapping size keys to Tailwind CSS classes.
+
+## Template Literals for Dynamic Classes
+
+```jsx
+className={`animate-spin rounded-full border-blue-600 border-t-transparent ${sizeClasses[size]}`}
+```
+
+**Syntax Pattern**: Template literal combining animation classes with dynamic size classes.
+
+## Conditional Rendering with Logical AND
+
+```jsx
+{text && (
+  <p className="mt-4 text-gray-600 text-center">{text}</p>
+)}
+```
+
+**Syntax Pattern**: Short-circuit evaluation for optional text rendering.
+
+## Critical Code Patterns
+
+### 1. Default Parameters in Destructuring
+```jsx
+const Loader = ({ size = 'medium', text = 'Loading...' }) => {
+```
+**Pattern**: Default value assignment directly in parameter destructuring.
+
+### 2. Size Configuration Object
+```jsx
+const sizeClasses = {
+  small: 'h-5 w-5 border-2',
+  medium: 'h-10 w-10 border-3',
+  large: 'h-16 w-16 border-4',
+};
+```
+**Pattern**: Centralized size mapping for consistent component variations.
+
+### 3. Dynamic Class Composition
+```jsx
+className={`animate-spin rounded-full border-blue-600 ${sizeClasses[size]}`}
+```
+**Pattern**: Template literals for combining animation and size-specific classes.
+
+### 4. Conditional Text Rendering
+```jsx
+{text && <p className="mt-4 text-gray-600">{text}</p>}
+```
+**Pattern**: Logical AND operator for optional content rendering.
+
+### 5. CSS Animation Classes
+```jsx
+className="animate-spin rounded-full border-t-transparent"
+```
+**Pattern**: Tailwind CSS animation classes for spinning effect.
 
 ```jsx
       <div

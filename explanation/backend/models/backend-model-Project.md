@@ -1,60 +1,109 @@
-# Backend Model: Project.js - Line by Line Explanation
+# backend-model-Project.md
 
-**Location**: `backend/models/Project.js` | **Lines**: 58
+## Overview
+The `Project.js` file defines the Mongoose schema for projects with owner/member relationships.
 
-## 📋 Overview
+## File Location
+```
+backend/models/Project.js
+```
 
-Mongoose schema for projects with owner/member references and status tracking.
+## Dependencies - Detailed Import Analysis
 
-**Key Features:**
-- Owner reference (single User)
-- Members array (multiple Users)
-- Status enum (5 states)
-- Priority enum (4 levels)
-- Auto-update `updatedAt` timestamp
+```javascript
+const mongoose = require('mongoose');
+```
 
----
+### Import Statement Breakdown:
+- **mongoose**: ODM library for schema definition and model creation
 
-## 🔍 Code Analysis
+## Schema with Reference Fields
 
-**Schema Fields:**
-- `name`: Required, max 100 chars
-- `description`: Required, max 500 chars
-- `owner`: ObjectId ref to User (required)
-- `members`: Array of ObjectId refs to User
-- `status`: Enum ['Planning', 'In Progress', 'On Hold', 'Completed', 'Cancelled']
-- `priority`: Enum ['Low', 'Medium', 'High', 'Critical']
-- `startDate`: Date (default: now)
-- `endDate`: Date (optional)
+```javascript
+const projectSchema = new mongoose.Schema({
+  name: { type: String, required: true, maxlength: 100 },
+  description: { type: String, required: true, maxlength: 500 },
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  status: { type: String, enum: ['Planning', 'In Progress', 'On Hold', 'Completed', 'Cancelled'], default: 'Planning' },
+  priority: { type: String, enum: ['Low', 'Medium', 'High', 'Critical'], default: 'Medium' },
+  startDate: { type: Date, default: Date.now },
+  endDate: { type: Date },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+});
+```
 
-**Pre-save Hook (Lines 53-56):**
+**Syntax Pattern**: Defining schema with ObjectId references and enum constraints.
+
+## Pre-save Hook for Timestamps
+
 ```javascript
 projectSchema.pre('save', function(next) {
   this.updatedAt = Date.now();
   next();
 });
 ```
-Updates `updatedAt` every time document is saved.
 
-**Usage Pattern:**
+**Syntax Pattern**: Mongoose pre-save hook for automatic timestamp updates.
+
+## Model Export
+
 ```javascript
-// Owner can update, members can view
-// Backend checks: isOwner for edit/delete, isOwner||isMember for view
+module.exports = mongoose.model('Project', projectSchema);
 ```
 
----
+**Syntax Pattern**: Creating and exporting Mongoose model from schema.
 
-## 🔗 Related Files
-- [projectController.js](backend-controller-project.md) - CRUD + member management
+## Critical Code Patterns
 
----
+### 1. ObjectId Reference Fields
+```javascript
+owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
+```
+**Pattern**: Defining single reference to another model.
 
-## 📚 Technical Terms Glossary
-- `pre('save')`: Mongoose middleware that runs before a document is saved; used here to update timestamps.
-- `ObjectId ref`: Schema field type indicating a relation to another model (e.g., owner: { type: Schema.Types.ObjectId, ref: 'User' }).
-- `timestamps`: Schema option that auto-creates `createdAt` and `updatedAt` fields.
+### 2. Array of References
+```javascript
+members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+```
+**Pattern**: Defining array of references to another model.
 
-## 🧑‍💻 Important Import & Syntax Explanations
-- Use `projectSchema.pre('save', fn)` to keep `updatedAt` in sync whenever the document changes.
-- `members` is an array of ObjectIds — use `.populate('members', 'name email')` to fetch member details.
-- Enums constrain allowed values; update both frontend and backend if you change enum options.
+### 3. Enum Field Constraints
+```javascript
+status: { type: String, enum: ['Planning', 'In Progress', 'On Hold', 'Completed', 'Cancelled'], default: 'Planning' }
+```
+**Pattern**: Restricting string field to predefined values.
+
+### 4. Multiple Enum Fields
+```javascript
+priority: { type: String, enum: ['Low', 'Medium', 'High', 'Critical'], default: 'Medium' }
+```
+**Pattern**: Using enums for categorical data with defaults.
+
+### 5. Manual Timestamp Updates
+```javascript
+projectSchema.pre('save', function(next) {
+  this.updatedAt = Date.now();
+  next();
+});
+```
+**Pattern**: Pre-save hook for updating modification timestamps.
+
+### 6. Schema Field Validation
+```javascript
+name: { type: String, required: true, maxlength: 100 }
+```
+**Pattern**: Combining multiple validation rules on schema fields.
+
+### 7. Optional Date Fields
+```javascript
+endDate: { type: Date }
+```
+**Pattern**: Defining optional date fields without defaults.
+
+### 8. Default Date Values
+```javascript
+startDate: { type: Date, default: Date.now }
+```
+**Pattern**: Setting default values for date fields.

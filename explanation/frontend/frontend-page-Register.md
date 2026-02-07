@@ -1,40 +1,39 @@
-# Register.jsx - Frontend Page Line-by-Line Explanation
+# frontend-page-Register.md
 
 ## Overview
-User registration page with fields for name, email, password, confirmPassword, and **role** (plus optional adminKey). Includes password matching validation and redirect logic.
+The `Register.jsx` page provides user registration with form validation and role selection.
 
-## Key Features
-- Name, email, password, confirm password fields
-- **Role selection** (`member`, `core`, `admin`) during registration
-- Optional **Admin Key** input (required if registering as `admin`)
-- Password matching validation
-- Email format validation with regex
-- Controlled form inputs
-- Password strength requirement (min 6 characters)
-- Redirect authenticated users to dashboard
-- Navigation to login page
+## File Location
+```
+frontend/src/pages/Register.jsx
+```
 
-## Line-by-Line Analysis
+## Dependencies - Detailed Import Analysis
 
-### Lines 1-5: Imports
 ```jsx
 import { useState, useEffect } from 'react';
 import { useNavigate, Navigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 ```
-- **Similar to Login**: Same import pattern for form handling
 
-### Technical Terms Glossary
-- **Password confirmation**: UI-level check ensuring `password === confirmPassword` before sending to API.
-- **Destructuring before submit**: Remove `confirmPassword` before sending payload to backend via `const { confirmPassword, ...registerData } = formData;`.
+### Import Statement Breakdown:
+- **React Hooks**: `useState`, `useEffect` - State management and side effects
+- **React Router**: `useNavigate`, `Navigate`, `Link` - Navigation components
+- **Auth Context**: `useAuth` - Authentication state and register function
+- **Toast Notifications**: `toast` from react-toastify - User feedback
 
-### Important Import & Syntax Explanations
-- `register()` from `useAuth()` should return a normalized response object; handle `result.success` and common errors (email exists) gracefully.
-- `navigate('/dashboard')` after registration relies on the AuthContext auto-logging in the user; ensure state is updated before navigation.
-- Accessibility note: Use `aria-invalid` on inputs when validation fails and associate the error message via `aria-describedby`.
+## Context Hook Destructuring
 
-### Lines 10-17: Form State (6 Fields)
+```jsx
+const { user, register } = useAuth();
+const navigate = useNavigate();
+```
+
+**Syntax Pattern**: Destructuring authentication state and registration function.
+
+## Extended Form State Object
+
 ```jsx
 const [formData, setFormData] = useState({
   name: '',
@@ -44,10 +43,151 @@ const [formData, setFormData] = useState({
   role: 'member',
   adminKey: ''
 });
-const [errors, setErrors] = useState({});
 ```
-- **Fields**: Name, email, password, confirmPassword, role, adminKey
-- **role**: Default `member`; user can choose `member`, `core`, or `admin`
+
+**Syntax Pattern**: Object state for comprehensive registration form with multiple fields.
+
+## Validation State
+
+```jsx
+const [errors, setErrors] = useState({});
+const [isSubmitting, setIsSubmitting] = useState(false);
+```
+
+**Syntax Pattern**: Separate state for validation errors and loading state.
+
+## Generic Change Handler
+
+```jsx
+const handleChange = (e) => {
+  const { name, value } = e.target;
+  setFormData(prev => ({
+    ...prev,
+    [name]: value
+  }));
+  if (errors[name]) {
+    setErrors(prev => ({
+      ...prev,
+      [name]: ''
+    }));
+  }
+};
+```
+
+**Syntax Pattern**: Generic input handler using computed property names and error clearing.
+
+## Password Confirmation Validation
+
+```jsx
+if (formData.password !== formData.confirmPassword) {
+  newErrors.confirmPassword = 'Passwords do not match';
+}
+```
+
+**Syntax Pattern**: Cross-field validation comparing password fields.
+
+## Admin Key Conditional Validation
+
+```jsx
+if (formData.role === 'admin' && !formData.adminKey.trim()) {
+  newErrors.adminKey = 'Admin key is required for admin registration';
+}
+```
+
+**Syntax Pattern**: Role-based conditional validation.
+
+## Payload Preparation
+
+```jsx
+const { confirmPassword, ...registerData } = formData;
+```
+
+**Syntax Pattern**: Destructuring to exclude confirmPassword from API payload.
+
+## Async Submit Handler
+
+```jsx
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  const validationErrors = validateForm();
+  if (Object.keys(validationErrors).length > 0) {
+    setErrors(validationErrors);
+    return;
+  }
+  
+  setIsSubmitting(true);
+  try {
+    const result = await register(registerData);
+    if (result.success) {
+      toast.success('Registration successful');
+      navigate('/dashboard');
+    } else {
+      toast.error(result.message || 'Registration failed');
+    }
+  } catch (error) {
+    toast.error('An error occurred during registration');
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+```
+
+**Syntax Pattern**: Async form submission with validation, error handling, and loading state.
+
+## Conditional Redirect
+
+```jsx
+if (user) {
+  return <Navigate to="/dashboard" replace />;
+}
+```
+
+**Syntax Pattern**: Declarative redirect for authenticated users.
+
+## Critical Code Patterns
+
+### 1. Extended Form State
+```jsx
+const [formData, setFormData] = useState({
+  name: '',
+  email: '',
+  password: '',
+  confirmPassword: '',
+  role: 'member',
+  adminKey: ''
+});
+```
+**Pattern**: Complex form state object with multiple related fields.
+
+### 2. Cross-Field Validation
+```jsx
+if (formData.password !== formData.confirmPassword) {
+  newErrors.confirmPassword = 'Passwords do not match';
+}
+```
+**Pattern**: Validation that compares values between different form fields.
+
+### 3. Conditional Validation
+```jsx
+if (formData.role === 'admin' && !formData.adminKey.trim()) {
+  newErrors.adminKey = 'Admin key required';
+}
+```
+**Pattern**: Validation logic that depends on other field values.
+
+### 4. Payload Transformation
+```jsx
+const { confirmPassword, ...registerData } = formData;
+```
+**Pattern**: Destructuring to create API payload excluding unnecessary fields.
+
+### 5. Role-Based UI Logic
+```jsx
+{formData.role === 'admin' && (
+  <input name="adminKey" ... />
+)}
+```
+**Pattern**: Conditional rendering based on selected role.
 - **adminKey**: Required if role === `admin` (used to validate admin registration)
 
 ### Lines 19-29: Email Validation
