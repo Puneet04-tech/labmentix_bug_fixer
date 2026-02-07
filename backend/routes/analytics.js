@@ -5,7 +5,9 @@ const {
   getProjectStats,
   getTicketTrends,
   getUserActivity,
-  getTeamPerformance
+  getTeamPerformance,
+  getRealtimeMetrics,
+  getPredictiveAnalytics
 } = require('../controllers/analyticsController');
 const auth = require('../middleware/auth');
 
@@ -18,5 +20,7 @@ router.get('/projects', getProjectStats);
 router.get('/trends', getTicketTrends);
 router.get('/user-activity', getUserActivity);
 router.get('/team', getTeamPerformance);
+router.get('/realtime', getRealtimeMetrics);
+router.get('/predictive', getPredictiveAnalytics);
 
 module.exports = router;
