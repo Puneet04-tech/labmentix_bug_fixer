@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const dotenv = require('dotenv');
+const path = require('path');
 const connectDB = require('./config/db');
 
 // Load environment variables
@@ -12,14 +13,14 @@ connectDB();
 
 const app = express();
 
+// Static file serving for screenshots (before other middleware)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // Middleware
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Static file serving for screenshots
-app.use('/uploads', express.static('uploads'));
 
 // Test route
 app.get('/', (req, res) => {

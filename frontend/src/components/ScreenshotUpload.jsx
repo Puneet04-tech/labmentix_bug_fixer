@@ -271,7 +271,7 @@ const ScreenshotUpload = ({
                     </p>
                     {file.uploadedUrl && (
                       <a 
-                        href={file.uploadedUrl} 
+                        href={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${file.uploadedUrl}`} 
                         target="_blank" 
                         rel="noopener noreferrer"
                         className="text-xs text-blue-600 dark:text-blue-400 hover:underline"

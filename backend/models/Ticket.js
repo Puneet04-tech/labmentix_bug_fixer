@@ -47,23 +47,23 @@ const ticketSchema = new mongoose.Schema({
   attachments: [{
     name: {
       type: String,
-      required: true
+      required: false
     },
     filename: {
       type: String,
-      required: true
+      required: false
     },
     url: {
       type: String,
-      required: true
+      required: false
     },
     size: {
       type: Number,
-      required: true
+      required: false
     },
     type: {
       type: String,
-      required: true
+      required: false
     },
     uploadedAt: {
       type: Date,
