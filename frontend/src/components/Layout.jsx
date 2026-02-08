@@ -123,7 +123,7 @@ const Layout = ({ children }) => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={toggleSidebar}
-                  className="p-2.5 rounded-xl text-slate-400 hover:text-cyan-400 hover:bg-blue-800/70 transition-all duration-300 shadow-lg hover:shadow-cyan-500/15"
+                  className="p-2.5 rounded-xl text-slate-400 hover:text-cyan-400 hover:bg-blue-800/70 transition-all duration-300 shadow-lg hover:shadow-cyan-500/15 relative z-10"
                 >
                   {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                 </motion.button>
@@ -138,7 +138,7 @@ const Layout = ({ children }) => {
                   <input
                     type="text"
                     placeholder="Search projects, tickets..."
-                    className="block w-full pl-10 pr-3 py-2.5 border border-blue-600/50 rounded-xl bg-blue-800/40 text-slate-50 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/60 focus:border-cyan-400/60 backdrop-blur-sm transition-all duration-300 shadow-lg shadow-blue-900/30"
+                    className="block w-full pl-10 pr-3 py-2.5 border border-blue-600/50 rounded-xl bg-blue-800/40 text-slate-50 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/60 focus:border-cyan-400/60 backdrop-blur-sm transition-all duration-300 shadow-lg shadow-blue-900/30 relative z-10"
                   />
                 </div>
               </div>
@@ -149,7 +149,7 @@ const Layout = ({ children }) => {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="p-2.5 rounded-xl text-slate-400 hover:text-amber-400 hover:bg-blue-800/70 transition-all duration-300 shadow-lg hover:shadow-amber-500/15 relative"
+                  className="p-2.5 rounded-xl text-slate-400 hover:text-amber-400 hover:bg-blue-800/70 transition-all duration-300 shadow-lg hover:shadow-amber-500/15 relative z-10"
                 >
                   <Bell className="w-5 h-5" />
                   <motion.span

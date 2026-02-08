@@ -491,22 +491,22 @@ const Analytics = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Connection Status */}
-            <div className="bg-[#0f1724] rounded-lg p-4 border border-slate-700">
+            <div className="bg-emerald-900/20 rounded-lg p-4 border border-emerald-500/30 backdrop-blur-sm">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-lg font-semibold text-slate-100">Connection Status</h3>
+                <h3 className="text-lg font-semibold text-emerald-100">Connection Status</h3>
                 <div className={`flex items-center space-x-2 ${connectionStatus === 'connected' ? 'text-green-400' : connectionStatus === 'connecting' ? 'text-blue-400' : 'text-red-400'}`}>
                   <div className={`w-3 h-3 rounded-full ${connectionStatus === 'connected' ? 'bg-green-400' : connectionStatus === 'connecting' ? 'bg-blue-400 animate-pulse' : 'bg-red-400'}`}></div>
                   <span className="text-sm capitalize">{connectionStatus}</span>
                 </div>
               </div>
-              <div className="space-y-2 text-sm text-slate-400">
+              <div className="space-y-2 text-sm text-emerald-200/70">
                 <div className="flex justify-between">
                   <span>Last Update:</span>
-                  <span className="text-slate-300">{lastUpdated.toLocaleTimeString()}</span>
+                  <span className="text-emerald-100">{lastUpdated.toLocaleTimeString()}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Data Version:</span>
-                  <span className="text-slate-300">{dataVersion}</span>
+                  <span className="text-emerald-100">{dataVersion}</span>
                 </div>
                 {retryCount > 0 && (
                   <div className="flex justify-between">
@@ -518,7 +518,7 @@ const Analytics = () => {
             </div>
 
             {/* Activity Feed */}
-            <div className="lg:col-span-2 bg-[#0f1724] rounded-lg p-4 border border-slate-700">
+            <div className="lg:col-span-2 bg-emerald-900/20 rounded-lg p-4 border border-emerald-500/30 backdrop-blur-sm">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-lg font-semibold text-slate-100">Activity Feed</h3>
                 <button
@@ -565,10 +565,51 @@ const Analytics = () => {
 
   return (
     <div className="min-h-screen bg-[#0b1220] relative overflow-hidden">
-      {/* Desktop Picture Background */}
-      <div className="fixed inset-0 bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600">
-        {/* Desktop-like gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-t from-blue-300/20 via-transparent to-blue-200/10"></div>
+      {/* Mossy Foggy Background */}
+      <div className="fixed inset-0">
+        {/* Primary Mossy Base */}
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-900 via-green-900 to-teal-900"></div>
+
+        {/* Secondary Foggy Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-green-600/40 via-emerald-500/30 to-teal-400/40"></div>
+
+        {/* Accent Moss Layer */}
+        <div className="absolute inset-0 bg-gradient-to-bl from-lime-500/25 via-green-500/20 to-emerald-500/25"></div>
+
+        {/* Foggy Mesh Gradient */}
+        <div
+          className="absolute inset-0 opacity-70"
+          style={{
+            background: `
+              radial-gradient(circle at 15% 25%, rgba(16, 185, 129, 0.25) 0%, transparent 45%),
+              radial-gradient(circle at 85% 15%, rgba(34, 197, 94, 0.20) 0%, transparent 40%),
+              radial-gradient(circle at 35% 75%, rgba(132, 204, 22, 0.30) 0%, transparent 50%),
+              radial-gradient(circle at 75% 65%, rgba(20, 184, 166, 0.18) 0%, transparent 35%),
+              radial-gradient(circle at 50% 40%, rgba(56, 189, 248, 0.15) 0%, transparent 55%),
+              radial-gradient(circle at 20% 85%, rgba(2, 132, 199, 0.22) 0%, transparent 45%),
+              radial-gradient(circle at 90% 35%, rgba(45, 212, 191, 0.19) 0%, transparent 40%),
+              radial-gradient(circle at 10% 50%, rgba(16, 185, 129, 0.24) 0%, transparent 45%),
+              radial-gradient(circle at 80% 80%, rgba(34, 197, 94, 0.21) 0%, transparent 40%),
+              radial-gradient(circle at 60% 20%, rgba(132, 204, 22, 0.26) 0%, transparent 50%),
+              radial-gradient(circle at 25% 70%, rgba(5, 150, 105, 0.17) 0%, transparent 35%),
+              radial-gradient(circle at 70% 45%, rgba(20, 184, 166, 0.16) 0%, transparent 55%),
+              radial-gradient(circle at 45% 85%, rgba(13, 148, 136, 0.23) 0%, transparent 45%),
+              radial-gradient(circle at 95% 60%, rgba(6, 182, 212, 0.20) 0%, transparent 40%)
+            `
+          }}
+        ></div>
+
+        {/* Mossy Pattern Overlay */}
+        <div
+          className="absolute inset-0 opacity-8"
+          style={{
+            backgroundImage: `url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPgogICAgPGcgZmlsbD0iI2ZmZmZmZiIgZmlsbC1vcGFjaXR5PSIwLjEiPgogICAgICA8Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIxLjUiLz4KICAgIDwvZz4KICA8L2cT4KPC9zdmc+")`,
+            backgroundSize: '60px 60px'
+          }}
+        ></div>
+
+        {/* Foggy Glass Effect */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-white/10 backdrop-blur-[2px]"></div>
       </div>
 
       <div className="relative z-10">
@@ -600,17 +641,17 @@ const Analytics = () => {
           </div>
 
           {/* Enhanced Analytics Controls */}
-          <div className="mt-6 bg-[#0f1724] rounded-lg p-4 border border-slate-700">
+          <div className="mt-6 bg-emerald-900/20 rounded-lg p-4 border border-emerald-500/30 backdrop-blur-sm">
             {/* Top Row: Filters and Search */}
             <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
               <div className="flex items-center space-x-4">
                 {/* Time Range Filter */}
                 <div className="flex items-center space-x-2">
-                  <label className="text-sm text-slate-400">Time Range:</label>
+                  <label className="text-sm text-emerald-200/70">Time Range:</label>
                   <select
                     value={timeRange}
                     onChange={(e) => setTimeRange(e.target.value)}
-                    className="bg-slate-800 text-slate-100 px-3 py-1 rounded border border-slate-600 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="bg-emerald-800/30 text-emerald-100 px-3 py-1 rounded border border-emerald-600/30 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent backdrop-blur-sm"
                   >
                     <option value="7">Last 7 days</option>
                     <option value="30">Last 30 days</option>
@@ -621,11 +662,11 @@ const Analytics = () => {
 
                 {/* Project Filter */}
                 <div className="flex items-center space-x-2">
-                  <label className="text-sm text-slate-400">Project:</label>
+                  <label className="text-sm text-emerald-200/70">Project:</label>
                   <select
                     value={selectedProject}
                     onChange={(e) => setSelectedProject(e.target.value)}
-                    className="bg-slate-800 text-slate-100 px-3 py-1 rounded border border-slate-600 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="bg-emerald-800/30 text-emerald-100 px-3 py-1 rounded border border-emerald-600/30 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent backdrop-blur-sm"
                   >
                     <option value="all">All Projects</option>
                     {projectStats.map(project => (

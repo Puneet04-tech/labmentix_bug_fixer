@@ -41,13 +41,23 @@ const Navbar = ({ toggleSidebar }) => {
   };
 
   return (
-    <div className="flex items-center space-x-2">
+    <div className="flex items-center space-x-2 relative">
+      {/* Premium Flowing Ribbon Elements - Whole Navbar Coverage */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden -z-20">
+        {/* Whole Navbar Ribbon Coverage */}
+        <div className="absolute top-0 left-0 w-1/3 h-full bg-gradient-to-r from-rose-500/8 via-pink-500/6 to-fuchsia-500/7 transform -rotate-3 blur-sm"></div>
+        <div className="absolute top-0 left-1/3 w-1/3 h-full bg-gradient-to-r from-violet-500/7 via-purple-500/5 to-indigo-500/6 transform rotate-2 blur-sm"></div>
+        <div className="absolute top-0 left-2/3 w-1/3 h-full bg-gradient-to-r from-emerald-400/6 via-teal-400/4 to-cyan-400/5 transform -rotate-1 blur-sm"></div>
+        <div className="absolute top-0 right-0 w-1/4 h-full bg-gradient-to-l from-amber-500/7 via-orange-500/5 to-red-500/6 transform rotate-4 translate-x-2 blur-sm"></div>
+        <div className="absolute top-0 right-1/4 w-1/4 h-full bg-gradient-to-l from-blue-500/5 via-cyan-400/3 to-teal-400/4 transform -rotate-2 translate-x-1 blur-sm"></div>
+        <div className="absolute top-0 right-1/2 w-1/4 h-full bg-gradient-to-l from-yellow-500/6 via-amber-400/4 to-orange-500/5 transform rotate-1 translate-x-1 blur-sm"></div>
+      </div>
       {/* Theme Toggle */}
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={toggleTheme}
-        className="p-2.5 text-slate-400 hover:text-amber-400 hover:bg-blue-800/70 rounded-xl transition-all duration-300 shadow-lg hover:shadow-amber-500/15"
+        className="p-2.5 text-slate-400 hover:text-amber-400 hover:bg-blue-800/70 rounded-xl transition-all duration-300 shadow-lg hover:shadow-amber-500/15 relative z-10"
         title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
       >
         {theme === 'dark' ? (
@@ -66,7 +76,7 @@ const Navbar = ({ toggleSidebar }) => {
         >
           <Link
             to="/admin"
-            className="flex items-center space-x-2 px-4 py-2.5 bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-500 hover:to-cyan-600 text-white rounded-xl transition-all duration-300 shadow-xl hover:shadow-cyan-500/30 font-medium"
+            className="flex items-center space-x-2 px-4 py-2.5 bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-500 hover:to-cyan-600 text-white rounded-xl transition-all duration-300 shadow-xl hover:shadow-cyan-500/30 font-medium relative z-10"
           >
             <Shield className="w-4 h-4" />
             <span className="font-medium hidden xl:block">Admin</span>
@@ -80,7 +90,7 @@ const Navbar = ({ toggleSidebar }) => {
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => setShowProfileMenu(!showProfileMenu)}
-          className="flex items-center space-x-3 p-2.5 hover:bg-blue-800/70 rounded-xl transition-all duration-300 shadow-lg hover:shadow-blue-900/30"
+          className="flex items-center space-x-3 p-2.5 hover:bg-blue-800/70 rounded-xl transition-all duration-300 shadow-lg hover:shadow-blue-900/30 relative z-10"
         >
           <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${getAvatarColor(user?.name || 'User')} text-white flex items-center justify-center font-bold text-sm shadow-lg`}>
             {getInitials(user?.name || 'User')}

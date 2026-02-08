@@ -30,18 +30,33 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       <aside
         className={`fixed top-0 left-0 h-full bg-blue-900/95 backdrop-blur-2xl shadow-2xl z-30 transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
-        } w-64 border-r border-blue-700/60`}
+        } w-64 border-r border-blue-700/60 relative overflow-hidden`}
       >
-        <div className="h-full flex flex-col">
+        {/* Premium Flowing Ribbon Elements - Whole Sidebar Coverage */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden -z-10">
+          {/* Whole Sidebar Ribbon Coverage */}
+          <div className="absolute top-0 left-0 w-full h-1/4 bg-gradient-to-r from-cyan-500/12 via-blue-500/10 to-indigo-500/11 transform -rotate-6 blur-sm"></div>
+          <div className="absolute top-1/6 left-0 w-full h-1/4 bg-gradient-to-r from-purple-500/10 via-violet-500/8 to-fuchsia-500/9 transform rotate-3 blur-sm"></div>
+          <div className="absolute top-1/3 left-0 w-full h-1/4 bg-gradient-to-r from-emerald-400/9 via-teal-400/7 to-cyan-400/8 transform -rotate-2 blur-sm"></div>
+          <div className="absolute top-1/2 left-0 w-full h-1/4 bg-gradient-to-r from-amber-500/11 via-orange-500/9 to-red-500/10 transform rotate-4 blur-sm"></div>
+          <div className="absolute top-2/3 left-0 w-full h-1/4 bg-gradient-to-r from-blue-500/8 via-cyan-400/6 to-teal-400/7 transform -rotate-5 blur-sm"></div>
+          <div className="absolute bottom-0 left-0 w-full h-1/4 bg-gradient-to-r from-yellow-500/10 via-amber-400/8 to-orange-500/9 transform rotate-1 blur-sm"></div>
+
+          {/* Additional overlay ribbons for depth */}
+          <div className="absolute top-1/4 right-0 w-3/4 h-1/6 bg-gradient-to-l from-rose-500/8 via-pink-500/6 to-fuchsia-500/7 transform rotate-8 translate-x-2 blur-sm"></div>
+          <div className="absolute bottom-1/4 right-0 w-2/3 h-1/5 bg-gradient-to-l from-violet-500/7 via-purple-500/5 to-indigo-500/6 transform -rotate-6 translate-x-1 blur-sm"></div>
+        </div>
+
+        <div className="h-full flex flex-col relative z-10">
           {/* Logo */}
             <div className="flex items-center justify-between p-6 border-b border-blue-700/70">
-              <Link to="/dashboard" className="flex items-center space-x-2 neon-text">
+              <Link to="/dashboard" className="flex items-center space-x-2 neon-text relative z-10">
                 <span className="text-3xl">🐛</span>
                 <span className="text-xl font-bold text-cyan-400 neon-text">Bug Tracker</span>
               </Link>
             <button
               onClick={toggleSidebar}
-                className="lg:hidden text-slate-600 hover:text-cyan-400"
+                className="lg:hidden text-slate-600 hover:text-cyan-400 relative z-10"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
