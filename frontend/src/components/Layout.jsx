@@ -67,17 +67,17 @@ const Layout = ({ children }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-950 via-green-900 to-teal-900 text-slate-50 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 text-slate-50 relative overflow-hidden">
       {/* Background Effects */}
       <div className="fixed inset-0 opacity-80">
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-950/50 via-green-900/40 to-teal-900/50"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/60 via-slate-800/50 to-indigo-950/60"></div>
         <div className="absolute inset-0" style={{
-          backgroundImage: `radial-gradient(circle at 20% 20%, rgba(16, 185, 129, 0.18) 0%, transparent 50%),
-                           radial-gradient(circle at 80% 80%, rgba(34, 197, 94, 0.18) 0%, transparent 50%),
-                           radial-gradient(circle at 40% 60%, rgba(132, 204, 22, 0.12) 0%, transparent 50%)`
+          backgroundImage: `radial-gradient(circle at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                           radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
+                           radial-gradient(circle at 40% 60%, rgba(124, 58, 237, 0.10) 0%, transparent 50%)`
         }}></div>
         {/* Foggy overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/15 backdrop-blur-[1px]"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/10 backdrop-blur-[1px]"></div>
       </div>
 
       {/* Grain Texture Overlay */}
@@ -114,7 +114,7 @@ const Layout = ({ children }) => {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-h-screen ml-0 lg:ml-64">
         {/* Top Navigation */}
-        <header className="sticky top-0 z-30 bg-blue-900/85 backdrop-blur-2xl border-b border-blue-700/70 shadow-2xl shadow-blue-900/60">
+        <header className="sticky top-0 z-30 bg-slate-800/85 backdrop-blur-2xl border-b border-slate-700/70 shadow-2xl shadow-slate-900/40">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
               {/* Mobile menu button */}
@@ -123,7 +123,7 @@ const Layout = ({ children }) => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={toggleSidebar}
-                  className="p-2.5 rounded-xl text-slate-400 hover:text-cyan-400 hover:bg-blue-800/70 transition-all duration-300 shadow-lg hover:shadow-cyan-500/15 relative z-10"
+                  className="p-2.5 rounded-xl text-slate-400 hover:text-indigo-400 hover:bg-slate-700/70 transition-all duration-300 shadow-lg hover:shadow-indigo-500/15 relative z-10"
                 >
                   {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                 </motion.button>
@@ -138,7 +138,7 @@ const Layout = ({ children }) => {
                   <input
                     type="text"
                     placeholder="Search projects, tickets..."
-                    className="block w-full pl-10 pr-3 py-2.5 border border-blue-600/50 rounded-xl bg-blue-800/40 text-slate-50 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/60 focus:border-cyan-400/60 backdrop-blur-sm transition-all duration-300 shadow-lg shadow-blue-900/30 relative z-10"
+                    className="block w-full pl-10 pr-3 py-2.5 border border-slate-600/50 rounded-xl bg-slate-700/40 text-slate-50 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/60 focus:border-indigo-400/60 backdrop-blur-sm transition-all duration-300 shadow-lg shadow-slate-900/30 relative z-10"
                   />
                 </div>
               </div>
@@ -149,7 +149,7 @@ const Layout = ({ children }) => {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="p-2.5 rounded-xl text-slate-400 hover:text-amber-400 hover:bg-blue-800/70 transition-all duration-300 shadow-lg hover:shadow-amber-500/15 relative z-10"
+                  className="p-2.5 rounded-xl text-slate-400 hover:text-amber-400 hover:bg-slate-700/70 transition-all duration-300 shadow-lg hover:shadow-amber-500/15 relative z-10"
                 >
                   <Bell className="w-5 h-5" />
                   <motion.span
@@ -169,7 +169,7 @@ const Layout = ({ children }) => {
         </header>
 
         {/* Breadcrumbs */}
-        <div className="bg-blue-900/50 border-b border-blue-700/50 backdrop-blur-sm">
+        <div className="bg-slate-800/50 border-b border-slate-700/50 backdrop-blur-sm">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
             <Breadcrumbs />
           </div>
@@ -190,7 +190,7 @@ const Layout = ({ children }) => {
         </main>
 
         {/* Footer */}
-        <footer className="bg-blue-900/70 border-t border-blue-700/50 backdrop-blur-sm mt-auto">
+        <footer className="bg-slate-800/70 border-t border-slate-700/50 backdrop-blur-sm mt-auto">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex items-center justify-between text-sm text-slate-400">
               <div className="flex items-center space-x-4">
@@ -200,7 +200,7 @@ const Layout = ({ children }) => {
               </div>
               <div className="flex items-center space-x-4">
                 <span className="flex items-center space-x-1">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></div>
                   <span className="hidden sm:inline">All systems operational</span>
                 </span>
               </div>

@@ -2,6 +2,15 @@ const Comment = require('../models/Comment');
 const Ticket = require('../models/Ticket');
 const Project = require('../models/Project');
 
+// Helper to extract an ID string from a ref which may be an ObjectId, string, or populated object
+const refToId = (ref) => {
+  if (!ref) return null;
+  if (typeof ref === 'string') return ref;
+  if (ref._id) return ref._id.toString();
+  if (ref.toString) return ref.toString();
+  return null;
+};
+
 // @desc    Get all comments for a ticket
 // @route   GET /api/comments/ticket/:ticketId
 // @access  Private
@@ -15,10 +24,10 @@ exports.getCommentsByTicket = async (req, res) => {
       return res.status(404).json({ message: 'Ticket not found' });
     }
 
-    // Check if user has access to the project
+    // Check if user has access to project
     const project = await Project.findById(ticket.project._id);
-    const isOwner = project.owner.toString() === req.user.id;
-    const isMember = project.members.some(member => member.toString() === req.user.id);
+    const isOwner = refToId(project.owner) === req.user.id;
+    const isMember = project.members.some(member => refToId(member.user) === req.user.id);
 
     if (!isOwner && !isMember) {
       return res.status(403).json({ message: 'Not authorized to access this ticket' });
@@ -58,8 +67,8 @@ exports.createComment = async (req, res) => {
 
     // Check if user has access to the project
     const project = await Project.findById(ticketDoc.project._id);
-    const isOwner = project.owner.toString() === req.user.id;
-    const isMember = project.members.some(member => member.toString() === req.user.id);
+    const isOwner = refToId(project.owner) === req.user.id;
+    const isMember = project.members.some(member => refToId(member.user) === req.user.id);
 
     if (!isOwner && !isMember) {
       return res.status(403).json({ message: 'Not authorized to comment on this ticket' });
@@ -130,12 +139,13 @@ exports.deleteComment = async (req, res) => {
       return res.status(404).json({ message: 'Comment not found' });
     }
 
-    // Check if user is the author or project owner
+    // Check if user is author or project owner
     const project = await Project.findById(comment.ticket.project._id);
     const isAuthor = comment.author.toString() === req.user.id;
-    const isProjectOwner = project.owner.toString() === req.user.id;
+    const isProjectOwner = refToId(project.owner) === req.user.id;
+    const isProjectMember = project.members.some(member => refToId(member.user) === req.user.id);
 
-    if (!isAuthor && !isProjectOwner) {
+    if (!isAuthor && !isProjectOwner && !isProjectMember) {
       return res.status(403).json({ message: 'Not authorized to delete this comment' });
     }
 

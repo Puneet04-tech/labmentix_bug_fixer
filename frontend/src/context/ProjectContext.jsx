@@ -68,6 +68,11 @@ export const ProjectProvider = ({ children }) => {
     }
   };
 
+  // Refresh projects data
+  const refreshProjects = async () => {
+    await fetchProjects();
+  };
+
   // Update project
   const updateProject = async (id, projectData) => {
     setLoading(true);
@@ -153,7 +158,8 @@ export const ProjectProvider = ({ children }) => {
     updateProject,
     deleteProject,
     addMember,
-    removeMember
+    removeMember,
+    refreshProjects
   };
 
   return <ProjectContext.Provider value={value}>{children}</ProjectContext.Provider>;

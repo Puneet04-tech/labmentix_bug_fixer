@@ -34,7 +34,12 @@ const CreateTicket = () => {
       // Get members of selected project
       if (formData.project && projects.length > 0) {
         const selectedProject = projects.find(p => p._id === formData.project);
+        console.log('🔍 Selected project for member loading:', selectedProject);
+        
         if (selectedProject && selectedProject.owner) {
+          console.log('👥 Project owner:', selectedProject.owner);
+          console.log('👥 Project members (raw):', selectedProject.members);
+          
           const members = [
             // Add owner if they exist
             selectedProject.owner._id ? {
@@ -42,25 +47,57 @@ const CreateTicket = () => {
               name: selectedProject.owner.name || 'Unknown Owner',
               email: selectedProject.owner.email || ''
             } : null,
-            // Add members with proper filtering
+            // Add members with proper filtering for both old and new structures
             ...(selectedProject.members || [])
-              .filter(member => member && member.user && member.user._id)
-              .map(member => ({
-                _id: member.user._id,
-                name: member.user.name || 'Unknown User',
-                email: member.user.email || ''
-              }))
+              .filter(member => {
+                // Handle new structure (member.user)
+                if (member.user && member.user._id) {
+                  console.log('✅ Found member with user object:', member.user);
+                  return true;
+                }
+                // Handle old structure (direct member reference)
+                if (member._id) {
+                  console.log('🔄 Found old structure member:', member);
+                  return true;
+                }
+                // Handle outsider members
+                if (member.email && member.name) {
+                  console.log('👤 Found outsider member:', member);
+                  return true;
+                }
+                console.log('❌ Invalid member structure:', member);
+                return false;
+              })
+              .map(member => {
+                // New structure with populated user
+                if (member.user && member.user._id) {
+                  return {
+                    _id: member.user._id,
+                    name: member.user.name || 'Unknown User',
+                    email: member.user.email || ''
+                  };
+                }
+                // Old structure or outsider
+                return {
+                  _id: member._id || member.email,
+                  name: member.name || 'Unknown User',
+                  email: member.email || ''
+                };
+              })
           ].filter(Boolean); // Remove any null entries
 
+          console.log('🎯 Final processed members:', members);
           setProjectMembers(members);
         } else {
+          console.log('❌ No project or owner found');
           setProjectMembers([]);
         }
       } else {
+        console.log('❌ No project selected or no projects available');
         setProjectMembers([]);
       }
     } catch (error) {
-      console.error('Error loading project members:', error);
+      console.error('❌ Error loading project members:', error);
       setProjectMembers([]);
     }
   }, [formData.project, projects]);

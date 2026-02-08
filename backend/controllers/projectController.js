@@ -20,7 +20,7 @@ exports.getProjects = async (req, res) => {
     const processedProjects = await Promise.all(projects.map(async project => {
       const processedMembers = project.members.map(member => {
         // If member has user object (new structure), return as is
-        if (member.user) {
+        if (member.user && member.user._id) {
           return member;
         }
         // If member is old structure (direct reference)
@@ -38,6 +38,7 @@ exports.getProjects = async (req, res) => {
           return User.findById(member._id).select('name email').then(user => {
             if (user) {
               // Found user - convert to new format
+              console.log(`✅ Converting old member to new format: ${user.email} (${user.name})`);
               return {
                 user: user,
                 isOutsider: false,
@@ -45,6 +46,7 @@ exports.getProjects = async (req, res) => {
               };
             } else {
               // User not found - treat as outsider with provided info
+              console.log(`⚠️ User not found for ID ${member._id}, treating as outsider`);
               return {
                 email: member.email,
                 name: member.name || 'Unknown',
@@ -273,9 +275,10 @@ exports.addMember = async (req, res) => {
     }
 
     // Check if member already exists (by user or email)
+    const normalizedEmail = email.toLowerCase().trim();
     const existingMember = project.members.find(member => 
-      (member.user && member.user.email === email) || 
-      (member.email === email)
+      (member.user && member.user.email && member.user.email.toLowerCase() === normalizedEmail) || 
+      (member.email && member.email.toLowerCase() === normalizedEmail)
     );
 
     if (existingMember) {
@@ -283,7 +286,9 @@ exports.addMember = async (req, res) => {
     }
 
     // Check if user is registered
-    const registeredUser = await User.findOne({ email });
+    const registeredUser = await User.findOne({ 
+      email: email.toLowerCase().trim() 
+    });
 
     let newMember;
     if (registeredUser) {
@@ -293,6 +298,7 @@ exports.addMember = async (req, res) => {
         isOutsider: false,
         addedAt: new Date()
       };
+      console.log(`✅ Found registered user: ${registeredUser.email} (${registeredUser.name})`);
     } else {
       // Add outsider
       newMember = {
@@ -301,6 +307,7 @@ exports.addMember = async (req, res) => {
         isOutsider: true,
         addedAt: new Date()
       };
+      console.log(`➕ Adding outsider: ${email} (${name || email.split('@')[0]})`);
     }
 
     project.members.push(newMember);

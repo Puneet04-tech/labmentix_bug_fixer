@@ -119,7 +119,22 @@ const TicketDetail = () => {
 
   // Get all project members for assignment (owner + members)
   const projectMembers = Array.isArray(currentTicket.project.members)
-    ? currentTicket.project.members
+    ? currentTicket.project.members.map(member => {
+        // Handle new structure with populated user
+        if (member.user && member.user._id) {
+          return {
+            _id: member.user._id,
+            name: member.user.name || 'Unknown User',
+            email: member.user.email || ''
+          };
+        }
+        // Handle old structure or outsider
+        return {
+          _id: member._id || member.email,
+          name: member.name || 'Unknown User',
+          email: member.email || ''
+        };
+      })
     : [];
 
   // Normalize owner object (could be id or populated object)
@@ -327,8 +342,12 @@ const TicketDetail = () => {
             {currentTicket.assignedTo ? (
               <div className="mb-4">
                 <p className="text-sm text-slate-500 dark:text-slate-400 mb-1">Assigned To</p>
-                <p className="font-medium text-slate-900 dark:text-slate-100">{currentTicket.assignedTo.name}</p>
-                <p className="text-sm text-slate-500 dark:text-slate-400">{currentTicket.assignedTo.email}</p>
+                <p className="font-medium text-slate-900 dark:text-slate-100">
+                  {currentTicket.assignedTo.name || currentTicket.assignedTo.email || 'Unknown User'}
+                </p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                  {currentTicket.assignedTo.email || 'No email'}
+                </p>
               </div>
             ) : (
               <p className="text-slate-500 dark:text-slate-400 mb-4 italic">Unassigned</p>
@@ -339,7 +358,7 @@ const TicketDetail = () => {
                 <label className="block text-sm text-slate-400 font-medium mb-2">Change Assignment</label>
                 <select
                   onChange={(e) => handleAssign(e.target.value || null)}
-                  value={currentTicket.assignedTo?._id || ''}
+                  value={currentTicket.assignedTo?._id || currentTicket.assignedTo || ''}
                   className="w-full px-3 py-2 border border-slate-700 bg-[#0f1724] text-slate-100 rounded-lg focus:ring-2 focus:ring-emerald-500"
                 >
                   <option value="">Unassigned</option>
